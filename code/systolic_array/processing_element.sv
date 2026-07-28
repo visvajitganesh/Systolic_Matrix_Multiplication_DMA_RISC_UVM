@@ -8,17 +8,17 @@ module processing_element #(
     input  logic pe_en,
 
     // INPUT SIGNALS
-    input  logic [DATA_WIDTH - 1:0] in,       // HORIZONTAL INPUTS
-    input  logic [DATA_WIDTH - 1:0] weight,   // VERTICAL WEIGHT LOADING inputs
-    input  logic [PSUM_WIDTH - 1:0] psum_in,  // PSUM 
+    input  logic [DATA_WIDTH - 1 : 0] in,       // HORIZONTAL INPUTS
+    input  logic [DATA_WIDTH - 1 : 0] weight,   // VERTICAL WEIGHT LOADING inputs
+    input  logic [PSUM_WIDTH - 1 : 0] psum_in,  // PSUM 
 
     // OUTPUT SIGNALS
-    output logic [DATA_WIDTH - 1:0]  a_out,  
-    output logic [PSUM_WIDTH - 1:0]  psum_out
+    output logic [DATA_WIDTH - 1 : 0]  a_out,  
+    output logic [PSUM_WIDTH - 1 : 0]  psum_out
 );
     /*
-    logic [DATA_WIDTH - 1:0]  weight_reg;
-    logic [DATA_WIDTH - 1:0]  a_reg;
+    logic [DATA_WIDTH - 1 : 0]  weight_reg;
+    logic [DATA_WIDTH - 1 : 0]  a_reg;
 
     // WEIGHT - STATIONARY REGISTER LOGIC 
     always_ff @(posedge clk or posedge rst) begin : weight_stationary
