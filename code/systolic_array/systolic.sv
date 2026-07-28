@@ -1,20 +1,21 @@
 module systolic #(
     parameter MATRIX_SIZE = 4,
-    parameter DATA_WIDTH  = 4 
+    parameter DATA_WIDTH  = 4,
+    parameter PSUM_WIDTH  = 4
 )(
     input  logic clk,
-    input  logic rst,
+    input  logic rst,          
 
     input  logic start,
 
-    input  logic [2 * MATRIX_SIZE * MATRIX_SIZE * DATA_WIDTH - 1 : 0] input_data,
+    input  logic [2 * MATRIX_SIZE * MATRIX_SIZE * DATA_WIDTH - 1 : 0] input_data,      /// INPUT MATRICES A ( Input ) and B (weight) Big Endian. 
 
     output logic [    MATRIX_SIZE * MATRIX_SIZE * DATA_WIDTH - 1 : 0] output_data,
 
-    output logic valid
+    output logic valid                                                                 ///  VALID HIGH  ----   Sample Output. 
 );
 
-    localparam int LIN_SIZE = MATRIX_SIZE * MATRIX_SIZE * DATA_WIDTH;
+    localparam int LIN_SIZE = MATRIX_SIZE * MATRIX_SIZE * DATA_WIDTH;                 
 
     logic [LIN_SIZE - 1 : 0] arr_lin_A;
     logic [LIN_SIZE - 1 : 0] arr_lin_B;
@@ -56,6 +57,7 @@ module systolic #(
     pe_array #(
         .DATA_WIDTH(DATA_WIDTH),
         .MATRIX_SIZE(MATRIX_SIZE)
+        .PSUM_WIDTH(PSUM_WIDTH)
     ) dut (
         .clk(clk), 
         .rst(rst), 
@@ -73,4 +75,5 @@ module systolic #(
             end
         end
     end
+    
 endmodule
