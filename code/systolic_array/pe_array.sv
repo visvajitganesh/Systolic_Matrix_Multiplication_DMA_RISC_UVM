@@ -1,6 +1,7 @@
 module pe_array #(
     parameter int MATRIX_SIZE = 4,
-    parameter int DATA_WIDTH  = 4 
+    parameter int DATA_WIDTH  = 4,
+    parameter int PSUM_WIDTH  = 4 
 )(
     input  logic clk,
     input  logic rst,
@@ -20,9 +21,10 @@ module pe_array #(
     // ------------------------------------------------------------------------
     // 1. Control Logic & Counter
     // ------------------------------------------------------------------------
-    logic [$clog2(3 * MATRIX_SIZE) - 1 : 0] counter;
 
-    logic pe_en, mul_en, adder_en;
+    logic [$clog2(3 * MATRIX_SIZE) - 1 : 0] counter;                     
+
+    logic pe_en;
 
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
@@ -41,10 +43,8 @@ module pe_array #(
         end
     end
 
-    // Enable signals
-    assign pe_en    = start;
-    assign mul_en   = start;
-    assign adder_en = start;
+    // Enable signal
+    assign pe_en = start;
 
     // ------------------------------------------------------------------------
     // 2. Input Skewing Chains (Horizontal Input Delay for A)
@@ -127,7 +127,8 @@ module pe_array #(
         for (r = 0; r < MATRIX_SIZE; r++) begin : g_pe_row
             for (c = 0; c < MATRIX_SIZE; c++) begin : g_pe_col
                 processing_element #(
-                    .DATA_WIDTH(DATA_WIDTH)
+                    .DATA_WIDTH(DATA_WIDTH),
+                    .PSUM_WIDTH(PSUM_WIDTH)
                 ) u_pe (
                     .clk       (clk),
                     .rst       (rst),
@@ -140,8 +141,6 @@ module pe_array #(
                     .weight    (B[r][c]), // Weights stationary directly from B
                     
                     .pe_en     (pe_en),
-                    .mul_en    (mul_en),
-                    .adder_en  (adder_en),
                     
                     // Vertical partial sum flow
                     .psum_in   (psum_wire[r][c]),
