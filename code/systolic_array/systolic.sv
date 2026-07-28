@@ -56,7 +56,7 @@ module systolic #(
 
     pe_array #(
         .DATA_WIDTH(DATA_WIDTH),
-        .MATRIX_SIZE(MATRIX_SIZE)
+        .MATRIX_SIZE(MATRIX_SIZE),
         .PSUM_WIDTH(PSUM_WIDTH)
     ) dut (
         .clk(clk), 
