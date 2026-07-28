@@ -1,0 +1,250 @@
+
+// Module: dma_systolic_top
+// Description: Full SoC Integration connecting AXI DMA engine to Systolic
+
+
+module dma_systolic_top #(
+    parameter AXI_ADDR_WIDTH = 32,
+    parameter AXI_DATA_WIDTH = 32,
+    parameter STREAM_WIDTH   = 4,
+    parameter MATRIX_SIZE    = 4,
+    parameter DATA_WIDTH     = 4,
+    parameter FIFO_DEPTH_EXP = 5   // Depth = 2^5 = 32 entries
+)(
+
+    // DMA Engine Clock & Reset Domain
+
+    input  logic                      clk_dma,
+    input  logic                      rst_dma_n,
+
+    // AXI4-Lite Slave Configuration Interface
+    input  logic [4:0]                s_axi_lite_awaddr,
+    input  logic                      s_axi_lite_awvalid,
+    output logic                      s_axi_lite_awready,
+    input  logic [AXI_DATA_WIDTH-1:0] s_axi_lite_wdata,
+    input  logic                      s_axi_lite_wvalid,
+    output logic                      s_axi_lite_wready,
+    output logic [1:0]                s_axi_lite_bresp,
+    output logic                      s_axi_lite_bvalid,
+    input  logic                      s_axi_lite_bready,
+
+    input  logic [4:0]                s_axi_lite_araddr,
+    input  logic                      s_axi_lite_arvalid,
+    output logic                      s_axi_lite_arready,
+    output logic [AXI_DATA_WIDTH-1:0] s_axi_lite_rdata,
+    output logic [1:0]                s_axi_lite_rresp,
+    output logic                      s_axi_lite_rvalid,
+    input  logic                      s_axi_lite_rready,
+
+    // AXI4 Master Memory Interface
+    output logic [AXI_ADDR_WIDTH-1:0] m_axi_araddr,
+    output logic [7:0]                m_axi_arlen,
+    output logic [2:0]                m_axi_arsize,
+    output logic [1:0]                m_axi_arburst,
+    output logic                      m_axi_arvalid,
+    input  logic                      m_axi_arready,
+
+    input  logic [AXI_DATA_WIDTH-1:0] m_axi_rdata,
+    input  logic [1:0]                m_axi_rresp,
+    input  logic                      m_axi_rlast,
+    input  logic                      m_axi_rvalid,
+    output logic                      m_axi_rready,
+
+    output logic [AXI_ADDR_WIDTH-1:0] m_axi_awaddr,
+    output logic [7:0]                m_axi_awlen,
+    output logic [2:0]                m_axi_awsize,
+    output logic [1:0]                m_axi_awburst,
+    output logic                      m_axi_awvalid,
+    input  logic                      m_axi_awready,
+
+    output logic [AXI_DATA_WIDTH-1:0] m_axi_wdata,
+    output logic [(AXI_DATA_WIDTH/8)-1:0] m_axi_wstrb,
+    output logic                      m_axi_wlast,
+    output logic                      m_axi_wvalid,
+    input  logic                      m_axi_wready,
+
+    input  logic [1:0]                m_axi_bresp,
+    input  logic                      m_axi_bvalid,
+    output logic                      m_axi_bready,
+
+
+    // Systolic Array Clock & Reset Domain
+
+    input  logic                      clk_sys,
+    input  logic                      rst_sys_n
+);
+
+    // Stream signals connecting DMA to FIFOs
+    logic [STREAM_WIDTH-1:0] dma_m_axis_tdata;
+    logic                    dma_m_axis_tvalid;
+    logic                    dma_m_axis_tready;
+
+    logic [STREAM_WIDTH-1:0] dma_s_axis_tdata;
+    logic                    dma_s_axis_tvalid;
+    logic                    dma_s_axis_tready;
+
+    // FIFO interconnect wires (Systolic side)
+    logic [STREAM_WIDTH-1:0] tx_fifo_dout;
+    logic                    tx_fifo_empty;
+    logic                    tx_fifo_rd_en;
+    logic                    tx_fifo_full;
+
+    logic [STREAM_WIDTH-1:0] rx_fifo_din;
+    logic                    rx_fifo_full;
+    logic                    rx_fifo_wr_en;
+    logic                    rx_fifo_empty;
+
+    // Systolic Core Wires
+    logic                                           sys_start;
+    logic [2*MATRIX_SIZE*MATRIX_SIZE*DATA_WIDTH-1:0] sys_input_data;
+    logic [  MATRIX_SIZE*MATRIX_SIZE*DATA_WIDTH-1:0] sys_output_data;
+    logic                                           sys_valid;
+
+    // Active-HIGH reset for internal Systolic units (pe_array/dff use posedge rst)
+    wire rst_sys_active_high = ~rst_sys_n;
+
+    // Handshakes between DMA and FIFOs
+    assign dma_m_axis_tready = ~tx_fifo_full;
+    wire tx_wr_en            = dma_m_axis_tvalid && dma_m_axis_tready;
+
+    assign dma_s_axis_tvalid = ~rx_fifo_empty;
+    wire rx_rd_en            = dma_s_axis_tvalid && dma_s_axis_tready;
+
+ 
+    // 1. AXI DMA Core
+    dma #(
+        .AXI_ADDR_WIDTH(AXI_ADDR_WIDTH),
+        .AXI_DATA_WIDTH(AXI_DATA_WIDTH),
+        .STREAM_WIDTH  (STREAM_WIDTH)
+    ) u_dma (
+        .clk              (clk_dma),
+        .rst              (rst_dma_n), // DMA uses active-low reset
+        
+        .s_axi_lite_awaddr(s_axi_lite_awaddr),
+        .s_axi_lite_awvalid(s_axi_lite_awvalid),
+        .s_axi_lite_awready(s_axi_lite_awready),
+        .s_axi_lite_wdata (s_axi_lite_wdata),
+        .s_axi_lite_wvalid(s_axi_lite_wvalid),
+        .s_axi_lite_wready(s_axi_lite_wready),
+        .s_axi_lite_bresp (s_axi_lite_bresp),
+        .s_axi_lite_bvalid(s_axi_lite_bvalid),
+        .s_axi_lite_bready(s_axi_lite_bready),
+        .s_axi_lite_araddr(s_axi_lite_araddr),
+        .s_axi_lite_arvalid(s_axi_lite_arvalid),
+        .s_axi_lite_arready(s_axi_lite_arready),
+        .s_axi_lite_rdata (s_axi_lite_rdata),
+        .s_axi_lite_rresp (s_axi_lite_rresp),
+        .s_axi_lite_rvalid(s_axi_lite_rvalid),
+        .s_axi_lite_rready(s_axi_lite_rready),
+
+        .m_axi_araddr     (m_axi_araddr),
+        .m_axi_arlen      (m_axi_arlen),
+        .m_axi_arsize     (m_axi_arsize),
+        .m_axi_arburst    (m_axi_arburst),
+        .m_axi_arvalid    (m_axi_arvalid),
+        .m_axi_arready    (m_axi_arready),
+        .m_axi_rdata      (m_axi_rdata),
+        .m_axi_rresp      (m_axi_rresp),
+        .m_axi_rlast      (m_axi_rlast),
+        .m_axi_rvalid     (m_axi_rvalid),
+        .m_axi_rready     (m_axi_rready),
+        .m_axi_awaddr     (m_axi_awaddr),
+        .m_axi_awlen      (m_axi_awlen),
+        .m_axi_awsize     (m_axi_awsize),
+        .m_axi_awburst    (m_axi_awburst),
+        .m_axi_awvalid    (m_axi_awvalid),
+        .m_axi_awready    (m_axi_awready),
+        .m_axi_wdata      (m_axi_wdata),
+        .m_axi_wstrb      (m_axi_wstrb),
+        .m_axi_wlast      (m_axi_wlast),
+        .m_axi_wvalid     (m_axi_wvalid),
+        .m_axi_wready     (m_axi_wready),
+        .m_axi_bresp      (m_axi_bresp),
+        .m_axi_bvalid     (m_axi_bvalid),
+        .m_axi_bready     (m_axi_bready),
+
+        // MM2S Outgoing Stream
+        .m_axis_tdata     (dma_m_axis_tdata),
+        .m_axis_tvalid    (dma_m_axis_tvalid),
+        .m_axis_tready    (dma_m_axis_tready),
+
+        // S2MM Incoming Stream
+        .s_axis_tdata     (dma_s_axis_tdata),
+        .s_axis_tvalid    (dma_s_axis_tvalid),
+        .s_axis_tready    (dma_s_axis_tready)
+    );
+
+    // 2. TX Async FIFO: DMA (Write) -> Systolic Adapter (Read)
+    async_fifo #(
+        .DATA_WIDTH(STREAM_WIDTH),
+        .ADDR_WIDTH(FIFO_DEPTH_EXP)
+    ) u_tx_async_fifo (
+        .wr_clk  (clk_dma),
+        .wr_rst_n(rst_dma_n),
+        .wr_en   (tx_wr_en),
+        .din     (dma_m_axis_tdata),
+        .full    (tx_fifo_full),
+
+        .rd_clk  (clk_sys),
+        .rd_rst_n(rst_sys_n),
+        .rd_en   (tx_fifo_rd_en),
+        .dout    (tx_fifo_dout),
+        .empty   (tx_fifo_empty)
+    );
+
+    // 3. RX Async FIFO: Systolic Adapter (Write) -> DMA (Read)
+    async_fifo #(
+        .DATA_WIDTH(STREAM_WIDTH),
+        .ADDR_WIDTH(FIFO_DEPTH_EXP)
+    ) u_rx_async_fifo (
+        .wr_clk  (clk_sys),
+        .wr_rst_n(rst_sys_n),
+        .wr_en   (rx_fifo_wr_en),
+        .din     (rx_fifo_din),
+        .full    (rx_fifo_full),
+
+        .rd_clk  (clk_dma),
+        .rd_rst_n(rst_dma_n),
+        .rd_en   (rx_rd_en),
+        .dout    (dma_s_axis_tdata),
+        .empty   (rx_fifo_empty)
+    );
+
+    // 4. Systolic Domain Adapter Unit
+    systolic_adapter #(
+        .STREAM_WIDTH(STREAM_WIDTH),
+        .MATRIX_SIZE (MATRIX_SIZE),
+        .DATA_WIDTH  (DATA_WIDTH)
+    ) u_systolic_adapter (
+        .clk_sys        (clk_sys),
+        .rst_sys_n      (rst_sys_n),
+
+        .tx_fifo_dout   (tx_fifo_dout),
+        .tx_fifo_empty  (tx_fifo_empty),
+        .tx_fifo_rd_en  (tx_fifo_rd_en),
+
+        .rx_fifo_din    (rx_fifo_din),
+        .rx_fifo_full   (rx_fifo_full),
+        .rx_fifo_wr_en  (rx_fifo_wr_en),
+
+        .sys_start      (sys_start),
+        .sys_input_data (sys_input_data),
+        .sys_output_data(sys_output_data),
+        .sys_valid      (sys_valid)
+    );
+
+    // 5. Systolic Array Core Module
+
+    systolic #(
+        .MATRIX_SIZE(MATRIX_SIZE),
+        .DATA_WIDTH (DATA_WIDTH)
+    ) u_systolic_array (
+        .clk        (clk_sys),
+        .rst        (rst_sys_active_high), // Inverted for Systolic active-high reset
+        .start      (sys_start),
+        .input_data (sys_input_data),
+        .output_data(sys_output_data),
+        .valid      (sys_valid)
+    );
+
+endmodule
