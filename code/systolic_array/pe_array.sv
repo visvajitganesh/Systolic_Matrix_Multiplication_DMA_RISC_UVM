@@ -27,21 +27,17 @@ module pe_array #(
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
             counter <= '0;
-            //valid   <= 1'b0;
         end 
         else if (start) begin
             if (counter < (3 * MATRIX_SIZE - 1)) begin
                 counter <= counter + 1'b1;
-                // valid   <= (counter >= (2 * MATRIX_SIZE - 1));
             end
             else begin
                 counter <= '0;
-                // valid   <= 1'b0;
             end
         end 
         else begin
             counter <= '0;
-            // valid   <= 1'b0;
         end
     end
 
