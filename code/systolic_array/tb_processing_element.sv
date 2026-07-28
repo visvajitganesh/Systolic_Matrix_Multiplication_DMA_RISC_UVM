@@ -2,7 +2,7 @@
 
 `timescale 1ns/1ps
 
-module tb_pe_int4;
+module tb_processing_element;
 
     // 1. Declare signals to connect to the PE
     logic         clk;
@@ -22,7 +22,7 @@ module tb_pe_int4;
     logic [15:0]  pe_output;
 
     // 2. Instantiate the Device Under Test (DUT)
-    pe_int4 #(
+    processing_element #(
         .DATA_WIDTH(4),
         .PSUM_WIDTH(16)
     ) dut (
