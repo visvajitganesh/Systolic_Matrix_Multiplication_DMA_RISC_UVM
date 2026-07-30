@@ -7,7 +7,7 @@ module tb_systolic;
     // ------------------------------------------------------------------------
     localparam int MATRIX_SIZE = 4;
     localparam int DATA_WIDTH  = 4;
-    localparam int PSUM_WIDTH  = 16; // Using 16-bit to prevent overflow [cite: 668]
+    localparam int PSUM_WIDTH  = 4; // Using 16-bit to prevent overflow [cite: 668]
 
     localparam int LIN_SIZE = MATRIX_SIZE * MATRIX_SIZE * DATA_WIDTH;
 
