@@ -22,15 +22,26 @@ module pe_array #(
     // 1. Control Logic & Counter
     // ------------------------------------------------------------------------
 
-    logic [$clog2(3 * MATRIX_SIZE) - 1 : 0] counter;                     
+    logic [$clog2(3 * MATRIX_SIZE) - 1 : 0] counter;
+    logic running;
 
     logic pe_en;
 
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
+            running <= 1'b0;
+        end else if ( start) begin
+            running <= 1'b1;
+        end else if ( counter == (3* MATRIX_SIZE - 1)) begin
+            running <= 1'b0;
+        end
+    end
+
+    always_ff @(posedge clk or posedge rst) begin
+        if (rst) begin
             counter <= '0;
         end 
-        else if (start) begin
+        else if (running || start) begin
             if (counter < (3 * MATRIX_SIZE - 1)) begin
                 counter <= counter + 1'b1;
             end
@@ -44,7 +55,7 @@ module pe_array #(
     end
 
     // Enable signal
-    assign pe_en = start;
+    assign pe_en = running || start;
 
     // ------------------------------------------------------------------------
     // 2. Input Skewing Chains (Horizontal Input Delay for A)
@@ -87,7 +98,7 @@ module pe_array #(
             ) d_ff_skew_in (
                 .clk (clk),
                 .rst (rst),
-                .en  (start),
+                .en  (pe_en),
                 .din (data_in_A[k]),
                 .dout(data_in_skewed_A[k])
             );
@@ -101,7 +112,7 @@ module pe_array #(
     logic [DATA_WIDTH - 1 : 0] a_wire [0 : MATRIX_SIZE - 1][0 : MATRIX_SIZE];
     
     // Vertical partial sum streaming [rows+1][cols]
-    logic [DATA_WIDTH - 1 : 0] psum_wire [0 : MATRIX_SIZE][0 : MATRIX_SIZE - 1];
+    logic [PSUM_WIDTH - 1 : 0] psum_wire [0 : MATRIX_SIZE][0 : MATRIX_SIZE - 1];
 
     // Connect skewed inputs to leftmost PE column
     genvar i_in;
@@ -153,8 +164,8 @@ module pe_array #(
     // ------------------------------------------------------------------------
     // 5. Output Un-skewing & Sampling Block
     // ------------------------------------------------------------------------
-    logic [DATA_WIDTH - 1 : 0] data_out_skewed    [0 : MATRIX_SIZE - 1];
-    logic [DATA_WIDTH - 1 : 0] data_out_unskewed  [0 : MATRIX_SIZE - 1];
+    logic [PSUM_WIDTH - 1 : 0] data_out_skewed    [0 : MATRIX_SIZE - 1];
+    logic [PSUM_WIDTH - 1 : 0] data_out_unskewed  [0 : MATRIX_SIZE - 1];
 
     // Grab raw outputs emerging from bottom row of PE array
     genvar col;
@@ -172,12 +183,12 @@ module pe_array #(
     generate
         for (out_col = 0; out_col < MATRIX_SIZE - 1; out_col++) begin : output_unskew
             d_ff_chain #(
-                .DATA_WIDTH(DATA_WIDTH),
+                .DATA_WIDTH(PSUM_WIDTH),
                 .DEPTH(MATRIX_SIZE - 1 - out_col)
             ) d_ff_unskew_out (
                 .clk (clk),
                 .rst (rst),
-                .en  (start),
+                .en  (pe_en),
                 .din (data_out_skewed[out_col]),
                 .dout(data_out_unskewed[out_col]) // Re-aligned row output
             );
@@ -192,7 +203,7 @@ module pe_array #(
         if (rst) begin
             OUT <= '{default: '0};
         end 
-        else if (start && (counter >= START_OUT_CYCLE) && (counter <= END_OUT_CYCLE)) begin
+        else if (running && (counter >= START_OUT_CYCLE) && (counter <= END_OUT_CYCLE)) begin
             for (int col_idx = 0; col_idx < MATRIX_SIZE; col_idx++) begin
                 OUT[counter - START_OUT_CYCLE][col_idx] <= data_out_unskewed[col_idx];
             end
@@ -200,6 +211,6 @@ module pe_array #(
     end
 
     // Valid signal active during the sampling window
-    assign valid = start && (counter >= START_OUT_CYCLE + 1) && (counter <= END_OUT_CYCLE + 1);
+    assign valid = running && (counter >= START_OUT_CYCLE + 1) && (counter <= END_OUT_CYCLE + 1);
 
 endmodule
