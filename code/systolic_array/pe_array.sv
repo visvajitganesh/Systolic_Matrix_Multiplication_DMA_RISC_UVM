@@ -78,7 +78,7 @@ module pe_array #(
 
     generate
         for (row = 0; row < MATRIX_SIZE; row++) begin : g_input_mux
-            assign data_in_A[row] = (start && (counter < MATRIX_SIZE)) 
+            assign data_in_A[row] = (pe_en && (counter < MATRIX_SIZE)) 
                                   ? A_transposed[row][counter] 
                                   : '0;
         end
@@ -164,6 +164,8 @@ module pe_array #(
     // ------------------------------------------------------------------------
     // 5. Output Un-skewing & Sampling Block
     // ------------------------------------------------------------------------
+
+    
     logic [PSUM_WIDTH - 1 : 0] data_out_skewed    [0 : MATRIX_SIZE - 1];
     logic [PSUM_WIDTH - 1 : 0] data_out_unskewed  [0 : MATRIX_SIZE - 1];
 
