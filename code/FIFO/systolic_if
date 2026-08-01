@@ -15,28 +15,27 @@ module systolic_adapter #(
 
     // TX FIFO Interface (Read Port in clk_sys domain)
 
-    input  logic [STREAM_WIDTH-1:0] tx_fifo_dout,
-    input  logic                    tx_fifo_empty,
-    output logic                    tx_fifo_rd_en,
+    input  logic [STREAM_WIDTH - 1:0] tx_fifo_dout,
+    input  logic                      tx_fifo_empty,
+    output logic                      tx_fifo_rd_en,
 
 
     // RX FIFO Interface (Write Port in clk_sys domain)
 
-    output logic [STREAM_WIDTH-1:0] rx_fifo_din,
-    input  logic                    rx_fifo_full,
-    output logic                    rx_fifo_wr_en,
+    output logic [STREAM_WIDTH - 1:0] rx_fifo_din,
+    input  logic                      rx_fifo_full,
+    output logic                      rx_fifo_wr_en,
 
 
     // Systolic Array Hardware Interface
-
-    output logic                                           sys_start,
-    output logic [2*MATRIX_SIZE*MATRIX_SIZE*DATA_WIDTH-1:0] sys_input_data,
-    input  logic [  MATRIX_SIZE*MATRIX_SIZE*DATA_WIDTH-1:0] sys_output_data,
-    input  logic                                           sys_valid
+    output logic                                                    sys_start,
+    output logic [2 * MATRIX_SIZE * MATRIX_SIZE * DATA_WIDTH - 1:0] sys_input_data,
+    input  logic [    MATRIX_SIZE * MATRIX_SIZE * DATA_WIDTH - 1:0] sys_output_data,
+    input  logic                                                    sys_valid
 );
 
     localparam int IN_NIBBLES  = (2 * MATRIX_SIZE * MATRIX_SIZE * DATA_WIDTH) / STREAM_WIDTH; // 128 / 4 = 32
-    localparam int OUT_NIBBLES = (MATRIX_SIZE * MATRIX_SIZE * DATA_WIDTH) / STREAM_WIDTH;     // 64 / 4 = 16
+    localparam int OUT_NIBBLES = (    MATRIX_SIZE * MATRIX_SIZE * DATA_WIDTH) / STREAM_WIDTH; // 64 / 4 = 16
 
     typedef enum logic [2:0] {
         S_IDLE,
@@ -46,12 +45,12 @@ module systolic_adapter #(
         S_DRAIN_OUT
     } state_t;
 
-    state_t state;
+    state_t     state;
     logic [5:0] count;
 
-    logic [2*MATRIX_SIZE*MATRIX_SIZE*DATA_WIDTH-1:0] in_reg;
-    logic [  MATRIX_SIZE*MATRIX_SIZE*DATA_WIDTH-1:0] out_reg;
-    logic sys_valid_d;
+    logic [2 * MATRIX_SIZE * MATRIX_SIZE * DATA_WIDTH - 1:0] in_reg;
+    logic [    MATRIX_SIZE * MATRIX_SIZE * DATA_WIDTH - 1:0] out_reg;
+    logic                                                    sys_valid_d;
 
     // Detect falling edge of valid signal from systolic array
     always_ff @(posedge clk_sys or negedge rst_sys_n) begin
@@ -101,21 +100,20 @@ module systolic_adapter #(
 
                         if (count == IN_NIBBLES - 1) begin
                             tx_fifo_rd_en <= 1'b0;
-                            sys_start     <= 1'b1; // Hold start high during array evaluation
+                            sys_start     <= 1'b1; // pulse for exactly one cycle
                             state         <= S_COMPUTE;
                         end
                     end
                 end
 
                 S_COMPUTE: begin
-                    sys_start <= 1'b1; // Keep high per pe_array counter requirement
+                    sys_start <= 1'b0; 
                     if (sys_valid) begin
                         state <= S_WAIT_VALID_FALL;
                     end
                 end
 
                 S_WAIT_VALID_FALL: begin
-                    sys_start <= 1'b1;
                     if (sys_valid_falling) begin
                         sys_start <= 1'b0;             // Reset computation loop
                         out_reg   <= sys_output_data;  // Capture full output matrix
