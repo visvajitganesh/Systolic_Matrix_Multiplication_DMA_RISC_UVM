@@ -1,8 +1,6 @@
-
 // Module: systolic_adapter
 // Description: Accumulates 4-bit FIFO streams into 128-bit matrices for the
 //              systolic array, and serializes 64-bit outputs back to 4-bit FIFO.
-
 
 module systolic_adapter #(
     parameter int STREAM_WIDTH = 4,
@@ -12,18 +10,15 @@ module systolic_adapter #(
     input  logic clk_sys,
     input  logic rst_sys_n, // Active-low reset
 
-
     // TX FIFO Interface (Read Port in clk_sys domain)
     input  logic [STREAM_WIDTH - 1:0] tx_fifo_dout,
     input  logic                      tx_fifo_empty,
     output logic                      tx_fifo_rd_en,
 
-
     // RX FIFO Interface (Write Port in clk_sys domain)
     output logic [STREAM_WIDTH - 1:0] rx_fifo_din,
     input  logic                      rx_fifo_full,
     output logic                      rx_fifo_wr_en,
-
 
     // Systolic Array Hardware Interface
     output logic                                                    sys_start,
