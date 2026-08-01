@@ -14,14 +14,12 @@ module systolic_adapter #(
 
 
     // TX FIFO Interface (Read Port in clk_sys domain)
-
     input  logic [STREAM_WIDTH - 1:0] tx_fifo_dout,
     input  logic                      tx_fifo_empty,
     output logic                      tx_fifo_rd_en,
 
 
     // RX FIFO Interface (Write Port in clk_sys domain)
-
     output logic [STREAM_WIDTH - 1:0] rx_fifo_din,
     input  logic                      rx_fifo_full,
     output logic                      rx_fifo_wr_en,
