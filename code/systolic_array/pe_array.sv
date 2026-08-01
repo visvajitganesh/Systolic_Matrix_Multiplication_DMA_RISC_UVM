@@ -197,8 +197,8 @@ module pe_array #(
         end
     endgenerate
 
-    localparam int START_OUT_CYCLE = 2 * MATRIX_SIZE;
-    localparam int END_OUT_CYCLE   = 3 * MATRIX_SIZE - 1;
+    localparam int START_OUT_CYCLE = 2 * MATRIX_SIZE - 1;
+    localparam int END_OUT_CYCLE   = 3 * MATRIX_SIZE - 2;
 
     // Calculate row index directly from main counter
     always_ff @(posedge clk or posedge rst) begin
@@ -213,6 +213,7 @@ module pe_array #(
     end
 
     // Valid signal active during the sampling window
-    assign valid = running && (counter >= START_OUT_CYCLE + 1) && (counter <= END_OUT_CYCLE + 1);
+    //assign valid = running && (counter >= START_OUT_CYCLE + 1) && (counter <= END_OUT_CYCLE + 1);
+    assign valid = running && (counter == END_OUT_CYCLE + 1);
 
 endmodule
