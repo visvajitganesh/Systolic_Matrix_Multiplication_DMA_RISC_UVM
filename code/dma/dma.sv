@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module dma_top (
+module dma (
     input  logic        clk,
     input  logic        rst_n,
 
@@ -28,20 +28,28 @@ module dma_top (
 
     output logic [31:0] m_axi_araddr,
     output logic [7:0]  m_axi_arlen,
+    output logic [2:0]  m_axi_arsize,
+    output logic [1:0]  m_axi_arburst,
     output logic        m_axi_arvalid,
     input  logic        m_axi_arready,
     input  logic [31:0] m_axi_rdata,
+    input  logic [1:0]  m_axi_rresp,
+    input  logic        m_axi_rlast,
     input  logic        m_axi_rvalid,
     output logic        m_axi_rready,
 
     output logic [31:0] m_axi_awaddr,
     output logic [7:0]  m_axi_awlen,
+    output logic [2:0]  m_axi_awsize,
+    output logic [1:0]  m_axi_awburst,
     output logic        m_axi_awvalid,
     input  logic        m_axi_awready,
     output logic [31:0] m_axi_wdata,
+    output logic [3:0]  m_axi_wstrb,
     output logic        m_axi_wvalid,
     output logic        m_axi_wlast,
     input  logic        m_axi_wready,
+    input  logic [1:0]  m_axi_bresp,
     input  logic        m_axi_bvalid,
     output logic        m_axi_bready,
 
@@ -57,12 +65,21 @@ module dma_top (
     output logic        s_axis_s2mm_tready
 );
 
-    // Register Offsets
+
     localparam ADDR_CTRL  = 32'h00;
     localparam ADDR_STAT  = 32'h04;
     localparam ADDR_SRC   = 32'h08;
     localparam ADDR_DEST  = 32'h0C;
     localparam ADDR_LEN   = 32'h10;
+
+
+    localparam [2:0] AXSIZE_4B    = 3'b010; // 2^2 = 4 bytes/beat
+    localparam [1:0] AXBURST_INCR = 2'b01;  // INCR burst type
+
+    assign m_axi_arsize  = AXSIZE_4B;
+    assign m_axi_arburst = AXBURST_INCR;
+    assign m_axi_awsize  = AXSIZE_4B;
+    assign m_axi_awburst = AXBURST_INCR;
 
     // Registers
     logic [31:0] reg_ctrl;
@@ -73,18 +90,21 @@ module dma_top (
 
     logic start_pulse;
     logic rd_done, wr_done;
+    logic rd_error, wr_error;
     logic busy;
 
     assign busy = reg_status[0];
+
 
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             reg_status <= 32'h0;
         end else begin
             if (start_pulse) begin
-                reg_status <= 32'h1; 
+                reg_status <= 32'h1; // Set Busy = 1, Done = 0
             end else if (rd_done && wr_done) begin
-                reg_status <= 32'h2; 
+                reg_status <= {29'h0, (rd_error || wr_error), 1'b1, 1'b0};
+                // bit0=Busy(0), bit1=Done(1), bit2=Error
             end
         end
     end
@@ -104,7 +124,7 @@ module dma_top (
             s_axi_lite_bvalid  <= 1'b0;
             s_axi_lite_bresp   <= 2'b00;
         end else begin
-            start_pulse <= 1'b0; 
+            start_pulse <= 1'b0; // Pulse self-clears
 
             if (s_axi_lite_awvalid && s_axi_lite_wvalid && !s_axi_lite_bvalid) begin
                 s_axi_lite_awready <= 1'b1;
@@ -133,7 +153,6 @@ module dma_top (
     end
 
     // AXI-Lite Read Logic
-    
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             s_axi_lite_arready <= 1'b0;
@@ -172,8 +191,8 @@ module dma_top (
     logic [31:0] rd_bytes_left;
     logic [2:0]  unpack_idx;
 
-    assign m_axis_mm2s_tvalid = (r_state == R_UNPACK);
-    assign m_axis_mm2s_tdata  = rd_buf[(unpack_idx * 4) +: 4];
+
+    assign m_axis_mm2s_tdata = rd_buf[(unpack_idx * 4) +: 4];
 
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
@@ -182,7 +201,9 @@ module dma_top (
             m_axi_arlen        <= '0;
             m_axi_arvalid      <= 1'b0;
             m_axi_rready       <= 1'b0;
+            m_axis_mm2s_tvalid <= 1'b0;
             rd_done            <= 1'b0;
+            rd_error           <= 1'b0;
             unpack_idx         <= '0;
             rd_bytes_left      <= '0;
         end else begin
@@ -193,13 +214,14 @@ module dma_top (
                         m_axi_araddr  <= reg_src_addr;
                         rd_bytes_left <= reg_xfer_len;
                         rd_done       <= 1'b0;
+                        rd_error      <= 1'b0;
                         r_state       <= R_ADDR;
                     end
                 end
 
                 R_ADDR: begin
                     m_axi_arvalid <= 1'b1;
-                    m_axi_arlen   <= 8'd0; // Single word read
+                    m_axi_arlen   <= 8'd0; // Single beat read (arsize=4B, arburst=INCR)
                     if (m_axi_arvalid && m_axi_arready) begin
                         m_axi_arvalid <= 1'b0;
                         m_axi_rready  <= 1'b1;
@@ -208,8 +230,10 @@ module dma_top (
                 end
 
                 R_DATA: begin
+
                     if (m_axi_rvalid && m_axi_rready) begin
                         rd_buf       <= m_axi_rdata;
+                        if (m_axi_rresp != 2'b00) rd_error <= 1'b1;
                         m_axi_rready <= 1'b0;
                         unpack_idx   <= '0;
                         r_state      <= R_UNPACK;
@@ -217,9 +241,12 @@ module dma_top (
                 end
 
                 R_UNPACK: begin
+                    m_axis_mm2s_tvalid <= 1'b1;
+
                     if (m_axis_mm2s_tvalid && m_axis_mm2s_tready) begin
-                        if (unpack_idx == 3'd7) begin 
-                            m_axi_araddr <= m_axi_araddr + 4;
+                        if (unpack_idx == 3'd7) begin // Transmitted 8 nibbles (4 bytes)
+                            m_axis_mm2s_tvalid <= 1'b0;
+                            m_axi_araddr       <= m_axi_araddr + 4;
 
                             if (rd_bytes_left <= 4) begin
                                 rd_done <= 1'b1;
@@ -235,6 +262,7 @@ module dma_top (
                 end
 
                 R_DONE: begin
+                    m_axis_mm2s_tvalid <= 1'b0;
                     if (!busy) begin
                         r_state <= R_IDLE;
                     end
@@ -242,7 +270,6 @@ module dma_top (
             endcase
         end
     end
-
 
     // S2MM Engine (Pack 4-bit Stream -> Write to Memory)
 
@@ -259,10 +286,12 @@ module dma_top (
         if (!rst_n) begin
             w_state       <= W_IDLE;
             wr_done       <= 1'b0;
+            wr_error      <= 1'b0;
             m_axi_awaddr  <= '0;
             m_axi_awlen   <= '0;
             m_axi_awvalid <= 1'b0;
             m_axi_wdata   <= '0;
+            m_axi_wstrb   <= '0;
             m_axi_wvalid  <= 1'b0;
             m_axi_wlast   <= 1'b0;
             m_axi_bready  <= 1'b0;
@@ -272,7 +301,8 @@ module dma_top (
         end else begin
             case (w_state)
                 W_IDLE: begin
-                    wr_done <= 1'b0;
+                    wr_done  <= 1'b0;
+                    wr_error <= 1'b0;
                     if (start_pulse) begin
                         m_axi_awaddr  <= reg_dest_addr;
                         wr_bytes_left <= reg_xfer_len;
@@ -286,6 +316,7 @@ module dma_top (
                         pack_buf[(pack_elm_cnt * 4) +: 4] <= s_axis_s2mm_tdata;
                         pack_elm_cnt <= pack_elm_cnt + 1'b1;
 
+                        // Check if we packed 16 nibbles (8 bytes) or reached full length
                         if (pack_elm_cnt == 4'd15) begin
                             w_state <= W_ADDR;
                         end
@@ -294,11 +325,12 @@ module dma_top (
 
                 W_ADDR: begin
                     m_axi_awvalid <= 1'b1;
-                    m_axi_awlen   <= 8'd1; // 2 words burst = 8 bytes
+                    m_axi_awlen   <= 8'd1; // 2-beat burst = 8 bytes (awsize=4B, awburst=INCR)
                     if (m_axi_awvalid && m_axi_awready) begin
                         m_axi_awvalid <= 1'b0;
                         m_axi_wvalid  <= 1'b1;
                         m_axi_wdata   <= pack_buf[31:0];
+                        m_axi_wstrb   <= 4'b1111; // full 32-bit word, all lanes valid
                         m_axi_wlast   <= 1'b0;
                         w_state       <= W_DATA;
                     end
@@ -308,9 +340,11 @@ module dma_top (
                     if (m_axi_wvalid && m_axi_wready) begin
                         if (!m_axi_wlast) begin
                             m_axi_wdata <= pack_buf[63:32];
+                            m_axi_wstrb <= 4'b1111;
                             m_axi_wlast <= 1'b1;
                         end else begin
                             m_axi_wvalid <= 1'b0;
+                            m_axi_wstrb  <= 4'b0000;
                             m_axi_wlast  <= 1'b0;
                             m_axi_bready <= 1'b1;
                             w_state      <= W_RESP;
@@ -319,9 +353,12 @@ module dma_top (
                 end
 
                 W_RESP: begin
+
                     if (m_axi_bvalid && m_axi_bready) begin
+                        if (m_axi_bresp != 2'b00) wr_error <= 1'b1;
                         m_axi_bready <= 1'b0;
-                        m_axi_awaddr <= m_axi_awaddr + 8; 
+                        m_axi_awaddr <= m_axi_awaddr + 8; // Offset dest address by 8 bytes
+
                         if (wr_bytes_left <= 8) begin
                             wr_done <= 1'b1;
                             w_state <= W_DONE;
