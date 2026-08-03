@@ -61,7 +61,7 @@ module dma #(parameter ADDR_WIDTH=32,
 
     // Write data  (W) - carries the data being written
     output logic [DATA_WIDTH-1:0] m_axi_wdata,    
-    output logic [3:0]  m_axi_wstrb,   
+    output logic [$clog2(DATA_WIDTH/8):0]  m_axi_wstrb,   
     output logic m_axi_wvalid,   
     output logic m_axi_wlast,   
     input  logic  m_axi_wready,   
@@ -101,11 +101,11 @@ module dma #(parameter ADDR_WIDTH=32,
     assign m_axi_awburst = AXBURST_INCR;
 
     // Memory-mapped configuration/status registers (written/read via AXI-Lite)
-    logic [31:0] reg_ctrl;       // Holds last value written to CTRL register
-    logic [31:0] reg_status;     // Live status: bit0=busy, bit1=done, bit2=error
-    logic [31:0] reg_src_addr;   
-    logic [31:0] reg_dest_addr; 
-    logic [31:0] reg_xfer_len;   // Number of bytes to transfer
+    logic [DATA_WIDTH-1:0] reg_ctrl;       // Holds last value written to CTRL register
+    logic [DATA_WIDTH-1:0] reg_status;     // Live status: bit0=busy, bit1=done, bit2=error
+    logic [DATA_WIDTH-1:0] reg_src_addr;   
+    logic [DATA_WIDTH-1:0] reg_dest_addr; 
+    logic [DATA_WIDTH-1:0] reg_xfer_len;   // Number of bytes to transfer
     logic [30:0] reg_wr_xfer_len;
 
     logic start_pulse;   // One-cycle pulse asserted when CTRL[0] is written as 1
