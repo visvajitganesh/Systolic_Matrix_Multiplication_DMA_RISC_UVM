@@ -27,8 +27,8 @@ module pe_array #(
 
     logic pe_en;
 
-    always_ff @(posedge clk or posedge rst) begin
-        if (rst) begin
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (rst_n) begin
             running <= 1'b0;
         end else if ( start) begin
             running <= 1'b1;
@@ -37,8 +37,8 @@ module pe_array #(
         end
     end
 
-    always_ff @(posedge clk or posedge rst) begin
-        if (rst) begin
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (rst_n) begin
             counter <= '0;
         end 
         else if (running || start) begin
@@ -201,8 +201,8 @@ module pe_array #(
     localparam int END_OUT_CYCLE   = 3 * MATRIX_SIZE - 2;
 
     // Calculate row index directly from main counter
-    always_ff @(posedge clk or posedge rst) begin
-        if (rst) begin
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (rst_n) begin
             OUT <= '{default: '0};
         end 
         else if (running && (counter >= START_OUT_CYCLE) && (counter <= END_OUT_CYCLE)) begin
