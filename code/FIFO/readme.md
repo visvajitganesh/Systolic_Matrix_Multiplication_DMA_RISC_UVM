@@ -43,8 +43,8 @@ Responsible for capturing systolic results and pushing them to the system memory
 The module utilizes configurable parameters to manage the data width disparity between the 8-bit inputs and the 32-bit accumulated outputs
 
 **Default Input Configuration (DMA $\rightarrow$ Array):**
-* `IN_DATA_WIDTH` = 8 bits
-* `IN_NUM_CHANNELS` = 8 channels
+* `IN_DATA_WIDTH` = 4 bits
+* `IN_NUM_CHANNELS` = 1 channels
 * `IN_DEPTH` = 16 entries
 * **Total Packed Input Bus Width** = 64 bits
 
