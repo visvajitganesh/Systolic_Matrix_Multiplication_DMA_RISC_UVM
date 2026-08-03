@@ -132,7 +132,6 @@ module dma (
     // AXI-Lite Slave Register Write Control
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            // Reset all configuration registers and handshake signals
             reg_ctrl  <= '0;
             reg_src_addr  <= '0;
             reg_dest_addr <= '0;
@@ -148,7 +147,6 @@ module dma (
                 // Single-cycle handshake: assert AWREADY/WREADY for this beat
                 s_axi_lite_awready <= 1'b1;
                 s_axi_lite_wready  <= 1'b1;
-                // Decode target register from the write address and capture data
                 case (s_axi_lite_awaddr[7:0])
                     ADDR_CTRL: begin
                         reg_ctrl <= s_axi_lite_wdata;
@@ -175,7 +173,6 @@ module dma (
     // AXI-Lite Slave Register Read Logic
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            // Reset read channel handshake/data signals
             s_axi_lite_arready <= 1'b0;
             s_axi_lite_rvalid  <= 1'b0;
             s_axi_lite_rdata   <= '0;
@@ -224,7 +221,6 @@ module dma (
 
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            // Reset MM2S engine state and all associated signals
             r_state            <= R_IDLE;
             m_axi_araddr       <= '0;
             m_axi_arlen        <= '0;
@@ -330,7 +326,6 @@ module dma (
 
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            // Reset S2MM engine state and all associated signals
             w_state <= W_IDLE;
             wr_done <= 1'b0;
             wr_error <= 1'b0;
