@@ -8,7 +8,7 @@ The design safely handles Clock Domain Crossing (CDC) between the system interco
 ## Module Instantiation Hierarchy
 The system is structured with strict interface contracts isolating the core FIFO logic from the top-level routing
 * **`tb_accel_buffer_top.sv`**: Self-checking testbench driving randomized traffic across dual asynchronous clocks.
-  * **`accel_buffer_top.sv`**: Flattened top-level wrapper combining input and output paths
+  * **`accel_fifo.sv`**: Flattened top-level wrapper combining input and output paths
     * **`input_buffer_if.sv`**: Interface contract for the MM2S path
     * **`input_buffer.sv`**: Adapts packed DMA streams into unpacked parallel array vectors
       * **`async_fifo.sv`**: Generic First-Word Fall-Through (FWFT) asynchronous FIFO
