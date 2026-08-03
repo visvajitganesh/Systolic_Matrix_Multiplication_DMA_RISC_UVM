@@ -1,17 +1,20 @@
 `timescale 1ns / 1ps
 
-module dma (
+module dma #(parameter ADDR_WIDTH=32,
+             parameter DATA_WIDTH=32,
+             parameter STREAM_WIDTH=4
+             )(
     input  logic clk,  
     input  logic rst_n,    
     
     // AXI4-Lite Register Slave Interface
     // Write address 
-    input  logic [31:0] s_axi_lite_awaddr,   // Write address from host
+    input  logic [ADDR_WIDTH-1:0] s_axi_lite_awaddr,   // Write address from host
     input  logic  s_axi_lite_awvalid,  // Write address valid
     output logic  s_axi_lite_awready,  // DMA ready to accept write address
 
     // Write data 
-    input  logic [31:0] s_axi_lite_wdata,    // Write data from host
+    input  logic [DATA_WIDTH-1:0] s_axi_lite_wdata,    // Write data from host
     input  logic  s_axi_lite_wvalid,   // Write data valid
     output logic  s_axi_lite_wready,   // DMA ready to accept write data
 
@@ -21,12 +24,12 @@ module dma (
     input  logic s_axi_lite_bready,   // Host ready to accept write response
 
     // Read address 
-    input  logic [31:0] s_axi_lite_araddr,   // Read address from host
+    input  logic [ADDR_WIDTH-1:0] s_axi_lite_araddr,   // Read address from host
     input  logic s_axi_lite_arvalid,  // Read address valid
     output logic s_axi_lite_arready,  // DMA ready to accept read address
 
     // Read data 
-    output logic [31:0] s_axi_lite_rdata,    // Read data to host
+    output logic [DATA_WIDTH-1:0] s_axi_lite_rdata,    // Read data to host
     output logic [1:0]  s_axi_lite_rresp,    // Read response (OKAY/ERROR/etc.)
     output logic s_axi_lite_rvalid,   
     input  logic s_axi_lite_rready,  
@@ -34,7 +37,7 @@ module dma (
 
     // AXI4 Master Interface (Memory Read & Write)
 
-    output logic [31:0] m_axi_araddr,   
+    output logic [ADDR_WIDTH-1:0] m_axi_araddr,   
     output logic [7:0]  m_axi_arlen,    // Burst length (beats - 1)
     output logic [2:0]  m_axi_arsize,   // Bytes per beat (fixed to 4B here)
     output logic [1:0]  m_axi_arburst,  // Burst type (fixed to INCR here)
@@ -42,14 +45,14 @@ module dma (
     input  logic  m_axi_arready,  
 
     // Read data  (R) - returns data requested via AR channel
-    input  logic [31:0] m_axi_rdata,    // Read data from memory
+    input  logic [DATA_WIDTH-1:0] m_axi_rdata,    // Read data from memory
     input  logic [1:0]  m_axi_rresp,   
     input  logic m_axi_rlast,    // Indicates last beat of read burst
     input  logic m_axi_rvalid,  
     output logic m_axi_rready, 
 
     // Write address  (AW) - used by the S2MM write engine
-    output logic [31:0] m_axi_awaddr,  
+    output logic [ADDR_WIDTH-1:0] m_axi_awaddr,  
     output logic [7:0]  m_axi_awlen,    // Burst length (beats - 1)
     output logic [2:0]  m_axi_awsize,   // Bytes per beat (fixed to 4B here)
     output logic [1:0]  m_axi_awburst,  // Burst type (fixed to INCR here)
@@ -57,7 +60,7 @@ module dma (
     input  logic m_axi_awready,  
 
     // Write data  (W) - carries the data being written
-    output logic [31:0] m_axi_wdata,    
+    output logic [DATA_WIDTH-1:0] m_axi_wdata,    
     output logic [3:0]  m_axi_wstrb,   
     output logic m_axi_wvalid,   
     output logic m_axi_wlast,   
@@ -70,12 +73,12 @@ module dma (
 
 
     // AXI-Stream Accelerator Interfaces
-    output logic [3:0]  m_axis_mm2s_tdata,   // 4-bit nibble output data
+    output logic [STREAM_WIDTH-1:0]  m_axis_mm2s_tdata,   // 4-bit nibble output data
     output logic  m_axis_mm2s_tvalid,  // Nibble data valid
     input  logic   m_axis_mm2s_tready,  // Downstream accelerator ready
 
     // S2MM stream input: 4-bit nibbles coming in from accelerator, packed
-    input  logic [3:0]  s_axis_s2mm_tdata,  
+    input  logic [STREAM_WIDTH-1:0]  s_axis_s2mm_tdata,  
     input  logic  s_axis_s2mm_tvalid, 
     output logic  s_axis_s2mm_tready  
 );
@@ -103,6 +106,7 @@ module dma (
     logic [31:0] reg_src_addr;   
     logic [31:0] reg_dest_addr; 
     logic [31:0] reg_xfer_len;   // Number of bytes to transfer
+    logic [30:0] reg_wr_xfer_len;
 
     logic start_pulse;   // One-cycle pulse asserted when CTRL[0] is written as 1
     logic rd_done, wr_done;   
@@ -110,7 +114,7 @@ module dma (
     logic busy;         
     // busy is simply bit 0 of the status register
     assign busy = reg_status[0];
-
+    assign reg_wr_xfer_len = reg_xfer_len>>1;
     // Sets Busy=1 when a transfer starts, and updates Done/Error/Busy
 
     always_ff @(posedge clk or negedge rst_n) begin                                      /////////
@@ -212,7 +216,7 @@ module dma (
     
     typedef enum logic [2:0] {R_IDLE, R_ADDR, R_DATA, R_UNPACK, R_DONE} r_state_t;
     r_state_t r_state;
-
+   
     logic [31:0] rd_buf;         
     logic [31:0] rd_bytes_left;  
     logic [2:0]  unpack_idx;   
@@ -324,6 +328,7 @@ module dma (
     // Only accept incoming stream data while actively packing (W_PACK state)
     assign s_axis_s2mm_tready = (w_state == W_PACK);
 
+
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             w_state <= W_IDLE;
@@ -349,12 +354,13 @@ module dma (
                     wr_error <= 1'b0;   // Clear error flag
                     if (start_pulse) begin
                         m_axi_awaddr  <= reg_dest_addr;  
-                        wr_bytes_left <= reg_xfer_len; 
+                        wr_bytes_left <= {1'b0,reg_wr_xfer_len}; 
                         pack_elm_cnt  <= '0;  
                         w_state  <= W_PACK;
                     end
                 end
-
+                
+                
                 // pack_buf (LSB-first), 4 bits at a time.
                 W_PACK: begin
                     if (s_axis_s2mm_tvalid && s_axis_s2mm_tready) begin
