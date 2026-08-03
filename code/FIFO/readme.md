@@ -33,7 +33,7 @@ The following table breaks down the individual components and their specific rol
 
 ## Verification & Testing
 
-The provided `tb_accel_buffer_top` is an automated, self-checking simulation[cite: 8]. It evaluates the buffer's robustness through three distinct testing phases:
+The provided `tb_accel_buffer_top` is an automated, self-checking simulation. It evaluates the buffer's robustness through three distinct testing phases:
 
 * **Phase 1 (Basic Passthrough):** Transmits data through the system at full speed with no backpressure.
 * **Phase 2 (Backpressure Stress):** Forces the consumers to stall, allowing the FIFO to fill completely before draining rapidly.
