@@ -1,41 +1,64 @@
-# Accelerator Buffer Interface 
+# Accelerator Buffer Interface (FIFO)
 
-This project implements a hardware buffering system that acts as a bridge between a system DMA (using AXI-Stream) and a high-speed Systolic Array accelerator. It manages independent clock domains and handles the packing/unpacking of data between flat streams and parallel vectors.
+## Overview
+This repository contains the RTL implementation of a dual-clock asynchronous buffer interface designed to bridge an AXI-Stream Direct Memory Access (DMA) engine and a parallel Systolic Array accelerator[cite: 24, 27, 29]. 
 
-## Module Overview
+The design safely handles Clock Domain Crossing (CDC) between the system interconnect clock (`clk_sys`) and a dedicated high-speed accelerator clock (`clk_accel`) using Gray-code synchronized asynchronous FIFOs[cite: 24, 25, 27, 29]. It features independent input (DMA $\rightarrow$ Array) and output (Array $\rightarrow$ DMA) buffering paths[cite: 24].
 
-The following table breaks down the individual components and their specific roles within the architecture:
+## Module Instantiation Hierarchy
+The system is structured with strict interface contracts isolating the core FIFO logic from the top-level routing[cite: 24, 27, 29].
 
-| Module / Interface | Source Code | Description | Key Features |
-| :--- | :--- | :--- | :--- |
-| **`accel_buffer_top`** | `accel_buffer_top.sv` | The top-level wrapper combining the input and output buffer paths. | Exposes flattened ports for testbenches without needing virtual interfaces. |
-| **`async_fifo`** | `async_fifo.sv` | A generic dual-clock asynchronous FIFO. | Uses Gray code pointer conversion, 2-flop synchronizers, and FWFT read style. |
-| **`input_buffer`** | `input_buffer.sv` | The data path from the DMA to the Systolic Array. | Unpacks flat AXI-Stream data into per-channel parallel vectors. |
-| **`input_buffer_if`** | `input_buffer_if.sv` | The SystemVerilog interface contract for the input path. | Defines specific `modport` directional enforcements for DMA, Array, and Buffer. |
-| **`output_buffer`** | `output_buffer.sv` | The data path from the Systolic Array back to the DMA. | Packs unpacked per-channel array data into a single flat bus for storage. |
-| **`output_buffer_if`** | `output_buffer_if.sv` | The SystemVerilog interface contract for the output path. | Maps AXI-Stream (`tdata`, `tvalid`) to array signals (`array_data`, `array_valid`). |
-| **`tb_accel_buffer_top`** | `tb_accel_buffer_top.sv` | A self-checking testbench to verify the top-level buffer system[cite: 8]. | Simulates independent, unrelated clocks to genuinely stress the CDC (Clock Domain Crossing) logic. |
+* **`tb_accel_buffer_top.sv`**: Self-checking testbench driving randomized traffic across dual asynchronous clocks[cite: 30].
+  * **`accel_buffer_top.sv`**: Flattened top-level wrapper combining input and output paths[cite: 24].
+    * **`input_buffer_if.sv`**: Interface contract for the MM2S path[cite: 27].
+    * **`input_buffer.sv`**: Adapts packed DMA streams into unpacked parallel array vectors[cite: 26].
+      * **`async_fifo.sv`**: Generic First-Word Fall-Through (FWFT) asynchronous FIFO[cite: 25, 26].
+    * **`output_buffer_if.sv`**: Interface contract for the S2MM path[cite: 29].
+    * **`output_buffer.sv`**: Adapts parallel array outputs into a packed DMA stream[cite: 28].
+      * **`async_fifo.sv`**: Generic FWFT asynchronous FIFO (carries `array_last` flag in MSB)[cite: 25, 28].
 
----
+## Interface Signals
+### 1. Input Buffer Path (DMA $\rightarrow$ Array)
+Responsible for accepting AXI-Stream data and feeding it to the systolic array[cite: 26, 27].
+* **DMA Side (System Clock Domain)**[cite: 27]:
+  * `in_tdata`: Packed stream input from DMA.
+  * `in_tvalid` / `in_tready`: Standard AXI-Stream push/backpressure handshake.
+  * `in_tlast`: Packet boundary marker (consumed by buffer, not forwarded).
+* **Array Side (Accelerator Clock Domain)**[cite: 27]:
+  * `in_array_data`: Unpacked 2D array feeding parallel processing elements.
+  * `in_array_valid`: Asserts when the FIFO is not empty.
+  * `in_array_ready`: Accelerator asserts to pop the next vector.
 
-## Architecture Details
+### 2. Output Buffer Path (Array $\rightarrow$ DMA)
+Responsible for capturing systolic results and pushing them to the system memory[cite: 28, 29].
+* **Array Side (Accelerator Clock Domain)**[cite: 29]:
+  * `out_array_data`: Unpacked 2D array of computed accumulator results.
+  * `out_array_valid` / `out_array_ready`: Array push and FIFO backpressure handshake.
+  * `out_array_last`: Signals the final resulting matrix block.
+* **DMA Side (System Clock Domain)**[cite: 29]:
+  * `out_tdata`: Packed stream output to DMA.
+  * `out_tvalid` / `out_tready`: Standard AXI-Stream handshake.
+  * `out_tlast`: Propagated packet completion token (derived from `array_last`).
 
-### Clock Domain Crossing (CDC)
-* Both the input and output buffers rely on `async_fifo` to safely pass data between two independent, non-integer-related clocks: `clk_sys` and `clk_accel`.
-* The FIFO depth is parameterized but must strictly be a power of two.
-* The asynchronous FIFO utilizes a standard Cliff-Cummings-style design, ensuring safe clock boundary crossings.
+## Data Widths & Configurations
+The module utilizes configurable parameters to manage the data width disparity between the 8-bit inputs and the 32-bit accumulated outputs[cite: 24].
 
-### Signal Handling Differences
-* **Input Path (`tlast`):** The `tlast` signal from the DMA is not forwarded into the systolic array. It is considered meaningful only to the DMA master itself and is not stored in the FIFO.
-* **Output Path (`array_last`):** The `array_last` signal from the systolic array *is* forwarded through to become `tlast`. It is packed alongside the data vector as the MSB to survive the clock domain crossing in lock-step with its corresponding word.
+**Default Input Configuration (DMA $\rightarrow$ Array):**
+* `IN_DATA_WIDTH` = 8 bits[cite: 24]
+* `IN_NUM_CHANNELS` = 8 channels[cite: 24]
+* `IN_DEPTH` = 16 entries[cite: 24]
+* **Total Packed Input Bus Width** = 64 bits[cite: 24, 26]
 
----
+**Default Output Configuration (Array $\rightarrow$ DMA):**
+* `OUT_DATA_WIDTH` = 32 bits[cite: 24]
+* `OUT_NUM_CHANNELS` = 8 channels[cite: 24]
+* `OUT_DEPTH` = 16 entries[cite: 24]
+* **Total Packed Output Bus Width** = 256 bits[cite: 24, 28]
 
-## Verification & Testing
+## Testbench & Verification
+The provided `tb_accel_buffer_top.sv` is a fully automated, self-checking testbench[cite: 30]. It utilizes two free-running, non-integer-related clocks (`clk_sys` at 100 MHz and `clk_accel` at ~142 MHz) to genuinely stress the CDC logic[cite: 30]. 
 
-The provided `tb_accel_buffer_top` is an automated, self-checking simulation. It evaluates the buffer's robustness through three distinct testing phases:
-
-* **Phase 1 (Basic Passthrough):** Transmits data through the system at full speed with no backpressure.
-* **Phase 2 (Backpressure Stress):** Forces the consumers to stall, allowing the FIFO to fill completely before draining rapidly.
-* **Phase 3 (Concurrent Stress):** Applies randomized drive stalls and consumer backpressure simultaneously across both buffers.
-* **Automated Checking:** Monitors record every successful push on the sending side into a queue and automatically compare it against every successful pop on the receiving side to verify order, value, and `last` signals.
+The verification sequence executes in three phases[cite: 30]:
+1. **Basic Passthrough:** Full-speed pushing and popping without backpressure[cite: 30].
+2. **Backpressure Stress:** Deliberately stalls consumers to fill FIFOs to capacity, then drains them rapidly[cite: 30].
+3. **Concurrent Stress:** Highly randomized driver stalls and consumer backpressure running simultaneously on both paths[cite: 30].
