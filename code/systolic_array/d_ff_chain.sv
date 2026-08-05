@@ -3,7 +3,7 @@ module d_ff_chain #(
     parameter DEPTH      = 1
 )(
     input logic clk,
-    input logic rst,
+    input logic rst_n,
     input logic en,
     
     input  logic [DATA_WIDTH - 1 : 0] din,
@@ -23,7 +23,7 @@ module d_ff_chain #(
                 .DATA_WIDTH(DATA_WIDTH)
             ) dff_inst (
                 .clk (clk),
-                .rst (rst),
+                .rst_n (rst_n),
                 .en  (en),
                 .din (data_wire[i]),
                 .dout(data_wire[i + 1])
