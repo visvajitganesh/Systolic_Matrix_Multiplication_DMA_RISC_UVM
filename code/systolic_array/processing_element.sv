@@ -3,7 +3,7 @@ module processing_element #(
     parameter int PSUM_WIDTH = 4
 ) (
     input  logic clk,
-    input  logic rst,
+    input  logic rst_n,
 
     input  logic pe_en,
 
@@ -21,8 +21,8 @@ module processing_element #(
     logic [DATA_WIDTH - 1 : 0]  a_reg;
 
     // WEIGHT - STATIONARY REGISTER LOGIC 
-    always_ff @(posedge clk or posedge rst) begin : weight_stationary
-        if(rst) begin
+    always_ff @(posedge clk or negedge rst_n) begin : weight_stationary
+        if(~rst_n) begin
             weight_reg <= '0;
         end 
         else if (pe_en) begin
@@ -31,8 +31,8 @@ module processing_element #(
     end
 
     // HORIZONTAL INPUT LOGIC 
-    always_ff @(posedge clk or posedge rst) begin : weight_loading
-        if(rst) begin
+    always_ff @(posedge clk or negedge rst_n) begin : weight_loading
+        if(~rst_n) begin
             a_reg <= '0;
             a_out <= '0;
         end 
@@ -44,8 +44,8 @@ module processing_element #(
     */
 
     // OUTPUT LOGIC
-    always_ff @(posedge clk or posedge rst) begin : mac
-        if(rst) begin
+    always_ff @(posedge clk or negedge rst_n) begin : mac
+        if(~rst_n) begin
             psum_out <= '0;
             a_out    <= '0;
         end 
