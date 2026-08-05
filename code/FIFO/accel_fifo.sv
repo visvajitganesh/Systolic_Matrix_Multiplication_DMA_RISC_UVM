@@ -67,6 +67,7 @@ module accel_top #(
     
     // Input FIFO: DMA nibble stream -> full input matrix pair
 
+    // Input FIFO: DMA nibble stream -> full input matrix pair
     input_fifo #(
         .DATA_WIDTH   (IN_DATA_WIDTH),
         .DATA_WIDTH_M (IN_DATA_WIDTH_M),
@@ -78,16 +79,16 @@ module accel_top #(
         .clk_accel      (clk_accel),
         .rst_accel_n    (rst_accel_n),
 
-        .tdata          (in_tdata),
-        .tvalid         (in_tvalid),
-        .tready         (in_tready),
-        .tlast          (in_tlast),
+        // FIXED: Matched port names to input_fifo.sv definitions
+        .s_axis_tdata   (in_tdata),
+        .s_axis_tvalid  (in_tvalid),
+        .s_axis_tready  (in_tready),
+        .s_axis_tlast   (in_tlast),
 
         .systolic_ready (systolic_ready_w),
         .array_data     (array_in_data),
         .array_start    (array_start)
     );
-
     
     // Systolic compute core
 
@@ -133,4 +134,3 @@ module accel_top #(
     );
 
 endmodule
-
