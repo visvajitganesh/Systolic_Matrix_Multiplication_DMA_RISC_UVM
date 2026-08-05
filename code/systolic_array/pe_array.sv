@@ -146,7 +146,7 @@ module pe_array #(
                     
                     // Horizontal activation flow
                     .in       (a_wire[r][c]),
-                    .a_out    (a_wire[r][c+1]),
+                    .a_out    (a_wire[r][c + 1]),
                     
                     // Stationary or passed weights
                     .weight   (B[r][c]), // Weights stationary directly from B
@@ -155,7 +155,7 @@ module pe_array #(
                     
                     // Vertical partial sum flow
                     .psum_in  (psum_wire[r][c]),
-                    .psum_out (psum_wire[r+1][c])
+                    .psum_out (psum_wire[r + 1][c])
                 );
             end
         end
