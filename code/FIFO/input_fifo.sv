@@ -11,10 +11,10 @@ module input_fifo #(
 
     // DMA / SYSTEM SIDE: AXI-Stream Protocol Signals (clk_sys)
 
-    input  logic [DATA_WIDTH - 1:0] tdata,  
-    input  logic                    tvalid, 
-    output logic                    tready, 
-    input  logic                    tlast, 
+    input  logic [DATA_WIDTH - 1:0] s_axis_tdata,  
+    input  logic                    s_axis_tvalid, 
+    output logic                    s_axis_tready, 
+    input  logic                    s_axis_tlast, 
 
     // SYSTOLIC ARRAY SIDE : Handshaking Mechanism (clk_accel)
     input  logic                                                      systolic_ready,
@@ -44,8 +44,8 @@ module input_fifo #(
     ) u_async_fifo (
         .wr_clk   (clk_sys),
         .wr_rst_n (rst_sys_n),
-        .wr_en    (tvalid && tready),
-        .wr_data  (tdata),
+        .wr_en    (s_axis_tvalid && s_axis_tready),
+        .wr_data  (s_sxis_tdata),
         .full     (fifo_full),
 
         .rd_clk   (clk_accel),
@@ -68,7 +68,7 @@ module input_fifo #(
 
     wire fifo_full_accel = fifo_full_sync[1];
     */
-    
+
     assign fifo_rd_en  = (current_state == FILL) && !fifo_empty;
 
     // Deserializer
