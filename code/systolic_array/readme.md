@@ -123,4 +123,3 @@ Directed (non-self-checking) testbench:
 
 ---
 
-*Next up: `input_buffer_if`/`output_buffer_if`, `async_fifo`, and the `dma_if_signals`/`systolic_if` bridge — let me know when you want those written up.*
