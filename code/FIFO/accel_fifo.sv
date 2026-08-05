@@ -19,39 +19,38 @@
 // systolic.sv itself runs on clk_accel/rst_accel_n, matching the
 // accelerator-side clock of both FIFOs.
 
-
 module accel_top #(
     parameter int MATRIX_SIZE     = 4,
 
     // Input path (DMA -> Array): stream width vs. matrix element width
-    parameter int IN_DATA_WIDTH   = 4,   // nibble width on the DMA AXI-Stream side
-    parameter int IN_DATA_WIDTH_M = 4,   // matrix A/B element width (= systolic.DATA_WIDTH)
-    parameter int IN_DEPTH        = 32,  // 2*MATRIX_SIZE*MATRIX_SIZE elements
+    parameter int IN_DATA_WIDTH   = 4,  // nibble width on the DMA AXI-Stream side
+    parameter int IN_DATA_WIDTH_M = 4,  // matrix A/B element width (= systolic.DATA_WIDTH)
+    parameter int IN_DEPTH        = 32, // 2*MATRIX_SIZE*MATRIX_SIZE elements
 
     // Output path (Array -> DMA): stream width vs. matrix element width
-    parameter int OUT_DATA_WIDTH   = 4,  // nibble width on the DMA AXI-Stream side
-    parameter int OUT_DATA_WIDTH_M = 4,  // result element width(= systolic.PSUM_WIDTH
-                                          // NOTE: kept at 4 for simplicity; MAC results can
-                                          // overflow 4 bits 
-                                          // fine as long as test matrix values stay small
-    parameter int OUT_DEPTH        = 16  // MATRIX_SIZE*MATRIX_SIZE*(OUT_DATA_WIDTH_M/OUT_DATA_WIDTH) nibbles
+    parameter int OUT_DATA_WIDTH   = 4, // nibble width on the DMA AXI-Stream side
+    parameter int OUT_DATA_WIDTH_M = 4, // result element width(= systolic.PSUM_WIDTH
+                                        // NOTE: kept at 4 for simplicity; MAC results can
+                                        // overflow 4 bits 
+                                        // fine as long as test matrix values stay small
+    parameter int OUT_DEPTH        = 16 // MATRIX_SIZE*MATRIX_SIZE*(OUT_DATA_WIDTH_M/OUT_DATA_WIDTH) nibbles
 )(
     input  logic clk_sys,      // System/DMA clock domain
     input  logic rst_sys_n,    // System/DMA active-low reset
     input  logic clk_accel,    // Accelerator/Array clock domain
     input  logic rst_accel_n,  // Accelerator/Array active-low reset
 
-    //DMA -> input_fifo (clk_sys) 
-    input  logic [IN_DATA_WIDTH-1:0]  in_tdata,
-    input  logic                      in_tvalid,
-    output logic                      in_tready,
-    input  logic                      in_tlast,
+    // DMA -> input_fifo (clk_sys) 
+    input  logic [IN_DATA_WIDTH - 1:0]  in_tdata,
+    input  logic                        in_tvalid,
+    output logic                        in_tready,
+    input  logic                        in_tlast,
 
-// output_fifo -> DMA (clk_sys) 
-    output logic [OUT_DATA_WIDTH-1:0] out_tdata,
-    output logic                      out_tvalid,
-    input  logic                      out_tready,
-    output logic                      out_tlast
+    // output_fifo -> DMA (clk_sys) 
+    output logic [OUT_DATA_WIDTH - 1:0] out_tdata,
+    output logic                        out_tvalid,
+    input  logic                        out_tready,
+    output logic                        out_tlast
 );
 
     
@@ -63,9 +62,6 @@ module accel_top #(
     logic [MATRIX_SIZE * MATRIX_SIZE * OUT_DATA_WIDTH_M - 1:0] array_out_data;
     logic sys_done;
     logic sys_busy;
-
-    
-    // Input FIFO: DMA nibble stream -> full input matrix pair
 
     // Input FIFO: DMA nibble stream -> full input matrix pair
     input_fifo #(
