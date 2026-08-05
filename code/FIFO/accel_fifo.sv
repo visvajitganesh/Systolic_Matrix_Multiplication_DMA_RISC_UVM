@@ -41,13 +41,13 @@ module accel_top #(
     input  logic clk_accel,    // Accelerator/Array clock domain
     input  logic rst_accel_n,  // Accelerator/Array active-low reset
 
-    DMA -> input_fifo (clk_sys) 
+    //DMA -> input_fifo (clk_sys) 
     input  logic [IN_DATA_WIDTH-1:0]  in_tdata,
     input  logic                      in_tvalid,
     output logic                      in_tready,
     input  logic                      in_tlast,
 
- output_fifo -> DMA (clk_sys) 
+// output_fifo -> DMA (clk_sys) 
     output logic [OUT_DATA_WIDTH-1:0] out_tdata,
     output logic                      out_tvalid,
     input  logic                      out_tready,
