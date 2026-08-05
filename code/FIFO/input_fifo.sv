@@ -1,21 +1,23 @@
-`timescale 1ns / 1ps
-
 module input_fifo #(
-    parameter int DATA_WIDTH   = 4,        
-    parameter int DATA_WIDTH_M = 4,        
+    parameter int DATA_WIDTH   = 4,        // Same as STREAM_WIDTH
+    parameter int DATA_WIDTH_M = 4,        // Matrix size element width
     parameter int MATRIX_SIZE  = 4,
-    parameter int DEPTH        = 32        
+    parameter int DEPTH        = 32        //  4 * 32 = 128 bits
 )(
-    input logic clk_sys,     
-    input logic rst_sys_n,   
-    input logic clk_accel,   
-    input logic rst_accel_n, 
+    input logic clk_sys,     // System Clock Domain (DMA side)
+    input logic rst_sys_n,   // System Reset
+    input logic clk_accel,   // Accelerator Clock Domain
+    input logic rst_accel_n, // Accelerator Reset
+
+    // DMA / SYSTEM SIDE: AXI-Stream Protocol Signals (clk_sys)
 
     input  logic [DATA_WIDTH - 1:0] s_axis_tdata,  
     input  logic                    s_axis_tvalid, 
     output logic                    s_axis_tready, 
     input  logic                    s_axis_tlast, 
 
+    // SYSTOLIC ARRAY SIDE : Handshaking Mechanism (clk_accel)
+    
     input  logic                                                      systolic_ready,
     output logic [2 * MATRIX_SIZE * MATRIX_SIZE * DATA_WIDTH_M - 1:0] array_data,  
     output logic                                                      array_start 
@@ -34,8 +36,8 @@ module input_fifo #(
     logic [DATA_WIDTH - 1:0] fifo_rd_data;
     logic                    fifo_rd_en;
 
-    // FIXED: Mapped to correct s_axis_tready port
-    assign s_axis_tready = !fifo_full; 
+    // Direct backpressure to DMA on system clock side
+    assign s_axis_tready = !fifo_full; // becomes low when the fifo is full
 
     async_fifo #(
         .DATA_WIDTH (DATA_WIDTH),
@@ -44,7 +46,7 @@ module input_fifo #(
         .wr_clk   (clk_sys),
         .wr_rst_n (rst_sys_n),
         .wr_en    (s_axis_tvalid && s_axis_tready),
-        .wr_data  (s_axis_tdata), // FIXED: s_axis_tdata (removed typo with 'x')
+        .wr_data  (s_axis_tdata),
         .full     (fifo_full),
 
         .rd_clk   (clk_accel),
@@ -54,8 +56,23 @@ module input_fifo #(
         .empty    (fifo_empty)
     );
 
+    /*
+    // fifo_full needs to change clock domains -- clock synchronizer
+    logic [1:0] fifo_full_sync;
+
+    always_ff @(posedge clk_accel or negedge rst_accel_n) begin
+        if (~rst_accel_n)
+            fifo_full_sync <= 2'b00;
+        else 
+            fifo_full_sync <= {fifo_full_sync[0], fifo_full};
+    end
+
+    wire fifo_full_accel = fifo_full_sync[1];
+    */
+
     assign fifo_rd_en  = (current_state == FILL) && !fifo_empty;
 
+    // Deserializer State Register
     always_ff @(posedge clk_accel or negedge rst_accel_n) begin
         if (~rst_accel_n)
             current_state <= IDLE;
@@ -63,6 +80,7 @@ module input_fifo #(
             current_state <= next_state;
     end
 
+    // FSM Next State Combinational Logic
     always_comb begin
         case (current_state)
             IDLE    : begin
@@ -83,6 +101,7 @@ module input_fifo #(
         endcase
     end
 
+    // Counter & Array Data Packing (Sequential)
     always_ff @(posedge clk_accel or negedge rst_accel_n) begin
         if (!rst_accel_n) begin
             counter     <= '0;
@@ -90,7 +109,7 @@ module input_fifo #(
             array_start <= 1'b0;
         end 
         else begin
-            array_start <= 1'b0; 
+            array_start <= 1'b0; // Default 0 (ensures single-cycle pulse)
 
             case (current_state)
                 IDLE: begin
@@ -103,7 +122,7 @@ module input_fifo #(
                         
                         if (counter == TOTAL_ELEMENTS - 1) begin
                             counter     <= '0;
-                            array_start <= 1'b1; 
+                            array_start <= 1'b1; // 1-cycle active pulse when transitioning to READY
                         end 
                         else begin
                             counter <= counter + 1'b1;
