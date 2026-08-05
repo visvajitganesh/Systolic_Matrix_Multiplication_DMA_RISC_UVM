@@ -15,7 +15,7 @@ module pe_array #(
     // Parallel Output Matrix
     output logic [DATA_WIDTH - 1 : 0] OUT [0 : MATRIX_SIZE - 1][0 : MATRIX_SIZE - 1],
 
-    output logic valid
+    output logic done
 );
 
     // ------------------------------------------------------------------------
@@ -212,8 +212,8 @@ module pe_array #(
         end
     end
 
-    // Valid signal active during the sampling window
-    //assign valid = running && (counter >= START_OUT_CYCLE + 1) && (counter <= END_OUT_CYCLE + 1);
-    assign valid = running && (counter == END_OUT_CYCLE + 1);
+    // Done signal active during the sampling window
+    //assign done = running && (counter >= START_OUT_CYCLE + 1) && (counter <= END_OUT_CYCLE + 1);
+    assign done = running && (counter == END_OUT_CYCLE + 1);
 
 endmodule
