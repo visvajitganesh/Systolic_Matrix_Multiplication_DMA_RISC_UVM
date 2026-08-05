@@ -16,7 +16,7 @@ module output_fifo #(
     input  logic array_busy,      // systolic.busy -- held high while a computation is in flight
     output logic systolic_ready,  // High when this buffer has fully drained and the array may safely start a new computation
 
-    // DMA / SYSTEM SIDE: AXI-Stream Protocol Signals (clk_sys)
+    // DMA  SYSTEM SIDE: AXI-Stream Protocol Signals (clk_sys)
     output logic [DATA_WIDTH - 1:0] tdata,
     output logic                    tvalid,
     input  logic                    tready,
@@ -127,7 +127,7 @@ module output_fifo #(
         end
     end
 
-    // DMA / SYSTEM SIDE: plain AXI-Stream passthrough (clk_sys)
+    // DMA SYSTEM SIDE: plain AXI-Stream passthrough (clk_sys)
 
     assign tvalid     = !fifo_empty;
     assign tdata       = fifo_rd_data;
