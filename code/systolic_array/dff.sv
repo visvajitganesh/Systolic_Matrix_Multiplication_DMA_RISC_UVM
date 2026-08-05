@@ -2,7 +2,7 @@ module dff #(
     parameter DATA_WIDTH = 4
 )(
     input clk,
-    input rst,
+    input rst_n,
 
     input en,
 
@@ -11,8 +11,8 @@ module dff #(
     output logic [DATA_WIDTH - 1 : 0] dout
 );
 
-    always_ff @(posedge clk or posedge rst) begin
-        if (rst) begin
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (~rst_n) begin
             dout <= 'b0;
         end
         else begin
