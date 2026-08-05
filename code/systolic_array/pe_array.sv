@@ -4,7 +4,7 @@ module pe_array #(
     parameter int PSUM_WIDTH  = 4 
 )(
     input  logic clk,
-    input  logic rst,
+    input  logic rst_n,
 
     input  logic start,
 
@@ -96,11 +96,11 @@ module pe_array #(
                 .DATA_WIDTH(DATA_WIDTH),
                 .DEPTH(k)
             ) d_ff_skew_in (
-                .clk (clk),
-                .rst (rst),
-                .en  (pe_en),
-                .din (data_in_A[k]),
-                .dout(data_in_skewed_A[k])
+                .clk   (clk),
+                .rst_n (rst_n),
+                .en    (pe_en),
+                .din   (data_in_A[k]),
+                .dout  (data_in_skewed_A[k])
             );
         end
     endgenerate
@@ -141,21 +141,21 @@ module pe_array #(
                     .DATA_WIDTH(DATA_WIDTH),
                     .PSUM_WIDTH(PSUM_WIDTH)
                 ) u_pe (
-                    .clk       (clk),
-                    .rst       (rst),
+                    .clk      (clk),
+                    .rst_n    (rst_n),
                     
                     // Horizontal activation flow
-                    .in        (a_wire[r][c]),
-                    .a_out     (a_wire[r][c+1]),
+                    .in       (a_wire[r][c]),
+                    .a_out    (a_wire[r][c+1]),
                     
                     // Stationary or passed weights
-                    .weight    (B[r][c]), // Weights stationary directly from B
+                    .weight   (B[r][c]), // Weights stationary directly from B
                     
-                    .pe_en     (pe_en),
+                    .pe_en    (pe_en),
                     
                     // Vertical partial sum flow
-                    .psum_in   (psum_wire[r][c]),
-                    .psum_out  (psum_wire[r+1][c])
+                    .psum_in  (psum_wire[r][c]),
+                    .psum_out (psum_wire[r+1][c])
                 );
             end
         end
@@ -188,11 +188,11 @@ module pe_array #(
                 .DATA_WIDTH(PSUM_WIDTH),
                 .DEPTH(MATRIX_SIZE - 1 - out_col)
             ) d_ff_unskew_out (
-                .clk (clk),
-                .rst (rst),
-                .en  (pe_en),
-                .din (data_out_skewed[out_col]),
-                .dout(data_out_unskewed[out_col]) // Re-aligned row output
+                .clk   (clk),
+                .rst_n (rst_n),
+                .en    (pe_en),
+                .din   (data_out_skewed[out_col]),
+                .dout  (data_out_unskewed[out_col]) // Re-aligned row output
             );
         end
     endgenerate
