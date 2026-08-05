@@ -8,7 +8,7 @@ module systolic #(
 
     input  logic start, //single pulse
 
-    input  logic [2 * MATRIX_SIZE * MATRIX_SIZE * DATA_WIDTH - 1 : 0] input_data,      /// INPUT MATRICES A ( Input ) and B (weight) Big Endian. 
+    input  logic [2 * MATRIX_SIZE * MATRIX_SIZE * DATA_WIDTH - 1 : 0] input_data, // INPUT MATRICES A ( Input ) and B (weight) Big Endian. 
 
     output logic [    MATRIX_SIZE * MATRIX_SIZE * PSUM_WIDTH - 1 : 0] output_data,
 
