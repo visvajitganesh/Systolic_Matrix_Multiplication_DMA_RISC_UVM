@@ -22,11 +22,11 @@ module d_ff_chain #(
             dff #(
                 .DATA_WIDTH(DATA_WIDTH)
             ) dff_inst (
-                .clk (clk),
+                .clk   (clk),
                 .rst_n (rst_n),
-                .en  (en),
-                .din (data_wire[i]),
-                .dout(data_wire[i + 1])
+                .en    (en),
+                .din   (data_wire[i]),
+                .dout  (data_wire[i + 1])
             );
         end
     endgenerate
