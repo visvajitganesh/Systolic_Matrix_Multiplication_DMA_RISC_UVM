@@ -75,7 +75,6 @@ module accel_top #(
         .clk_accel      (clk_accel),
         .rst_accel_n    (rst_accel_n),
 
-        // FIXED: Matched port names to input_fifo.sv definitions
         .s_axis_tdata   (in_tdata),
         .s_axis_tvalid  (in_tvalid),
         .s_axis_tready  (in_tready),
