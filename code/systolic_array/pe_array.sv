@@ -23,17 +23,17 @@ module pe_array #(
     // ------------------------------------------------------------------------
 
     logic [$clog2(3 * MATRIX_SIZE) - 1 : 0] counter;
-    logic running;
 
+    // Enable signal
     logic pe_en;
 
     always_ff @(posedge clk or negedge rst_n) begin
         if (~rst_n) begin
-            running <= 1'b0;
-        end else if ( start) begin
-            running <= 1'b1;
+            pe_en <= 1'b0;
+        end else if (start) begin
+            pe_en <= 1'b1;
         end else if ( counter == (3* MATRIX_SIZE - 1)) begin
-            running <= 1'b0;
+            pe_en <= 1'b0;
         end
     end
 
@@ -41,7 +41,7 @@ module pe_array #(
         if (~rst_n) begin
             counter <= '0;
         end 
-        else if (running || start) begin
+        else if (pe_en) begin
             if (counter < (3 * MATRIX_SIZE - 1)) begin
                 counter <= counter + 1'b1;
             end
@@ -53,9 +53,6 @@ module pe_array #(
             counter <= '0;
         end
     end
-
-    // Enable signal
-    assign pe_en = running || start;
 
     // ------------------------------------------------------------------------
     // 2. Input Skewing Chains (Horizontal Input Delay for A)
@@ -205,7 +202,7 @@ module pe_array #(
         if (~rst_n) begin
             OUT <= '{default: '0};
         end 
-        else if (running && (counter >= START_OUT_CYCLE) && (counter <= END_OUT_CYCLE)) begin
+        else if (pe_en && (counter >= START_OUT_CYCLE) && (counter <= END_OUT_CYCLE)) begin
             for (int col_idx = 0; col_idx < MATRIX_SIZE; col_idx++) begin
                 OUT[counter - START_OUT_CYCLE][col_idx] <= data_out_unskewed[col_idx];
             end
@@ -213,7 +210,7 @@ module pe_array #(
     end
 
     // Done signal active during the sampling window
-    //assign done = running && (counter >= START_OUT_CYCLE + 1) && (counter <= END_OUT_CYCLE + 1);
-    assign done = running && (counter == END_OUT_CYCLE + 1);
+    //assign done = pe_en && (counter >= START_OUT_CYCLE + 1) && (counter <= END_OUT_CYCLE + 1);
+    assign done = pe_en && (counter == END_OUT_CYCLE + 1);
 
 endmodule

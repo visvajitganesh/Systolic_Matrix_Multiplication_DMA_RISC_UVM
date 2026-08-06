@@ -17,6 +17,7 @@ module input_fifo #(
     input  logic                    s_axis_tlast, 
 
     // SYSTOLIC ARRAY SIDE : Handshaking Mechanism (clk_accel)
+    
     input  logic                                                      systolic_ready,
     output logic [2 * MATRIX_SIZE * MATRIX_SIZE * DATA_WIDTH_M - 1:0] array_data,  
     output logic                                                      array_start 
@@ -36,7 +37,7 @@ module input_fifo #(
     logic                    fifo_rd_en;
 
     // Direct backpressure to DMA on system clock side
-    assign tready = !fifo_full; // becomes low when the fifo is full
+    assign s_axis_tready = !fifo_full; // becomes low when the fifo is full
 
     async_fifo #(
         .DATA_WIDTH (DATA_WIDTH),
@@ -45,7 +46,7 @@ module input_fifo #(
         .wr_clk   (clk_sys),
         .wr_rst_n (rst_sys_n),
         .wr_en    (s_axis_tvalid && s_axis_tready),
-        .wr_data  (s_sxis_tdata),
+        .wr_data  (s_axis_tdata),
         .full     (fifo_full),
 
         .rd_clk   (clk_accel),
@@ -71,7 +72,7 @@ module input_fifo #(
 
     assign fifo_rd_en  = (current_state == FILL) && !fifo_empty;
 
-    // Deserializer
+    // Deserializer State Register
     always_ff @(posedge clk_accel or negedge rst_accel_n) begin
         if (~rst_accel_n)
             current_state <= IDLE;
@@ -79,13 +80,14 @@ module input_fifo #(
             current_state <= next_state;
     end
 
+    // FSM Next State Combinational Logic
     always_comb begin
         case (current_state)
             IDLE    : begin
                 if (!fifo_empty && systolic_ready)
                     next_state = FILL;
                 else
-                    next_state = IDLE
+                    next_state = IDLE;
             end
 
             FILL    : begin
