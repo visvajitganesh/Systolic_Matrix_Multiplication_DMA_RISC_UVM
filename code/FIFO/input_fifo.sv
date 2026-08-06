@@ -119,7 +119,7 @@ module input_fifo #(
                 FILL: begin
                     if (fifo_rd_en) begin
                         array_data[((TOTAL_ELEMENTS - 1 - counter) * DATA_WIDTH_M) +: DATA_WIDTH_M] <= fifo_rd_data;
-                        
+
                         if (counter == TOTAL_ELEMENTS - 1) begin
                             counter     <= '0;
                             array_start <= 1'b1; // 1-cycle active pulse when transitioning to READY

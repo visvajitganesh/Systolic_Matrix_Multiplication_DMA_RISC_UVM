@@ -12,15 +12,15 @@ module output_fifo #(
 
     // SYSTOLIC ARRAY SIDE: Handshaking Mechanism (clk_accel)
     input  logic [MATRIX_SIZE * MATRIX_SIZE * DATA_WIDTH_M - 1:0] array_data, // Result matrix from systolic.output_data, Big Endian
-    input  logic array_done,      // 1-cycle pulse from systolic.done -- result is valid this cycle
-    input  logic array_busy,      // systolic.busy -- held high while a computation is in flight
-    output logic systolic_ready,  // High when this buffer has fully drained and the array may safely start a new computation
+    input  logic                                                  array_done,      // 1-cycle pulse from systolic.done -- result is valid this cycle
+
+    //Removed array_busy and systolic_ready signals since they are not used in this module. The busy/done handshake is handled internally in the systolic module and the input_fifo module.
 
     // DMA  SYSTEM SIDE: AXI-Stream Protocol Signals (clk_sys)
-    output logic [DATA_WIDTH - 1:0] tdata,
-    output logic                    tvalid,
-    input  logic                    tready,
-    output logic                    tlast
+    output logic [DATA_WIDTH - 1:0] m_axis_tdata,
+    output logic                    m_axis_tvalid,
+    input  logic                    m_axis_tready,
+    output logic                    m_axis_tlast
 );
 
     localparam int TOTAL_ELEMENTS = MATRIX_SIZE * MATRIX_SIZE;
@@ -41,15 +41,10 @@ module output_fifo #(
     logic [DATA_WIDTH - 1:0] fifo_rd_data;
     logic fifo_rd_en;
 
-    // Only ready for a new result once fully drained AND the array itself
-    // isn't mid-computation -- mirrors the busy/done protocol systolic.sv
-    // already uses internally (start is ignored while busy is high), just
-    // surfaced here so an upstream input_fifo.systolic_ready can gate on it.
-    assign systolic_ready = (current_state == IDLE) && !array_busy;
 
     // Select the current element out of the latched result matrix,
     // big-endian, matching systolic.sv's output packing convention.
-    assign fifo_wr_data = result_reg[((TOTAL_ELEMENTS - 1 - counter) * DATA_WIDTH_M) +: DATA_WIDTH_M];
+    assign fifo_wr_data = result_reg[((TOTAL_ELEMENTS - 1 - counter) * DATA_WIDTH) +: DATA_WIDTH];
     assign fifo_wr_en   = (current_state == DRAIN) && !fifo_full;
 
     async_fifo #(
@@ -129,16 +124,17 @@ module output_fifo #(
 
     // DMA SYSTEM SIDE: plain AXI-Stream passthrough (clk_sys)
 
-    assign tvalid     = !fifo_empty;
-    assign tdata       = fifo_rd_data;
-    assign fifo_rd_en = tvalid && tready;
+    assign m_axis_tvalid = !fifo_empty;
+    assign m_axis_tdata  = fifo_rd_data;
+    assign fifo_rd_en    = m_axis_tvalid && m_axis_tready;
 
-    // tlast: pulse on the handshake that reads out the final nibble of
+    // m_axis_tlast: pulse on the handshake that reads out the final nibble of
     // each drained result matrix.
     always_ff @(posedge clk_sys or negedge rst_sys_n) begin
         if (!rst_sys_n) begin
             rd_elem_cnt <= '0;
-        end else if (fifo_rd_en) begin
+        end 
+        else if (fifo_rd_en) begin
             if (rd_elem_cnt == TOTAL_ELEMENTS - 1)
                 rd_elem_cnt <= '0;
             else
@@ -146,6 +142,6 @@ module output_fifo #(
         end
     end
 
-    assign tlast = fifo_rd_en && (rd_elem_cnt == TOTAL_ELEMENTS - 1);
+    assign m_axis_tlast = fifo_rd_en && (rd_elem_cnt == TOTAL_ELEMENTS - 1);
 
 endmodule

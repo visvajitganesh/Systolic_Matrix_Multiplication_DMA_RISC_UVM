@@ -4,8 +4,7 @@ module systolic #(
     parameter PSUM_WIDTH  = 4
 )(
     input  logic clk,
-    input  logic rst_n,          
-
+    input  logic rst_n,
     input  logic start, //single pulse
 
     input  logic [2 * MATRIX_SIZE * MATRIX_SIZE * DATA_WIDTH - 1 : 0] input_data, // INPUT MATRICES A ( Input ) and B (weight) Big Endian. 
@@ -29,7 +28,7 @@ module systolic #(
         else if (start && !busy) begin
             input_data_reg <= input_data; // Latch input vector on start pulse when array is idle
         end
-    end              
+    end
 
     // Linear & Matrix Unpacking
 
@@ -97,5 +96,5 @@ module systolic #(
             end
         end
     end
-    
+
 endmodule

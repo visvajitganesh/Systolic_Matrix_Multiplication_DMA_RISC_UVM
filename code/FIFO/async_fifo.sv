@@ -24,21 +24,21 @@ module async_fifo #(
     parameter int ADDR_WIDTH = $clog2(DEPTH)
 )(
     // Write domain
-    input  logic                  wr_clk,
-    input  logic                  wr_rst_n,
-    input  logic                  wr_en,
-    input  logic [DATA_WIDTH-1:0] wr_data,
-    output logic                  full,
+    input  logic                    wr_clk,
+    input  logic                    wr_rst_n,
+    input  logic                    wr_en,
+    input  logic [DATA_WIDTH - 1:0] wr_data,
+    output logic                    full,
 
     // Read domain
-    input  logic                  rd_clk,
-    input  logic                  rd_rst_n,
-    input  logic                  rd_en,
-    output logic [DATA_WIDTH-1:0] rd_data,
-    output logic                  empty
+    input  logic                    rd_clk,
+    input  logic                    rd_rst_n,
+    input  logic                    rd_en,
+    output logic [DATA_WIDTH - 1:0] rd_data,
+    output logic                    empty
 );
 
-    logic [DATA_WIDTH-1:0] mem [0:DEPTH-1];
+    logic [DATA_WIDTH - 1:0] mem [0:DEPTH - 1];
 
     // Binary + Gray pointers, one extra MSB used purely for wrap detection
     logic [ADDR_WIDTH:0] wr_bin, wr_bin_next;
@@ -63,14 +63,16 @@ module async_fifo #(
         if (!wr_rst_n) begin
             wr_bin  <= '0;
             wr_gray <= '0;
-        end else begin
+        end 
+        else begin
             wr_bin  <= wr_bin_next;
             wr_gray <= wr_gray_next;
         end
     end
 
     always_ff @(posedge wr_clk) begin
-        if (wr_fire) mem[wr_bin[ADDR_WIDTH-1:0]] <= wr_data;
+        if (wr_fire) 
+            mem[wr_bin[ADDR_WIDTH - 1:0]] <= wr_data;
     end
 
     // synchronize read pointer into write clock domain
@@ -78,7 +80,8 @@ module async_fifo #(
         if (!wr_rst_n) begin
             rd_gray_sync1 <= '0;
             rd_gray_sync2 <= '0;
-        end else begin
+        end 
+        else begin
             rd_gray_sync1 <= rd_gray;
             rd_gray_sync2 <= rd_gray_sync1;
         end
@@ -101,20 +104,22 @@ module async_fifo #(
         if (!rd_rst_n) begin
             rd_bin  <= '0;
             rd_gray <= '0;
-        end else begin
+        end 
+        else begin
             rd_bin  <= rd_bin_next;
             rd_gray <= rd_gray_next;
         end
     end
 
-    assign rd_data = mem[rd_bin[ADDR_WIDTH-1:0]]; // FWFT: head always presented
+    assign rd_data = mem[rd_bin[ADDR_WIDTH - 1:0]]; // FWFT: head always presented
 
     // synchronize write pointer into read clock domain
     always_ff @(posedge rd_clk or negedge rd_rst_n) begin
         if (!rd_rst_n) begin
             wr_gray_sync1 <= '0;
             wr_gray_sync2 <= '0;
-        end else begin
+        end 
+        else begin
             wr_gray_sync1 <= wr_gray;
             wr_gray_sync2 <= wr_gray_sync1;
         end

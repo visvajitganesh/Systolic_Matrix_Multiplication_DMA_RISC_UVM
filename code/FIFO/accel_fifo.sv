@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-// accel_top
+// accel_fifo
 //
 // System top: wires input_fifo -> systolic -> output_fifo together.
 //
@@ -19,7 +19,7 @@
 // systolic.sv itself runs on clk_accel/rst_accel_n, matching the
 // accelerator-side clock of both FIFOs.
 
-module accel_top #(
+module accel_fifo #(
     parameter int MATRIX_SIZE     = 4,
 
     // Input path (DMA -> Array): stream width vs. matrix element width
@@ -53,11 +53,11 @@ module accel_top #(
     output logic                        out_tlast
 );
 
-    
+
     // Internal wiring: input_fifo <-> systolic <-> output_fifo
     logic [2 * MATRIX_SIZE * MATRIX_SIZE * IN_DATA_WIDTH_M - 1:0] array_in_data;
     logic array_start;
-    logic systolic_ready_w;
+
 
     logic [MATRIX_SIZE * MATRIX_SIZE * OUT_DATA_WIDTH_M - 1:0] array_out_data;
     logic sys_done;
@@ -80,11 +80,11 @@ module accel_top #(
         .s_axis_tready  (in_tready),
         .s_axis_tlast   (in_tlast),
 
-        .systolic_ready (systolic_ready_w),
+        .systolic_ready (~sys_busy),
         .array_data     (array_in_data),
         .array_start    (array_start)
     );
-    
+
     // Systolic compute core
 
     systolic #(
@@ -119,13 +119,11 @@ module accel_top #(
 
         .array_data     (array_out_data),
         .array_done     (sys_done),
-        .array_busy     (sys_busy),
-        .systolic_ready (systolic_ready_w),
 
-        .tdata          (out_tdata),
-        .tvalid         (out_tvalid),
-        .tready         (out_tready),
-        .tlast          (out_tlast)
+        .m_axis_tdata   (out_tdata),
+        .m_axis_tvalid  (out_tvalid),
+        .m_axis_tready  (out_tready),
+        .m_axis_tlast   (out_tlast)
     );
 
 endmodule
