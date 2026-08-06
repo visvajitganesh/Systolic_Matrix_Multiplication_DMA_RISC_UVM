@@ -21,10 +21,10 @@ Total latency for an `N×N` array: `3N - 1` cycles from `start` to the last vali
         A (streamed in, skewed by row)
               │
    ┌──────────▼──────────┐
-   │   PE   PE   PE   PE  │ ← row 0 (no input delay)
-   │   PE   PE   PE   PE  │ ← row 1 (1-cycle input delay)
-   │   PE   PE   PE   PE  │ ← row 2 (2-cycle input delay)
-   │   PE   PE   PE   PE  │ ← row 3 (3-cycle input delay)
+   │   PE   PE   PE   PE │ ← row 0 (no input delay)
+   │   PE   PE   PE   PE │ ← row 1 (1-cycle input delay)
+   │   PE   PE   PE   PE │ ← row 2 (2-cycle input delay)
+   │   PE   PE   PE   PE │ ← row 3 (3-cycle input delay)
    └──────────┬──────────┘
               │
      psum flows top→bottom, out the bottom row
