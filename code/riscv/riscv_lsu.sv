@@ -25,15 +25,22 @@ module riscv_lsu
     always_comb begin
         dmem_addr_o = addr_mem_i;
 
-        case(mem_size_mem_i)
-            2'b10   : dmem_wstrb_o = 4'b1111;
-            2'b01   : dmem_wstrb_o = addr_mem_i[1] ? 4'b1100 : 4'b0011;
-            2'b00   : dmem_wstrb_o = (addr_mem_i[1:0] == 00) ? 4'b0001 :
-                                     (addr_mem_i[1:0] == 01) ? 4'b0010 :
-                                     (addr_mem_i[1:0] == 10) ? 4'b0100 :
-                                     (addr_mem_i[1:0] == 11) ? 4'b1000 : '0;
-            default : dmem_wstrb_o = '0; 
-        endcase
+        if (!is_store_mem_i) begin
+            dmem_wstrb_o = 4'b0000;
+        end
+        else begin
+            case(mem_size_mem_i)
+                2'b10   : dmem_wstrb_o = 4'b1111;
+                2'b01   : dmem_wstrb_o = addr_mem_i[1] ? 4'b1100 : 4'b0011;
+                2'b00   : case (addr_mem_i[1:0])
+                            2'b00   : dmem_wstrb_o = 4'b0001;
+                            2'b01   : dmem_wstrb_o = 4'b0010;
+                            2'b10   : dmem_wstrb_o = 4'b0100;
+                            2'b11   : dmem_wstrb_o = 4'b1000;
+                          endcase
+                default : dmem_wstrb_o = '0; 
+            endcase
+        end
 
 
     end
