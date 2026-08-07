@@ -4,13 +4,13 @@ module riscv_issue
     input                          rst_i,
 
     input                          squash_i,
-    input                          stall_i,      // from downstream (e.g. LSU not ready) -- may not be needed yet, think about it
+    input                          stall_i,             // from downstream (e.g. LSU not ready) -- may not be needed yet, think about it
 
     // ---- from DECODE (combinational, this cycle) ----
     input                          valid_dec_i,
     input                   [31:0] pc_dec_i,
     input                    [4:0] rd_dec_i,
-    input                    [4:0] rs1_dec_i,
+    input                    [4:0] rs1_dec_i,  
     input                    [4:0] rs2_dec_i,
     input                          rd_valid_dec_i,
     input                          is_load_dec_i,
@@ -26,20 +26,25 @@ module riscv_issue
     input                   [31:0] alu_result_exec_i,
 
     // ---- for the scoreboard + bypass: state of in-flight instructions ----
-    input                          valid_mem_i,       // from riscv_pipe_ctrl
+    input                          valid_mem_i,        // from riscv_pipe_ctrl
     input                    [4:0] rd_mem_i,
     input                          rd_valid_mem_i,
-    
-    input                   [31:0] alu_result_mem_i,  // for bypass (non-load only)
+    input                   [31:0] alu_result_mem_i,   // for bypass (non-load only)
     input                          is_load_mem_i, 
 
+    input                          valid_mem2_i,       // from riscv_pipe_ctrl's new MEM2 stage
+    input                    [4:0] rd_mem2_i,
+    input                          rd_valid_mem2_i,
+    input                   [31:0] alu_result_mem2_i,  // for bypass (non-load only)
+    input                          is_load_mem2_i,     // same load-bypass caveat as MEM
+    
     input                          valid_wb_i,
     input                    [4:0] rd_wb_i,
     input                          rd_valid_wb_i,
-    input                   [31:0] result_wb_i,       // for bypass (loads AND alu -- already muxed)
+    input                   [31:0] result_wb_i,        // for bypass (loads AND alu -- already muxed)
 
     // ---- outputs ----
-    output                         stall_o,      // tell FETCH/DECODE to freeze
+    output                         stall_o,            // tell FETCH/DECODE to freeze
 
     // registered, feeding EXECUTE next cycle
     output                         valid_exec_o,
@@ -67,6 +72,8 @@ module riscv_issue
             scoreboard[rd_exec_o] = 1'b1;
         if (valid_mem_i && rd_valid_mem_i)
             scoreboard[rd_mem_i]  = 1'b1;
+        if (valid_mem2_i && rd_valid_mem2_i)
+            scoreboard[rd_mem2_i] = 1'b1;
         if (valid_wb_i && rd_valid_wb_i)
             scoreboard[rd_wb_i]   = 1'b1;
     end
@@ -102,6 +109,8 @@ module riscv_issue
 
         if (valid_wb_i && rd_valid_wb_i && (rd_wb_i == rs1_dec_i))
             bypassed_rs1 = result_wb_i;
+        if (valid_mem2_i && rd_valid_mem2_i && !is_load_mem2_i && (rd_mem2_i == rs1_dec_i))
+            bypassed_rs1 = alu_result_mem2_i;
         if (valid_mem_i && rd_valid_mem_i && !is_load_mem_i && (rd_mem_i == rs1_dec_i))
             bypassed_rs1 = alu_result_mem_i;
         if (valid_exec_o && rd_valid_exec_o && (rd_exec_o == rs1_dec_i))
@@ -113,6 +122,8 @@ module riscv_issue
 
         if (valid_wb_i && rd_valid_wb_i && (rd_wb_i == rs2_dec_i))
             bypassed_rs2 = result_wb_i;
+        if (valid_mem2_i && rd_valid_mem2_i && !is_load_mem2_i && (rd_mem2_i == rs2_dec_i))
+            bypassed_rs2 = alu_result_mem2_i;
         if (valid_mem_i && rd_valid_mem_i && !is_load_mem_i && (rd_mem_i == rs2_dec_i))
             bypassed_rs2 = alu_result_mem_i;
         if (valid_exec_o && rd_valid_exec_o && (rd_exec_o == rs2_dec_i))
