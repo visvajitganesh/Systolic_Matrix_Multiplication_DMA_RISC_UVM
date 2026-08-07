@@ -1,10 +1,10 @@
 module riscv_alu #(
     parameter DATA_WIDTH = 32
 )(
-    input  logic [`ALU_OP_W  - 1:0]   alu_op_i,
-    input  logic [DATA_WIDTH - 1:0]   operand_a_i,
-    input  logic [DATA_WIDTH - 1:0]   operand_b_i,
-    output logic [DATA_WIDTH - 1:0]   result_o
+    input  logic [`ALU_OP_W  - 1:0] alu_op_i,
+    input  logic [DATA_WIDTH - 1:0] operand_a_i,
+    input  logic [DATA_WIDTH - 1:0] operand_b_i,
+    output logic [DATA_WIDTH - 1:0] result_o
 );
 
     localparam SHIFT_W = $clog2(DATA_WIDTH);   ///shift amount held in the lower 5 bits of operand_b_i.
