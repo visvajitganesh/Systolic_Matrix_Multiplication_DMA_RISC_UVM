@@ -1,17 +1,17 @@
 module riscv_regfile #(
     parameter DATA_WIDTH = 32
 )(
-    input                clk_i,
-    input                rst_i,
+    input                           clk_i,
+    input                           rst_i,
 
-    input        [4:0]               rd0_i,        // write address
-    input        [DATA_WIDTH - 1:0]  rd0_value_i,  // write data
-    input                            rd0_wren_i,   // write enable  <-- think about whether you need this, see below
+    input        [4:0]              rd0_i,        // write address
+    input        [DATA_WIDTH - 1:0] rd0_value_i,  // write data
+    input                           rd0_wren_i,   // write enable  <-- think about whether you need this, see below
 
-    input        [4:0]               ra0_i,        // read address 1
-    input        [4:0]               rb0_i,        // read address 2
-    output       [DATA_WIDTH - 1:0]  ra0_value_o,  // read data 1
-    output       [DATA_WIDTH - 1:0]  rb0_value_o   // read data 2
+    input        [4:0]              ra0_i,        // read address 1
+    input        [4:0]              rb0_i,        // read address 2
+    output       [DATA_WIDTH - 1:0] ra0_value_o,  // read data 1
+    output       [DATA_WIDTH - 1:0] rb0_value_o   // read data 2
 );
 
     logic [DATA_WIDTH - 1:0] r_xx [0:31]; 
