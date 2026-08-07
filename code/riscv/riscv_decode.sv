@@ -1,30 +1,30 @@
 module riscv_decode
 (
-    input        [31:0]  instr_i,
+    input             [31:0] instr_i,
 
-    output               is_alu_o,      // R-type or I-type ALU op
-    output               is_load_o,
-    output               is_store_o,
-    output               is_branch_o,
-    output               is_jal_o,
-    output               is_jalr_o,
-    output               invalid_o,      // unrecognized opcode
+    output                   is_alu_o,        // R-type or I-type ALU op
+    output                   is_load_o,
+    output                   is_store_o,
+    output                   is_branch_o,
+    output                   is_jal_o,
+    output                   is_jalr_o,
+    output                   invalid_o,       // unrecognized opcode
 
     output [`ALU_OP_W - 1:0] alu_op_o,
     output                   alu_src_b_imm_o, // 1 = operand_b comes from immediate, not rb
     output                   alu_src_a_pc_o,  // 1 = operand_a comes from PC, not rs1
 
-    output       [4:0]   rd_o,
-    output       [4:0]   rs1_o,
-    output       [4:0]   rs2_o,
-    output               rd_valid_o,     // does this instruction write rd?
+    output             [4:0] rd_o,
+    output             [4:0] rs1_o,
+    output             [4:0] rs2_o,
+    output                   rd_valid_o,      // does this instruction write rd?
 
-    output       [2:0]   branch_funct3_o,
+    output             [2:0] branch_funct3_o,
 
-    output       [1:0]   mem_size_o,      // 00=byte, 01=half, 10=word
-    output               mem_unsigned_o,  // 1 = zero-extend (LBU/LHU), 0 = sign-extend
+    output             [1:0] mem_size_o,      // 00=byte, 01=half, 10=word
+    output                   mem_unsigned_o,  // 1 = zero-extend (LBU/LHU), 0 = sign-extend
 
-    output       [31:0]  imm_o           // sign-extended immediate, already assembled
+    output            [31:0] imm_o            // sign-extended immediate, already assembled
 );
 
     always_comb begin
@@ -99,7 +99,7 @@ module riscv_decode
                             alu_op_o = `ALU_SRA;
                     end
 
-                    default : ;
+                    default         : ;
                 endcase
             end
             
@@ -134,7 +134,6 @@ module riscv_decode
                         mem_size_o     = 2'b00;
                         mem_unsigned_o = 1'b1;
                     end 
-
                 endcase
             end
 
@@ -186,14 +185,14 @@ module riscv_decode
                 alu_op_o        = `ALU_ADD;
             end
 
-            `OPCODE_LUI : begin
+            `OPCODE_LUI    : begin
                 is_alu_o        = 1'b1;
                 rd_valid_o      = 1'b1;
                 alu_src_b_imm_o = 1'b1;
                 alu_op_o        = `ALU_PASS_B;
             end
 
-            `OPCODE_AUIPC : begin
+            `OPCODE_AUIPC  : begin
                 is_alu_o        = 1'b1;
                 rd_valid_o      = 1'b1;
                 alu_src_a_pc_o  = 1'b1;
