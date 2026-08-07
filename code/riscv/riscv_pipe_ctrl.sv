@@ -31,6 +31,14 @@ module riscv_pipe_ctrl
     output logic  [1:0] mem_size_mem_o,      // Registered mem_size_exec_i — tells the external LSU how many bytes to access.
     output logic        mem_unsigned_mem_o,  // Registered mem_unsigned_exec_i — tells the external LSU whether to sign- or zero-extend the loaded value before returning it.
 
+    // ---- outputs: latched, feeding MEM2 (internal to this module, and read by nothing external) ----
+    output logic        valid_mem2_o,
+    output logic [31:0] pc_mem2_o,
+    output logic  [4:0] rd_mem2_o,    
+    output logic        rd_valid_mem2_o,
+    output logic        is_load_mem2_o,
+    output logic [31:0] alu_result_mem2_o,   // carried forward for non-load instructions
+
     // ---- input: LSU's read dat, already sign/zero extended by LSU ----
     input        [31:0] mem_rdata_i,         // The 32-bit value read from data memory this cycle by the external LSU, already sign/zero-extended according to mem_size_mem_o/mem_unsigned_mem_o. Only meaningful when is_load_mem_o is set — otherwise ignored.
 
@@ -42,7 +50,7 @@ module riscv_pipe_ctrl
     output logic [31:0] result_wb_o          // final muxed value: alu_result or mem_rdata 
 );
 
-    // ---- execute -> memory ----
+    // ---- execute -> memory1 ----
     always_ff @(posedge clk_i or posedge rst_i) begin
         if (rst_i || squash_i) begin
             valid_mem_o        <= '0;
@@ -70,12 +78,33 @@ module riscv_pipe_ctrl
         end
     end
 
-    // ---- memory -> writeback ----
+    // ---- memory1 -> memory2 ----
+
+    always_ff @(posedge clk_i or posedge rst_i) begin
+        if (rst_i) begin
+            valid_mem2_o        <= '0;
+            pc_mem2_o           <= '0;
+            rd_mem2_o           <= '0;
+            rd_valid_mem2_o     <= '0;
+            is_load_mem2_o      <= '0;
+            alu_result_mem2_o   <= '0;
+        end
+        else begin
+            valid_mem2_o        <= valid_mem_o;
+            pc_mem2_o           <= pc_mem_o;
+            rd_mem2_o           <= rd_mem_o;
+            rd_valid_mem2_o     <= rd_valid_mem_o;
+            is_load_mem2_o      <= is_load_mem_o;
+            alu_result_mem2_o   <= alu_result_mem_o;
+        end
+    end
+
+    // ---- memory2 -> writeback ----
     // NOTE: no squash port here.
 
     logic [31:0] wb_value_c;
 
-    assign wb_value_c = is_load_mem_o ? mem_rdata_i : alu_result_mem_o;
+    assign wb_value_c = is_load_mem2_o ? mem_rdata_i : alu_result_mem2_o;
 
     always_ff @(posedge clk_i or posedge rst_i) begin
         if (rst_i) begin
@@ -86,10 +115,10 @@ module riscv_pipe_ctrl
             result_wb_o   <= '0;
         end
         else begin
-            valid_wb_o    <= valid_mem_o;
-            pc_wb_o       <= pc_mem_o;
-            rd_wb_o       <= rd_mem_o;
-            rd_valid_wb_o <= rd_valid_mem_o;
+            valid_wb_o    <= valid_mem2_o;
+            pc_wb_o       <= pc_mem2_o;
+            rd_wb_o       <= rd_mem2_o;
+            rd_valid_wb_o <= rd_valid_mem2_o;
             result_wb_o   <= wb_value_c;
         end
     end
