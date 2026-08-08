@@ -1,6 +1,4 @@
 `timescale 1ns / 1ps
-
-// =============================================================================
 // tb_system_top
 // End-to-end self-checking testbench: BRAM -> DMA -> input_fifo -> systolic
 // -> output_fifo -> DMA -> BRAM, with A and B randomized and the result
@@ -9,7 +7,6 @@
 // truncates to OUT_DATA_WIDTH_M bits to match the HW accumulator width).
 //
 // Reuses the BRAM/DMA-register AXI-Lite access tasks from dma_bram_tb.sv.
-// =============================================================================
 
 module tb_system_top;
 
@@ -139,10 +136,10 @@ module tb_system_top;
         .s_bram_axi_lite_rready  (s_bram_rready)
     );
 
-    // -------------------------------------------------------------------------
+
     // Tasks: BRAM Direct AXI-Lite Access (RISC port) -- same pattern as
     // dma_bram_tb.sv, timed off clk_sys.
-    // -------------------------------------------------------------------------
+
     task automatic bram_write(input logic [31:0] addr, input logic [31:0] data);
         @(posedge clk_sys);
         s_bram_awaddr  <= addr;
@@ -186,9 +183,8 @@ module tb_system_top;
         s_bram_rready <= 1'b0;
     endtask
 
-    // -------------------------------------------------------------------------
     // Tasks: DMA Register AXI-Lite Access
-    // -------------------------------------------------------------------------
+
     task automatic dma_reg_write(input logic [31:0] addr, input logic [31:0] data);
         @(posedge clk_sys);
         s_dma_awaddr  <= addr;
@@ -223,9 +219,9 @@ module tb_system_top;
         s_dma_rready <= 1'b0;
     endtask
 
-    // -------------------------------------------------------------------------
+
     // Matrix <-> RAM-word packing helpers.
-    // -------------------------------------------------------------------------
+
     function automatic logic [31:0] pack_word(
         input logic [IN_DATA_WIDTH_M-1:0] e0, e1, e2, e3, e4, e5, e6, e7
     );
@@ -342,13 +338,13 @@ module tb_system_top;
             run_one_test(t);
         end
 
-        $display("==========================================");
+        $display("=======");
         $display(" checked=%0d  errors=%0d", total_checked, total_errors);
         if (total_errors == 0)
             $display(" RESULT: PASS");
         else
             $display(" RESULT: FAIL");
-        $display("==========================================");
+        $display("=======");
         $finish;
     end
 
