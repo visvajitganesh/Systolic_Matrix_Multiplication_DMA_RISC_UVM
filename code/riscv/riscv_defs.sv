@@ -39,7 +39,8 @@
 
 `define FUNCT7_ADD  7'b0000000
 `define FUNCT7_SUB  7'b0100000
-
+`define FUNCT7_SRL  7'b0000000
+`define FUNCT7_SRA  7'b0100000
 
 
 `define OPCODE_R   6:0
