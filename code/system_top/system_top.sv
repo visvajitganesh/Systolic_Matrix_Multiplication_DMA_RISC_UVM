@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-// -----------------------------------------------------------------------
+
 // system_top
 //
 // Full data path: BRAM <-AXI4-> DMA <-4b stream-> input_fifo -> systolic
@@ -16,13 +16,7 @@
 //   clk_sys/rst_sys_n     - DMA, BRAM, and the clk_sys side of both FIFOs
 //   clk_accel/rst_accel_n - the systolic array core and the clk_accel
 //                           side of both FIFOs
-//
-// tlast handling: dma.sv's stream ports have no tlast signal at all
-// (MM2S has none to give, S2MM has none to consume -- it counts bytes
-// via reg_wr_xfer_len instead). accel_top.in_tlast is tied low (unused
-// internally by input_fifo). accel_top.out_tlast is left unconnected
-// (output_fifo generates it, but nothing downstream needs it here).
-// -----------------------------------------------------------------------
+
 
 module system_top #(
     parameter int AXI_ADDR_WIDTH  = 32,
@@ -41,9 +35,8 @@ module system_top #(
     input logic clk_accel,
     input logic rst_accel_n,
 
-    // =========================================================================
     // 1. Host AXI4-Lite Slave Interface -> DMA Configuration Registers
-    // =========================================================================
+
     input  logic [AXI_ADDR_WIDTH-1:0] s_dma_axi_lite_awaddr,
     input  logic                      s_dma_axi_lite_awvalid,
     output logic                      s_dma_axi_lite_awready,
@@ -65,9 +58,9 @@ module system_top #(
     output logic                      s_dma_axi_lite_rvalid,
     input  logic                      s_dma_axi_lite_rready,
 
-    // =========================================================================
+
     // 2. RISC CPU AXI4-Lite Slave Interface -> Direct Access to Shared BRAM
-    // =========================================================================
+
     input  logic [AXI_ADDR_WIDTH-1:0]     s_bram_axi_lite_awaddr,
     input  logic                          s_bram_axi_lite_awvalid,
     output logic                          s_bram_axi_lite_awready,
@@ -91,9 +84,9 @@ module system_top #(
     input  logic                          s_bram_axi_lite_rready
 );
 
-    // -------------------------------------------------------------------------
+
     // Internal stream wires: DMA <-> accel_top
-    // -------------------------------------------------------------------------
+
     logic [STREAM_WIDTH-1:0] mm2s_tdata;
     logic                    mm2s_tvalid;
     logic                    mm2s_tready;
@@ -102,9 +95,9 @@ module system_top #(
     logic                    s2mm_tvalid;
     logic                    s2mm_tready;
 
-    // -------------------------------------------------------------------------
+
     // DMA + shared BRAM (single clk_sys/rst_sys_n domain)
-    // -------------------------------------------------------------------------
+    
     dma_bram #(
         .AXI_ADDR_WIDTH (AXI_ADDR_WIDTH),
         .AXI_DATA_WIDTH (AXI_DATA_WIDTH),
@@ -157,9 +150,9 @@ module system_top #(
         .s_axis_s2mm_tready (s2mm_tready)
     );
 
-    // -------------------------------------------------------------------------
+
     // Systolic array + CDC FIFOs (clk_sys <-> clk_accel boundary)
-    // -------------------------------------------------------------------------
+
     accel_top #(
         .MATRIX_SIZE     (MATRIX_SIZE),
         .IN_DATA_WIDTH   (STREAM_WIDTH),
