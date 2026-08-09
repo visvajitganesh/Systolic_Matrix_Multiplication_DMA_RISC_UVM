@@ -1,3 +1,5 @@
+`include "riscv_defs.sv"
+
 module riscv_issue
 (
     input                          clk_i,

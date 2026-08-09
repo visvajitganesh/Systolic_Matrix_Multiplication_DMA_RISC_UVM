@@ -1,3 +1,6 @@
+`include "riscv_defs.sv"
+
+
 module riscv_core #( 
     parameter logic [31:0] DMEM_BASE = 32'h0000_0000,
     parameter logic [31:0] DMEM_SIZE = 32'h0000_1000  // 4KB local memory 
@@ -25,8 +28,8 @@ module riscv_core #(
     output logic        m_axi_lite_arvalid,
     input               m_axi_lite_arready,
 
-    input               m_axi_lite_rdata,
-    input               m_axi_lite_rresp,
+    input  logic [31:0] m_axi_lite_rdata,
+    input         [1:0] m_axi_lite_rresp,
     input               m_axi_lite_rvalid,
     output logic        m_axi_lite_rready
 );
@@ -54,6 +57,10 @@ module riscv_core #(
     logic [31:0] fetch_pc_w;
     logic [31:0] fetch_instr_w;
     logic        fetch_valid_w;
+
+    // Execute Unit
+    // ALU
+    logic [31:0] alu_result_w;
 
     riscv_fetch u_fetch
     (
@@ -203,9 +210,7 @@ module riscv_core #(
         .is_jalr_exec_o        (exec_is_jalr_w)
     );
  
-    // Execute Unit
-    // ALU
-    logic [31:0] alu_result_w;
+    
  
     riscv_alu u_alu
     (
@@ -300,7 +305,7 @@ module riscv_core #(
     logic sel_dmem_q;
 
     // Address Decode: Check if the address is in DMEM range (0x0000_0000 to 0x0000_0FFF)
-    assign sel_dmem_w = (dmem_addr_w >= DMEM_BASE) && (dmem_addr_w < (DEM_BASE + DMEM_SIZE));
+    assign sel_dmem_w = (dmem_addr_w >= DMEM_BASE) && (dmem_addr_w < (DMEM_BASE + DMEM_SIZE));
 
     // Latch target selection for the read resonse cycle
     always_ff @(posedge clk_i or posedge rst_i) begin
@@ -357,37 +362,35 @@ module riscv_core #(
     );
 
     // AXI-Lite Master Bridge(DMA)
-    riscv_axi_lite_bridge u_axil_bridge (
+    riscv_axi_lite_bridge u_axi_lite_bridge (
         .clk_i          (clk_i),
         .rst_i          (rst_i),
-        .valid_mem_i    (axil_valid_mem_w), // Active only when target is AXI
+        .valid_mem_i    (axi_lite_mem_valid_mem_w), // Active only when target is AXI
         .is_load_mem_i  (pc_is_load_mem_w),
         .is_store_mem_i (pc_is_store_mem_w),
         .addr_mem_i     (dmem_addr_w),
         .wdata_mem_i    (dmem_wdata_w),
         .wstrb_mem_i    (dmem_wstrb_w),
-        .rdata_mem_o    (axil_rdata_w),
+        .rdata_mem_o    (axi_lite_rdata_w),
         .stall_o        (axi_stall_w),
 
-        .m_axil_awaddr  (m_axil_awaddr),
-        .m_axil_awprot  (m_axil_awprot),
-        .m_axil_awvalid (m_axil_awvalid),
-        .m_axil_awready (m_axil_awready),
-        .m_axil_wdata   (m_axil_wdata),
-        .m_axil_wstrb   (m_axil_wstrb),
-        .m_axil_wvalid  (m_axil_wvalid),
-        .m_axil_wready  (m_axil_wready),
-        .m_axil_bresp   (m_axil_bresp),
-        .m_axil_bvalid  (m_axil_bvalid),
-        .m_axil_bready  (m_axil_bready),
-        .m_axil_araddr  (m_axil_araddr),
-        .m_axil_arprot  (m_axil_arprot),
-        .m_axil_arvalid (m_axil_arvalid),
-        .m_axil_arready (m_axil_arready),
-        .m_axil_rdata   (m_axil_rdata),
-        .m_axil_rresp   (m_axil_rresp),
-        .m_axil_rvalid  (m_axil_rvalid),
-        .m_axil_rready  (m_axil_rready) 
+        .m_axi_lite_awaddr  (m_axi_lite_awaddr),
+        .m_axi_lite_awprot  (m_axi_lite_awprot),
+        .m_axi_lite_awvalid (m_axi_lite_awvalid),
+        .m_axi_lite_awready (m_axi_lite_awready),
+        .m_axi_lite_wdata   (m_axi_lite_wdata),
+        .m_axi_lite_wstrb   (m_axi_lite_wstrb),
+        .m_axi_lite_bresp   (m_axi_lite_bresp),
+        .m_axi_lite_bvalid  (m_axi_lite_bvalid),
+        .m_axi_lite_bready  (m_axi_lite_bready),
+        .m_axi_lite_araddr  (m_axi_lite_araddr),
+        .m_axi_lite_arprot  (m_axi_lite_arprot),
+        .m_axi_lite_arvalid (m_axi_lite_arvalid),
+        .m_axi_lite_arready (m_axi_lite_arready),
+        .m_axi_lite_rdata   (m_axi_lite_rdata),
+        .m_axi_lite_rresp   (m_axi_lite_rresp),
+        .m_axi_lite_rvalid  (m_axi_lite_rvalid),
+        .m_axi_lite_rready  (m_axi_lite_rready) 
     );
 
 endmodule

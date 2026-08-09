@@ -1,3 +1,5 @@
+`include "riscv_defs.sv"
+
 module riscv_imem
 #(
     parameter DEPTH     = 1024,   // number of 32-bit words

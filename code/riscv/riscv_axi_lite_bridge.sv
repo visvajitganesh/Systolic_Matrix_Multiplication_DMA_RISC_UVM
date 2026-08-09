@@ -1,3 +1,5 @@
+`include "riscv_defs.sv"
+
 module riscv_axi_lite_bridge #(
     parameter ADDR_WIDTH = 32,
     parameter DATA_WIDTH = 32
@@ -44,7 +46,7 @@ module riscv_axi_lite_bridge #(
     input  logic [DATA_WIDTH - 1:0] m_axi_lite_rdata,
     input  logic              [1:0] m_axi_lite_rresp,
     input  logic                    m_axi_lite_rvalid,
-    output logic                    m_axi_lite_arready
+    output logic                    m_axi_lite_rready
 );
 
     typedef enum logic [1:0] {
@@ -54,7 +56,7 @@ module riscv_axi_lite_bridge #(
         WRITE_RESP
     } state_t;
 
-    state_t curremt_state, next_state;
+    state_t current_state, next_state;
 
     logic aw_done_q, w_done_q;
 
@@ -133,7 +135,7 @@ module riscv_axi_lite_bridge #(
         endcase
     end
 
-    // Sequnetial logic: State register and write handshake tracking
+    // Sequential logic: State register and write handshake tracking
     always_ff @(posedge clk_i or posedge rst_i) begin
         if (rst_i) begin
             current_state <= IDLE;

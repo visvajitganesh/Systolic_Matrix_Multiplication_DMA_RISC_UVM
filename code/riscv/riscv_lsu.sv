@@ -1,3 +1,7 @@
+
+
+`include "riscv_defs.sv"
+
 module riscv_lsu
 (
     input               clk_i,

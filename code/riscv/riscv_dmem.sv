@@ -1,3 +1,5 @@
+`include "riscv_defs.sv"
+
 module riscv_dmem
 #(
     parameter DEPTH = 1024,
