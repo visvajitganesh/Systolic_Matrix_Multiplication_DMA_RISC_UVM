@@ -29,6 +29,9 @@ module riscv_decode
     output logic            [31:0] imm_o            // sign-extended immediate
 );
 
+    logic rs1_valid;
+    logic rs2_valid;
+
     always_comb begin
 
         is_alu_o    = 1'b0;
@@ -43,14 +46,18 @@ module riscv_decode
         alu_src_b_imm_o = 1'b0;
         alu_src_a_pc_o  = 1'b0;
         rd_valid_o      = 1'b0;
+        rs1_valid       = 1'b0;
+        rs2_valid       = 1'b0;
 
         mem_size_o     = '0;
         mem_unsigned_o =  0;
 
         case (instr_i[`OPCODE_R])
             `OPCODE_OP     : begin
-                is_alu_o   = 1'b1;
-                rd_valid_o = 1'b1;
+                is_alu_o    = 1'b1;
+                rd_valid_o  = 1'b1;
+                rs1_valid   = 1'b1;
+                rs2_valid   = 1'b1;
 
                 case (instr_i[`FUNCT3_R])
                     `FUNCT3_ADD_SUB : begin
@@ -90,6 +97,7 @@ module riscv_decode
             `OPCODE_OP_IMM : begin 
                 is_alu_o        = 1'b1;
                 rd_valid_o      = 1'b1;
+                rs1_valid       = 1'b1;
                 alu_src_b_imm_o = 1'b1;
 
                 case (instr_i[`FUNCT3_R])
@@ -123,6 +131,7 @@ module riscv_decode
             `OPCODE_LOAD   : begin 
                 is_load_o       = 1'b1;
                 rd_valid_o      = 1'b1;
+                rs1_valid       = 1'b1;
                 alu_src_b_imm_o = 1'b1;
                 alu_op_o        = `ALU_ADD;
 
@@ -158,6 +167,8 @@ module riscv_decode
 
             `OPCODE_STORE  : begin 
                 is_store_o      = 1'b1;
+                rs1_valid       = 1'b1;
+                rs2_valid       = 1'b1;
                 alu_src_b_imm_o = 1'b1;
                 alu_op_o        = `ALU_ADD;
 
@@ -183,6 +194,8 @@ module riscv_decode
                 
             `OPCODE_BRANCH : begin 
                 is_branch_o = 1'b1;
+                rs1_valid       = 1'b1;
+                rs2_valid       = 1'b1;
                 
                 case (instr_i[`FUNCT3_R])
                     `FUNCT3_BEQ  : alu_op_o  = `ALU_SUB;
@@ -206,6 +219,7 @@ module riscv_decode
             `OPCODE_JALR   : begin
                 is_jalr_o       = 1'b1;
                 rd_valid_o      = 1'b1;
+                rs1_valid       = 1'b1;
                 alu_src_b_imm_o = 1'b1;
                 alu_op_o        = `ALU_ADD;
             end
@@ -229,9 +243,9 @@ module riscv_decode
         endcase
     end
 
-    assign rd_o  = instr_i[`RD_R];
-    assign rs1_o = instr_i[`RS1_R];
-    assign rs2_o = instr_i[`RS2_R];
+    assign rd_o  = rd_valid_o ? instr_i[`RD_R]  : 5'd0;
+    assign rs1_o = rs1_valid  ? instr_i[`RS1_R] : 5'd0;
+    assign rs2_o = rs2_valid  ? instr_i[`RS2_R] : 5'd0;
 
     always_comb begin
         case (instr_i[`OPCODE_R])
