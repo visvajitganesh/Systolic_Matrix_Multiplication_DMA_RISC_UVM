@@ -50,32 +50,32 @@ module riscv_issue
     input                   [31:0] result_wb_i,        // for bypass (loads AND alu -- already muxed)
 
     // ---- outputs ----
-    output                         stall_o,            // tell FETCH/DECODE to freeze
+    output logic                   stall_o,            // tell FETCH/DECODE to freeze
 
     // registered, feeding EXECUTE next cycle
-    output                         valid_exec_o,
-    output                  [31:0] pc_exec_o,
-    output                   [4:0] rd_exec_o,
-    output                         rd_valid_exec_o,
-    output                         is_load_exec_o,
-    output                         is_store_exec_o,
+    output logic                   valid_exec_o,
+    output logic            [31:0] pc_exec_o,
+    output logic             [4:0] rd_exec_o,
+    output logic                   rd_valid_exec_o,
+    output logic                   is_load_exec_o,
+    output logic                   is_store_exec_o,
     output logic [`ALU_OP_W - 1:0] alu_op_exec_o,
-    output                  [31:0] operand_a_exec_o,   // rs1 value (bypassed) or PC
-    output                  [31:0] operand_b_exec_o,   // rs2 value (bypassed) or imm
-    output                  [31:0] store_data_exec_o,  // rs2 value (bypassed), for SW
-    output                   [1:0] mem_size_exec_o,
-    output                         mem_unsigned_exec_o,
-    output                  [31:0] imm_exec_o,
-    output                         is_branch_exec_o,
-    output                   [2:0] branch_funct3_exec_o,
-    output                         is_jal_exec_o,
-    output                         is_jalr_exec_o
+    output logic            [31:0] operand_a_exec_o,   // rs1 value (bypassed) or PC
+    output logic            [31:0] operand_b_exec_o,   // rs2 value (bypassed) or imm
+    output logic            [31:0] store_data_exec_o,  // rs2 value (bypassed), for SW
+    output logic             [1:0] mem_size_exec_o,
+    output logic                   mem_unsigned_exec_o,
+    output logic            [31:0] imm_exec_o,
+    output logic                   is_branch_exec_o,
+    output logic             [2:0] branch_funct3_exec_o,
+    output logic                   is_jal_exec_o,
+    output logic                   is_jalr_exec_o
 );
 
     // scoreboard
 
     logic [31:0] scoreboard;
-
+    /*
     always_comb begin
         scoreboard = 32'b0;
 
@@ -88,6 +88,27 @@ module riscv_issue
         if (valid_wb_i && rd_valid_wb_i)
             scoreboard[rd_wb_i]   = 1'b1;
 
+        scoreboard[0] = 1'b0;
+    end
+    */
+    always_comb begin
+        scoreboard = 32'b0;
+
+        // EXEC stage: Only stall if it's a LOAD (data not ready until MEM/WB)
+        if (valid_exec_o && rd_valid_exec_o && is_load_exec_o)
+            scoreboard[rd_exec_o] = 1'b1;
+
+        // MEM stage: Only stall if it's a LOAD (if load data isn't ready until MEM2/WB)
+        if (valid_mem_i && rd_valid_mem_i && is_load_mem_i)
+            scoreboard[rd_mem_i]  = 1'b1;
+
+        // MEM2 stage: Only stall if it's a LOAD (if load data isn't ready until WB)
+        if (valid_mem2_i && rd_valid_mem2_i && is_load_mem2_i)
+            scoreboard[rd_mem2_i] = 1'b1;
+
+        // WB stage: Data is always ready via write-through bypass, never stalls
+
+        // Register x0 is hardwired to 0, never causes a hazard
         scoreboard[0] = 1'b0;
     end
 
@@ -172,7 +193,7 @@ module riscv_issue
             is_jalr_exec_o       <= '0;
             imm_exec_o           <= '0;       
         end
-        else if (!stall_i) begin
+        else if (stall_i) begin
             // Memory (AXI) transaction pending downstream. riscv_pipe_ctrl's
             // hops are ALSO frozen by this same stall_i this cycle, so
             // whatever is sitting in this register has NOT been consumed
