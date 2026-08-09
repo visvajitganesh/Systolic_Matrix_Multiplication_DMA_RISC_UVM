@@ -2,25 +2,25 @@
 
 module riscv_fetch
 (
-    input          clk_i,
-    input          rst_i,
+    input                clk_i,
+    input                rst_i,
 
     // Redirect from execute/branch-resolution stage.
-    input          branch_taken_i,
-    input   [31:0] branch_target_i,
-    input          squash_i,
+    input                branch_taken_i,
+    input         [31:0] branch_target_i,
+    input                squash_i,
 
     // Stall from downstream (scoreboard hazard. memory not ready. etc)
-    input          stall_i,
+    input                stall_i,
 
     // Instruction memory interface
-    output  [31:0] imem_addr_o,
-    input   [31:0] imem_rdata_i,
+    output        [31:0] imem_addr_o,
+    input         [31:0] imem_rdata_i,
 
     // To decode/issue
-    output  [31:0] pc_o,    // this instruction's own PC (needed for AUIPC, JAL, branch target calc)
+    output        [31:0] pc_o,    // this instruction's own PC (needed for AUIPC, JAL, branch target calc)
     output  logic [31:0] instr_o,
-    output         valid_o
+    output               valid_o
 );
 
     logic [31:0] pc_q;      // address being requested THIS cycle
@@ -75,7 +75,7 @@ module riscv_fetch
     end
     
     //assign instr_o = stall_i ? instr_hold_q : imem_rdata_i;
-    assign instr_o     = use_buff_q ? instr_buff_q : imem_rdata_i;
+    assign instr_o = use_buff_q ? instr_buff_q : imem_rdata_i;
     assign pc_o    = pc_e_q;
 
     // assign instr_o     = imem_rdata_i;
@@ -95,4 +95,3 @@ what was there in pc_q which gets reflected. Hence buffer is needed.
 when stall drops instr_o gets updated immediately but not pc_o.
 Thats we need to buffer the pc_e_q as well.
 */
-
