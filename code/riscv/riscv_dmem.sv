@@ -1,5 +1,3 @@
-`include "riscv_defs.sv"
-
 module riscv_dmem
 #(
     parameter DEPTH = 1024,
@@ -24,13 +22,17 @@ module riscv_dmem
             for (int i = 0; i < DEPTH; i++) mem[i] = 32'b0;
     end
 
-    always_ff @(posedge clk_i) begin
+    always @(posedge clk_i) begin
         rdata_o <= mem[addr_i[31:2]];
 
-        if (wstrb_i[0]) mem[addr_i[31:2]][7:0]   <= wdata_i[7:0];
-        if (wstrb_i[1]) mem[addr_i[31:2]][15:8]  <= wdata_i[15:8];
-        if (wstrb_i[2]) mem[addr_i[31:2]][23:16] <= wdata_i[23:16];
-        if (wstrb_i[3]) mem[addr_i[31:2]][31:24] <= wdata_i[31:24];
+        if (wstrb_i[0]) 
+            mem[addr_i[31:2]][7:0]   <= wdata_i[7:0];
+        if (wstrb_i[1]) 
+            mem[addr_i[31:2]][15:8]  <= wdata_i[15:8];
+        if (wstrb_i[2]) 
+            mem[addr_i[31:2]][23:16] <= wdata_i[23:16];
+        if (wstrb_i[3]) 
+            mem[addr_i[31:2]][31:24] <= wdata_i[31:24];
     end
 
 endmodule
