@@ -1,5 +1,3 @@
-`include "riscv_defs.sv"
-
 module riscv_regfile #(
     parameter DATA_WIDTH = 32
 )(
