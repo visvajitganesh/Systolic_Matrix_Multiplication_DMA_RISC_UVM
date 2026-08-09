@@ -1,5 +1,3 @@
-
-
 `include "riscv_defs.sv"
 
 module riscv_lsu
@@ -19,13 +17,13 @@ module riscv_lsu
     input               mem_unsigned_mem_i,
 
     // data memory interface
-    output       [31:0] dmem_addr_o,
-    output       [31:0] dmem_wdata_o,
-    output        [3:0] dmem_wstrb_o,   // byte-lane write-enable -- think about why this is 4 bits, not 1
+    output logic [31:0] dmem_addr_o,
+    output logic [31:0] dmem_wdata_o,
+    output logic  [3:0] dmem_wstrb_o,   // byte-lane write-enable -- think about why this is 4 bits, not 1
     input        [31:0] dmem_rdata_i,
 
     // back to riscv_pipe_ctrl
-    output       [31:0] mem_rdata_o      // = mem_rdata_i port on riscv_pipe_ctrl -- extended, ready to use
+    output logic [31:0] mem_rdata_o      // = mem_rdata_i port on riscv_pipe_ctrl -- extended, ready to use
 );
     assign dmem_addr_o = addr_mem_i;
 
