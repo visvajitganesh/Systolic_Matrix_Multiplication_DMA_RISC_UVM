@@ -1,0 +1,745 @@
+
+                           Design Compiler Graphical 
+                                 DC Ultra (TM)
+                                  DFTMAX (TM)
+                              Power Compiler (TM)
+                                 DesignWare (R)
+                                 DC Expert (TM)
+                               Design Vision (TM)
+                               HDL Compiler (TM)
+                               VHDL Compiler (TM)
+                                  DFT Compiler
+                               Design Compiler(R)
+
+                 Version V-2023.12 for linux64 - Nov 27, 2023 
+
+                    Copyright (c) 1988 - 2023 Synopsys, Inc.
+   This software and the associated documentation are proprietary to Synopsys,
+ Inc. This software may only be used in accordance with the terms and conditions
+ of a written license agreement with Synopsys, Inc. All other use, reproduction,
+   or distribution of this software is strictly prohibited.  Licensed Products
+     communicate with Synopsys servers for the purpose of providing software
+    updates, detecting software piracy and verifying that customers are using
+    Licensed Products in conformity with the applicable License Key for such
+  Licensed Products. Synopsys will use information gathered in connection with
+    this process to deliver software updates and pursue software pirates and
+                                   infringers.
+
+ Inclusivity & Diversity - Visit SolvNetPlus to read the "Synopsys Statement on
+            Inclusivity and Diversity" (Refer to article 000036315 at
+                        https://solvnetplus.synopsys.com)
+Initializing...
+Current time:       Sat Aug  1 11:41:25 2026
+Hostname:           acts-eda.pune.cdac.in
+CPU Model:          Intel(R) Xeon(R) CPU E5-2680 v3 @ 2.50GHz
+CPU Details:        Cores = 48 : Sockets = 2 : Cache Size = 30720 KB : Freq = 3.30 GHz
+OS:                 Linux 4.18.0-553.51.1.el8_10.x86_64
+RAM:                 62 GB (Free   4 GB)
+Swap:                 7 GB (Free   5 GB)
+Work Filesystem:    / mounted to /dev/mapper/almalinux-root
+Tmp Filesystem:     / mounted to /dev/mapper/almalinux-root
+Work Disk:          1370 GB (Free 219 GB)
+Tmp Disk:           1370 GB (Free 219 GB)
+
+CPU Load: 0%, Ram Free: 4 GB, Swap Free: 5 GB, Work Disk Free: 219 GB, Tmp Disk Free: 219 GB
+# ---------- Library setup ----------
+set LIB_DIR "/study/Testcase_C-DAC_july24/Testcase_C-DAC_july24/C-DAC_july24/ref/lib/stdcell_rvt"
+/study/Testcase_C-DAC_july24/Testcase_C-DAC_july24/C-DAC_july24/ref/lib/stdcell_rvt
+set search_path ". $LIB_DIR"
+. /study/Testcase_C-DAC_july24/Testcase_C-DAC_july24/C-DAC_july24/ref/lib/stdcell_rvt
+set target_library "saed32rvt_ss0p7vn40c.db"
+saed32rvt_ss0p7vn40c.db
+set link_library "* saed32rvt_ss0p7vn40c.db saed32rvt_tt0p78vn40c.db saed32rvt_ff1p16v125c.db"
+* saed32rvt_ss0p7vn40c.db saed32rvt_tt0p78vn40c.db saed32rvt_ff1p16v125c.db
+# ---------- Design library ----------
+define_design_lib WORK -path ./WORK
+1
+# ---------- Read RTL ----------
+set RTL_DIR "/home/DVLSI10/pd_group7/rtl"
+/home/DVLSI10/pd_group7/rtl
+analyze -format sverilog [glob $RTL_DIR/systolic_array.sv]
+Running PRESTO HDLC
+Compiling source file /home/DVLSI10/pd_group7/rtl/systolic_array.sv
+Presto compilation completed successfully.
+Loading db file '/study/Testcase_C-DAC_july24/Testcase_C-DAC_july24/C-DAC_july24/ref/lib/stdcell_rvt/saed32rvt_ss0p7vn40c.db'
+Loading db file '/study/Testcase_C-DAC_july24/Testcase_C-DAC_july24/C-DAC_july24/ref/lib/stdcell_rvt/saed32rvt_tt0p78vn40c.db'
+Loading db file '/study/Testcase_C-DAC_july24/Testcase_C-DAC_july24/C-DAC_july24/ref/lib/stdcell_rvt/saed32rvt_ff1p16v125c.db'
+1
+elaborate systolic
+Loading db file '/home/acts/synopsys_tools/dc/syn/V-2023.12/libraries/syn/gtech.db'
+Loading db file '/home/acts/synopsys_tools/dc/syn/V-2023.12/libraries/syn/standard.sldb'
+  Loading link library 'saed32rvt_ss0p7vn40c'
+  Loading link library 'saed32rvt_tt0p78vn40c'
+  Loading link library 'saed32rvt_ff1p16v125c'
+  Loading link library 'gtech'
+Running PRESTO HDLC
+Presto compilation completed successfully. (systolic)
+Elaborated 1 design.
+Current design is now 'systolic'.
+Information: Building the design 'pe_array' instantiated from design 'systolic' with
+	the parameters "DATA_WIDTH=4,MATRIX_SIZE=4,PSUM_WIDTH=4". (HDL-193)
+Warning:  /home/DVLSI10/pd_group7/rtl/systolic_array.sv:153: signed to unsigned conversion occurs. (VER-318)
+Warning:  /home/DVLSI10/pd_group7/rtl/systolic_array.sv:163: signed to unsigned conversion occurs. (VER-318)
+Warning:  /home/DVLSI10/pd_group7/rtl/systolic_array.sv:334: signed to unsigned conversion occurs. (VER-318)
+
+Inferred memory devices in process
+	in routine pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4 line 148 in file
+		'/home/DVLSI10/pd_group7/rtl/systolic_array.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|     running_reg     | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+
+Inferred memory devices in process
+	in routine pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4 line 158 in file
+		'/home/DVLSI10/pd_group7/rtl/systolic_array.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|     counter_reg     | Flip-flop |   4   |  Y  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+
+Inferred memory devices in process
+	in routine pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4 line 322 in file
+		'/home/DVLSI10/pd_group7/rtl/systolic_array.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|       OUT_reg       | Flip-flop |  64   |  Y  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+Statistics for MUX_OPs
+=======================================================================================
+|                 block name/line                   | Inputs | Outputs | # sel inputs |
+=======================================================================================
+| pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4/199 |   4    |   16    |      2       |
+=======================================================================================
+Presto compilation completed successfully. (pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4)
+Information: Building the design 'd_ff_chain' instantiated from design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4' with
+	the parameters "DATA_WIDTH=4,DEPTH=1". (HDL-193)
+Presto compilation completed successfully. (d_ff_chain_DATA_WIDTH4_DEPTH1)
+Information: Building the design 'd_ff_chain' instantiated from design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4' with
+	the parameters "DATA_WIDTH=4,DEPTH=2". (HDL-193)
+Presto compilation completed successfully. (d_ff_chain_DATA_WIDTH4_DEPTH2)
+Information: Building the design 'd_ff_chain' instantiated from design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4' with
+	the parameters "DATA_WIDTH=4,DEPTH=3". (HDL-193)
+Presto compilation completed successfully. (d_ff_chain_DATA_WIDTH4_DEPTH3)
+Information: Building the design 'processing_element' instantiated from design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4' with
+	the parameters "DATA_WIDTH=4,PSUM_WIDTH=4". (HDL-193)
+
+Inferred memory devices in process
+	in routine processing_element_DATA_WIDTH4_PSUM_WIDTH4 line 105 in file
+		'/home/DVLSI10/pd_group7/rtl/systolic_array.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|    psum_out_reg     | Flip-flop |   4   |  Y  | N  | Y  | N  | N  | N  | N  |
+|      a_out_reg      | Flip-flop |   4   |  Y  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+Presto compilation completed successfully. (processing_element_DATA_WIDTH4_PSUM_WIDTH4)
+Information: Building the design 'dff' instantiated from design 'd_ff_chain_DATA_WIDTH4_DEPTH1' with
+	the parameters "DATA_WIDTH=4". (HDL-193)
+
+Inferred memory devices in process
+	in routine dff_DATA_WIDTH4 line 14 in file
+		'/home/DVLSI10/pd_group7/rtl/systolic_array.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|      dout_reg       | Flip-flop |   4   |  Y  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+Presto compilation completed successfully. (dff_DATA_WIDTH4)
+1
+current_design systolic
+Current design is 'systolic'.
+{systolic}
+link
+
+  Linking design 'systolic'
+  Using the following designs and libraries:
+  --------------------------------------------------------------------------
+  * (7 designs)               /home/DVLSI10/pd_group7/scripts/systolic.db, etc
+  saed32rvt_ss0p7vn40c (library) /study/Testcase_C-DAC_july24/Testcase_C-DAC_july24/C-DAC_july24/ref/lib/stdcell_rvt/saed32rvt_ss0p7vn40c.db
+  saed32rvt_tt0p78vn40c (library) /study/Testcase_C-DAC_july24/Testcase_C-DAC_july24/C-DAC_july24/ref/lib/stdcell_rvt/saed32rvt_tt0p78vn40c.db
+  saed32rvt_ff1p16v125c (library) /study/Testcase_C-DAC_july24/Testcase_C-DAC_july24/C-DAC_july24/ref/lib/stdcell_rvt/saed32rvt_ff1p16v125c.db
+
+1
+# ---------- Read constraints ----------
+read_sdc /home/DVLSI10/pd_group7/sdc/systolic.sdc
+
+Reading SDC version 2.1...
+Error: Cannot find the specified driving cell in memory.   (UID-993)
+Current design is 'systolic'.
+Current design is 'systolic'.
+1
+# ---------- Checks ----------
+check_design
+ 
+****************************************
+check_design summary:
+Version:     V-2023.12
+Date:        Sat Aug  1 11:41:27 2026
+****************************************
+
+                   Name                                            Total
+--------------------------------------------------------------------------------
+Cells                                                              23
+    Cells do not drive (LINT-1)                                     3
+    Connected to power or ground (LINT-32)                         16
+    Nets connected to multiple pins on same cell (LINT-33)          4
+
+Nets                                                               16
+    Unloaded nets (LINT-2)                                         16
+--------------------------------------------------------------------------------
+
+Warning: In design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4', cell 'C472' does not drive any nets. (LINT-1)
+Warning: In design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4', cell 'C501' does not drive any nets. (LINT-1)
+Warning: In design 'processing_element_DATA_WIDTH4_PSUM_WIDTH4', cell 'C53' does not drive any nets. (LINT-1)
+Warning: In design 'systolic', net 'dut/a_wire[0][4][0]' driven by pin 'dut/g_pe_row[0].g_pe_col[3].u_pe/a_out[0]' has no loads. (LINT-2)
+Warning: In design 'systolic', net 'dut/a_wire[0][4][1]' driven by pin 'dut/g_pe_row[0].g_pe_col[3].u_pe/a_out[1]' has no loads. (LINT-2)
+Warning: In design 'systolic', net 'dut/a_wire[0][4][2]' driven by pin 'dut/g_pe_row[0].g_pe_col[3].u_pe/a_out[2]' has no loads. (LINT-2)
+Warning: In design 'systolic', net 'dut/a_wire[0][4][3]' driven by pin 'dut/g_pe_row[0].g_pe_col[3].u_pe/a_out[3]' has no loads. (LINT-2)
+Warning: In design 'systolic', net 'dut/a_wire[1][4][0]' driven by pin 'dut/g_pe_row[1].g_pe_col[3].u_pe/a_out[0]' has no loads. (LINT-2)
+Warning: In design 'systolic', net 'dut/a_wire[1][4][1]' driven by pin 'dut/g_pe_row[1].g_pe_col[3].u_pe/a_out[1]' has no loads. (LINT-2)
+Warning: In design 'systolic', net 'dut/a_wire[1][4][2]' driven by pin 'dut/g_pe_row[1].g_pe_col[3].u_pe/a_out[2]' has no loads. (LINT-2)
+Warning: In design 'systolic', net 'dut/a_wire[1][4][3]' driven by pin 'dut/g_pe_row[1].g_pe_col[3].u_pe/a_out[3]' has no loads. (LINT-2)
+Warning: In design 'systolic', net 'dut/a_wire[2][4][0]' driven by pin 'dut/g_pe_row[2].g_pe_col[3].u_pe/a_out[0]' has no loads. (LINT-2)
+Warning: In design 'systolic', net 'dut/a_wire[2][4][1]' driven by pin 'dut/g_pe_row[2].g_pe_col[3].u_pe/a_out[1]' has no loads. (LINT-2)
+Warning: In design 'systolic', net 'dut/a_wire[2][4][2]' driven by pin 'dut/g_pe_row[2].g_pe_col[3].u_pe/a_out[2]' has no loads. (LINT-2)
+Warning: In design 'systolic', net 'dut/a_wire[2][4][3]' driven by pin 'dut/g_pe_row[2].g_pe_col[3].u_pe/a_out[3]' has no loads. (LINT-2)
+Warning: In design 'systolic', net 'dut/a_wire[3][4][0]' driven by pin 'dut/g_pe_row[3].g_pe_col[3].u_pe/a_out[0]' has no loads. (LINT-2)
+Warning: In design 'systolic', net 'dut/a_wire[3][4][1]' driven by pin 'dut/g_pe_row[3].g_pe_col[3].u_pe/a_out[1]' has no loads. (LINT-2)
+Warning: In design 'systolic', net 'dut/a_wire[3][4][2]' driven by pin 'dut/g_pe_row[3].g_pe_col[3].u_pe/a_out[2]' has no loads. (LINT-2)
+Warning: In design 'systolic', net 'dut/a_wire[3][4][3]' driven by pin 'dut/g_pe_row[3].g_pe_col[3].u_pe/a_out[3]' has no loads. (LINT-2)
+Warning: In design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4', a pin on submodule 'g_pe_row[0].g_pe_col[0].u_pe' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'psum_in[3]' is connected to logic 0. 
+Warning: In design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4', a pin on submodule 'g_pe_row[0].g_pe_col[0].u_pe' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'psum_in[2]' is connected to logic 0. 
+Warning: In design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4', a pin on submodule 'g_pe_row[0].g_pe_col[0].u_pe' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'psum_in[1]' is connected to logic 0. 
+Warning: In design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4', a pin on submodule 'g_pe_row[0].g_pe_col[0].u_pe' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'psum_in[0]' is connected to logic 0. 
+Warning: In design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4', a pin on submodule 'g_pe_row[0].g_pe_col[1].u_pe' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'psum_in[3]' is connected to logic 0. 
+Warning: In design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4', a pin on submodule 'g_pe_row[0].g_pe_col[1].u_pe' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'psum_in[2]' is connected to logic 0. 
+Warning: In design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4', a pin on submodule 'g_pe_row[0].g_pe_col[1].u_pe' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'psum_in[1]' is connected to logic 0. 
+Warning: In design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4', a pin on submodule 'g_pe_row[0].g_pe_col[1].u_pe' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'psum_in[0]' is connected to logic 0. 
+Warning: In design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4', a pin on submodule 'g_pe_row[0].g_pe_col[2].u_pe' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'psum_in[3]' is connected to logic 0. 
+Warning: In design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4', a pin on submodule 'g_pe_row[0].g_pe_col[2].u_pe' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'psum_in[2]' is connected to logic 0. 
+Warning: In design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4', a pin on submodule 'g_pe_row[0].g_pe_col[2].u_pe' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'psum_in[1]' is connected to logic 0. 
+Warning: In design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4', a pin on submodule 'g_pe_row[0].g_pe_col[2].u_pe' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'psum_in[0]' is connected to logic 0. 
+Warning: In design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4', a pin on submodule 'g_pe_row[0].g_pe_col[3].u_pe' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'psum_in[3]' is connected to logic 0. 
+Warning: In design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4', a pin on submodule 'g_pe_row[0].g_pe_col[3].u_pe' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'psum_in[2]' is connected to logic 0. 
+Warning: In design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4', a pin on submodule 'g_pe_row[0].g_pe_col[3].u_pe' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'psum_in[1]' is connected to logic 0. 
+Warning: In design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4', a pin on submodule 'g_pe_row[0].g_pe_col[3].u_pe' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'psum_in[0]' is connected to logic 0. 
+Warning: In design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4', the same net is connected to more than one pin on submodule 'g_pe_row[0].g_pe_col[0].u_pe'. (LINT-33)
+   Net '*Logic0*' is connected to pins 'psum_in[3]', 'psum_in[2]'', 'psum_in[1]', 'psum_in[0]'.
+Warning: In design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4', the same net is connected to more than one pin on submodule 'g_pe_row[0].g_pe_col[1].u_pe'. (LINT-33)
+   Net '*Logic0*' is connected to pins 'psum_in[3]', 'psum_in[2]'', 'psum_in[1]', 'psum_in[0]'.
+Warning: In design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4', the same net is connected to more than one pin on submodule 'g_pe_row[0].g_pe_col[2].u_pe'. (LINT-33)
+   Net '*Logic0*' is connected to pins 'psum_in[3]', 'psum_in[2]'', 'psum_in[1]', 'psum_in[0]'.
+Warning: In design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4', the same net is connected to more than one pin on submodule 'g_pe_row[0].g_pe_col[3].u_pe'. (LINT-33)
+   Net '*Logic0*' is connected to pins 'psum_in[3]', 'psum_in[2]'', 'psum_in[1]', 'psum_in[0]'.
+1
+check_timing
+Information: Changed wire load model for 'dff_DATA_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'd_ff_chain_DATA_WIDTH4_DEPTH1' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'dff_DATA_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'dff_DATA_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'd_ff_chain_DATA_WIDTH4_DEPTH2' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'dff_DATA_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'dff_DATA_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'dff_DATA_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'd_ff_chain_DATA_WIDTH4_DEPTH3' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'processing_element_DATA_WIDTH4_PSUM_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'processing_element_DATA_WIDTH4_PSUM_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'processing_element_DATA_WIDTH4_PSUM_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'processing_element_DATA_WIDTH4_PSUM_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'processing_element_DATA_WIDTH4_PSUM_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'processing_element_DATA_WIDTH4_PSUM_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'processing_element_DATA_WIDTH4_PSUM_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'processing_element_DATA_WIDTH4_PSUM_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'processing_element_DATA_WIDTH4_PSUM_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'processing_element_DATA_WIDTH4_PSUM_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'processing_element_DATA_WIDTH4_PSUM_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'processing_element_DATA_WIDTH4_PSUM_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'processing_element_DATA_WIDTH4_PSUM_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'processing_element_DATA_WIDTH4_PSUM_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'processing_element_DATA_WIDTH4_PSUM_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'processing_element_DATA_WIDTH4_PSUM_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'dff_DATA_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'dff_DATA_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'dff_DATA_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'd_ff_chain_DATA_WIDTH4_DEPTH3' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'dff_DATA_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'dff_DATA_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'd_ff_chain_DATA_WIDTH4_DEPTH2' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'dff_DATA_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'd_ff_chain_DATA_WIDTH4_DEPTH1' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4' from '(none)' to 'ForQA'. (OPT-170)
+  Allocating blocks in 'DW02_mult_A_width4_B_width4'
+Information: Changed wire load model for 'DW01_sub_width5' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*SUB_UNS_OP_4_4_5' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_sub_width5' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*SUB_UNS_OP_4_4_5' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_sub_width5' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*SUB_UNS_OP_4_4_5' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_sub_width5' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*SUB_UNS_OP_4_4_5' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_inc_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*ADD_UNS_OP_4_1_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_cmp2_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*LEQ_UNS_OP_4_4_1' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_cmp2_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*GEQ_UNS_OP_4_4_1' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_cmp2_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*LEQ_UNS_OP_4_4_1' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_add_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*ADD_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW02_mult_A_width4_B_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*MULT_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_add_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*ADD_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW02_mult_A_width4_B_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*MULT_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_add_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*ADD_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW02_mult_A_width4_B_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*MULT_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_add_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*ADD_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW02_mult_A_width4_B_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*MULT_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_add_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*ADD_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW02_mult_A_width4_B_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*MULT_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_add_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*ADD_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW02_mult_A_width4_B_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*MULT_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_add_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*ADD_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW02_mult_A_width4_B_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*MULT_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_add_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*ADD_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW02_mult_A_width4_B_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*MULT_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_add_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*ADD_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW02_mult_A_width4_B_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*MULT_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_add_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*ADD_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW02_mult_A_width4_B_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*MULT_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_add_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*ADD_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW02_mult_A_width4_B_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*MULT_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_add_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*ADD_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW02_mult_A_width4_B_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*MULT_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_add_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*ADD_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW02_mult_A_width4_B_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*MULT_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_add_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*ADD_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW02_mult_A_width4_B_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*MULT_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_add_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*ADD_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW02_mult_A_width4_B_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*MULT_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_add_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*ADD_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW02_mult_A_width4_B_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*MULT_UNS_OP_4_4_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_cmp2_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*LT_UNS_OP_4_4_1' from '(none)' to 'ForQA'. (OPT-170)
+Information: Updating design information... (UID-85)
+
+Information: Checking generated_clocks...
+
+Information: Checking loops...
+
+Information: Checking no_input_delay...
+
+Information: Checking unconstrained_endpoints...
+
+Information: Checking pulse_clock_cell_type...
+
+Information: Checking no_driving_cell...
+
+Information: Checking partial_input_delay...
+1
+# ---------- Compile ----------
+compile_ultra -timing_high_effort
+Loading db file '/home/acts/synopsys_tools/dc/syn/V-2023.12/libraries/syn/dw_foundation.sldb'
+Information: Failed to find dw_foundation.sldb in the user defined search_path, load it from 'Synopsys Root'. (UISN-70)
+Warning: DesignWare synthetic library dw_foundation.sldb is added to the synthetic_library in the current command. (UISN-40)
+Warning: The -timing_high_effort_script option is ignored.  (OPT-1342)
+Information: Performing leakage power optimization. (PWR-850)
+CPU Load: 0%, Ram Free: 3 GB, Swap Free: 5 GB, Work Disk Free: 219 GB, Tmp Disk Free: 219 GB
+Alib files are up-to-date.
+Information: Failed to find dw_foundation.sldb in the user defined search_path, load it from 'Synopsys Root'. (UISN-70)
+Warning: DesignWare synthetic library dw_foundation.sldb is added to the synthetic_library in the current command. (UISN-40)
+Information: Evaluating DesignWare library utilization. (UISN-27)
+
+============================================================================
+| DesignWare Building Block Library  |         Version         | Available |
+============================================================================
+| Basic DW Building Blocks           | V-2023.12-DWBB_202312.0 |     *     |
+| Licensed DW Building Blocks        | V-2023.12-DWBB_202312.0 |     *     |
+============================================================================
+
+====================================================================================================
+| Flow Information                                                                                 |
+----------------------------------------------------------------------------------------------------
+| Flow         | Design Compiler WLM                                                               |
+| Command Line | compile_ultra -timing_high_effort_script                                          |
+====================================================================================================
+| Design Information                                      | Value                                  |
+====================================================================================================
+| Number of Scenarios                                     | 0                                      |
+| Leaf Cell Count                                         | 460                                    |
+| Number of User Hierarchies                              | 35                                     |
+| Sequential Cell Count                                   | 245                                    |
+| Macro Count                                             | 0                                      |
+| Number of Power Domains                                 | 0                                      |
+| Number of Path Groups                                   | 2                                      |
+| Number of VT Class                                      | 1                                      |
+| Number of Clocks                                        | 1                                      |
+| Number of Dont Touch Cells                              | 58                                     |
+| Number of Dont Touch Nets                               | 0                                      |
+| Number of Size Only Cells                               | 0                                      |
+| Design with UPF Data                                    | false                                  |
+====================================================================================================
+Information: Sequential output inversion is enabled.  SVF file must be used for formal verification. (OPT-1208)
+
+Information: There are 54 potential problems in your design. Please run 'check_design' for more information. (LINT-99)
+
+Information: Uniquified 2 instances of design 'd_ff_chain_DATA_WIDTH4_DEPTH1'. (OPT-1056)
+Information: Uniquified 2 instances of design 'd_ff_chain_DATA_WIDTH4_DEPTH2'. (OPT-1056)
+Information: Uniquified 2 instances of design 'd_ff_chain_DATA_WIDTH4_DEPTH3'. (OPT-1056)
+Information: Uniquified 16 instances of design 'processing_element_DATA_WIDTH4_PSUM_WIDTH4'. (OPT-1056)
+Information: Uniquified 12 instances of design 'dff_DATA_WIDTH4'. (OPT-1056)
+  Simplifying Design 'systolic'
+Information: The register 'dut/g_pe_row[0].g_pe_col[3].u_pe/a_out_reg[0]' will be removed. (OPT-1207)
+Information: The register 'dut/g_pe_row[0].g_pe_col[3].u_pe/a_out_reg[1]' will be removed. (OPT-1207)
+Information: The register 'dut/g_pe_row[0].g_pe_col[3].u_pe/a_out_reg[2]' will be removed. (OPT-1207)
+Information: The register 'dut/g_pe_row[0].g_pe_col[3].u_pe/a_out_reg[3]' will be removed. (OPT-1207)
+Information: The register 'dut/g_pe_row[1].g_pe_col[3].u_pe/a_out_reg[0]' will be removed. (OPT-1207)
+Information: The register 'dut/g_pe_row[1].g_pe_col[3].u_pe/a_out_reg[1]' will be removed. (OPT-1207)
+Information: The register 'dut/g_pe_row[1].g_pe_col[3].u_pe/a_out_reg[2]' will be removed. (OPT-1207)
+Information: The register 'dut/g_pe_row[1].g_pe_col[3].u_pe/a_out_reg[3]' will be removed. (OPT-1207)
+Information: The register 'dut/g_pe_row[2].g_pe_col[3].u_pe/a_out_reg[0]' will be removed. (OPT-1207)
+Information: The register 'dut/g_pe_row[2].g_pe_col[3].u_pe/a_out_reg[1]' will be removed. (OPT-1207)
+Information: The register 'dut/g_pe_row[2].g_pe_col[3].u_pe/a_out_reg[2]' will be removed. (OPT-1207)
+Information: The register 'dut/g_pe_row[2].g_pe_col[3].u_pe/a_out_reg[3]' will be removed. (OPT-1207)
+Information: The register 'dut/g_pe_row[3].g_pe_col[3].u_pe/a_out_reg[0]' will be removed. (OPT-1207)
+Information: The register 'dut/g_pe_row[3].g_pe_col[3].u_pe/a_out_reg[1]' will be removed. (OPT-1207)
+Information: The register 'dut/g_pe_row[3].g_pe_col[3].u_pe/a_out_reg[2]' will be removed. (OPT-1207)
+Information: The register 'dut/g_pe_row[3].g_pe_col[3].u_pe/a_out_reg[3]' will be removed. (OPT-1207)
+
+Loaded alib file './alib-52/saed32rvt_ss0p7vn40c.db.alib'
+  Building model 'DW01_NAND2'
+Information: Ungrouping hierarchy dut before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/input_skew[1].d_ff_skew_in before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/input_skew[2].d_ff_skew_in before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/input_skew[3].d_ff_skew_in before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/g_pe_row[0].g_pe_col[0].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/output_unskew[2].d_ff_unskew_out before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/output_unskew[1].d_ff_unskew_out before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/output_unskew[0].d_ff_unskew_out before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/g_pe_row[3].g_pe_col[3].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/g_pe_row[3].g_pe_col[2].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/g_pe_row[3].g_pe_col[1].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/g_pe_row[3].g_pe_col[0].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/g_pe_row[2].g_pe_col[3].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/g_pe_row[2].g_pe_col[2].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/g_pe_row[2].g_pe_col[1].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/g_pe_row[2].g_pe_col[0].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/g_pe_row[1].g_pe_col[3].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/g_pe_row[1].g_pe_col[2].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/g_pe_row[1].g_pe_col[1].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/g_pe_row[1].g_pe_col[0].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/g_pe_row[0].g_pe_col[3].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/g_pe_row[0].g_pe_col[2].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/g_pe_row[0].g_pe_col[1].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/input_skew[1].d_ff_skew_in/g_dff_chain[0].dff_inst before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/output_unskew[2].d_ff_unskew_out/g_dff_chain[0].dff_inst before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/output_unskew[1].d_ff_unskew_out/g_dff_chain[1].dff_inst before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/output_unskew[1].d_ff_unskew_out/g_dff_chain[0].dff_inst before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/output_unskew[0].d_ff_unskew_out/g_dff_chain[2].dff_inst before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/output_unskew[0].d_ff_unskew_out/g_dff_chain[1].dff_inst before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/output_unskew[0].d_ff_unskew_out/g_dff_chain[0].dff_inst before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/input_skew[3].d_ff_skew_in/g_dff_chain[2].dff_inst before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/input_skew[3].d_ff_skew_in/g_dff_chain[1].dff_inst before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/input_skew[3].d_ff_skew_in/g_dff_chain[0].dff_inst before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/input_skew[2].d_ff_skew_in/g_dff_chain[1].dff_inst before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy dut/input_skew[2].d_ff_skew_in/g_dff_chain[0].dff_inst before Pass 1 (OPT-776)
+Information: Ungrouping 35 of 36 hierarchies before Pass 1 (OPT-775)
+CPU Load: 0%, Ram Free: 3 GB, Swap Free: 5 GB, Work Disk Free: 219 GB, Tmp Disk Free: 219 GB
+Information: State dependent leakage is now switched from on to off.
+
+  Beginning Pass 1 Mapping
+  ------------------------
+  Processing 'systolic'
+Information: Added key list 'DesignWare' to design 'systolic'. (DDB-72)
+ Implement Synthetic for 'systolic'.
+CPU Load: 0%, Ram Free: 3 GB, Swap Free: 5 GB, Work Disk Free: 219 GB, Tmp Disk Free: 219 GB
+
+  Updating timing information
+Information: Updating design information... (UID-85)
+Information: The library cell 'PMT3_RVT' in the library 'saed32rvt_ss0p7vn40c' is not characterized for internal power. (PWR-536)
+Information: The library cell 'PMT2_RVT' in the library 'saed32rvt_ss0p7vn40c' is not characterized for internal power. (PWR-536)
+Information: The library cell 'PMT1_RVT' in the library 'saed32rvt_ss0p7vn40c' is not characterized for internal power. (PWR-536)
+Information: The library cell 'NMT3_RVT' in the library 'saed32rvt_ss0p7vn40c' is not characterized for internal power. (PWR-536)
+Information: The library cell 'NMT2_RVT' in the library 'saed32rvt_ss0p7vn40c' is not characterized for internal power. (PWR-536)
+Information: The library cell 'NMT1_RVT' in the library 'saed32rvt_ss0p7vn40c' is not characterized for internal power. (PWR-536)
+Information: The target library(s) contains cell(s), other than black boxes, that are not characterized for internal power. (PWR-24)
+
+Threshold voltage group cell usage:
+>> saed32cell_svt 100.00%
+
+  Beginning Mapping Optimizations  (Ultra High effort)
+  -------------------------------
+  Mapping Optimization (Phase 1)
+
+                                  TOTAL                                                
+   ELAPSED            WORST NEG   SETUP    DESIGN                              LEAKAGE 
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT            POWER  
+  --------- --------- --------- --------- --------- ------------------------- ---------
+    0:00:04    3783.4      0.00       0.0     253.2                           198313.6094
+    0:00:04    3783.4      0.00       0.0     253.2                           198313.6094
+
+Threshold voltage group cell usage:
+>> saed32cell_svt 100.00%
+
+  Beginning Constant Register Removal
+  -----------------------------------
+    0:00:04    3783.4      0.00       0.0     253.2                           198313.6094
+    0:00:04    3783.4      0.00       0.0     253.2                           198313.6094
+
+Threshold voltage group cell usage:
+>> saed32cell_svt 100.00%
+
+  Beginning Global Optimizations
+  ------------------------------
+  Numerical Synthesis (Phase 1)
+  Numerical Synthesis (Phase 2)
+  Global Optimization (Phase 1)
+  Global Optimization (Phase 2)
+  Global Optimization (Phase 3)
+  Global Optimization (Phase 4)
+  Global Optimization (Phase 5)
+  Global Optimization (Phase 6)
+  Global Optimization (Phase 7)
+  Global Optimization (Phase 8)
+  Global Optimization (Phase 9)
+  Global Optimization (Phase 10)
+  Global Optimization (Phase 11)
+  Global Optimization (Phase 12)
+  Global Optimization (Phase 13)
+  Global Optimization (Phase 14)
+  Global Optimization (Phase 15)
+  Global Optimization (Phase 16)
+  Global Optimization (Phase 17)
+  Global Optimization (Phase 18)
+  Global Optimization (Phase 19)
+  Global Optimization (Phase 20)
+  Global Optimization (Phase 21)
+  Global Optimization (Phase 22)
+  Global Optimization (Phase 23)
+  Global Optimization (Phase 24)
+  Global Optimization (Phase 25)
+  Global Optimization (Phase 26)
+  Global Optimization (Phase 27)
+  Global Optimization (Phase 28)
+  Global Optimization (Phase 29)
+  Global Optimization (Phase 30)
+
+Threshold voltage group cell usage:
+>> saed32cell_svt 100.00%
+
+  Beginning Isolate Ports
+  -----------------------
+
+Threshold voltage group cell usage:
+>> saed32cell_svt 100.00%
+
+  Beginning Delay Optimization
+  ----------------------------
+    0:00:04    3481.8      0.20       0.2     565.7                           157411.0000
+    0:00:04    3483.3      0.00       0.0     566.9                           157257.8125
+    0:00:04    3483.3      0.00       0.0     566.9                           157257.8125
+    0:00:05    3459.2      0.00       0.0     569.8                           156646.6875
+
+Threshold voltage group cell usage:
+>> saed32cell_svt 100.00%
+    0:00:05    3459.2      0.00       0.0     569.8                           156646.6875
+    0:00:05    3459.2      0.00       0.0     569.8                           156646.6875
+
+  Beginning WLM Backend Optimization
+  --------------------------------------
+    0:00:05    3438.1      0.00       0.0     551.5                           155741.0469
+    0:00:05    3438.1      0.00       0.0     551.5                           155741.0469
+    0:00:05    3438.1      0.00       0.0     551.5                           155741.0469
+    0:00:05    3438.1      0.00       0.0     551.5                           155741.0469
+    0:00:05    3438.1      0.00       0.0     551.5                           155741.0469
+    0:00:05    3437.6      0.00       0.0     551.5                           155560.1094
+    0:00:05    3437.6      0.00       0.0     551.5                           155560.1094
+    0:00:05    3437.6      0.00       0.0     551.5                           155560.1094
+    0:00:05    3437.6      0.00       0.0     551.5                           155560.1094
+    0:00:05    3437.6      0.00       0.0     551.5                           155560.1094
+    0:00:05    3437.6      0.00       0.0     551.5                           155560.1094
+    0:00:05    3437.6      0.00       0.0     551.5                           155560.1094
+    0:00:05    3437.6      0.00       0.0     551.5                           155560.1094
+    0:00:05    3437.6      0.00       0.0     551.5                           155560.1094
+    0:00:05    3437.6      0.00       0.0     551.5                           155560.1094
+    0:00:05    3437.6      0.00       0.0     551.5                           155560.1094
+    0:00:05    3437.6      0.00       0.0     551.5                           155560.1094
+    0:00:05    3437.6      0.00       0.0     551.5                           155560.1094
+    0:00:05    3437.6      0.00       0.0     551.5                           155560.1094
+    0:00:05    3437.6      0.00       0.0     551.5                           155560.1094
+    0:00:05    3437.6      0.00       0.0     551.5                           155560.1094
+    0:00:05    3437.6      0.00       0.0     551.5                           155560.1094
+    0:00:05    3437.6      0.00       0.0     551.5                           155560.1094
+    0:00:05    3437.6      0.00       0.0     551.5                           155560.1094
+
+
+  Beginning Design Rule Fixing  (max_transition)  (max_capacitance)
+  ----------------------------
+
+                                  TOTAL                                                
+   ELAPSED            WORST NEG   SETUP    DESIGN                              LEAKAGE 
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT            POWER  
+  --------- --------- --------- --------- --------- ------------------------- ---------
+    0:00:05    3437.6      0.00       0.0     551.5                           155560.1094
+  Global Optimization (Phase 31)
+  Global Optimization (Phase 32)
+  Global Optimization (Phase 33)
+    0:00:07    4261.0      0.00       0.0      90.6                           205924.0312
+    0:00:07    4261.0      0.00       0.0      90.6                           205924.0312
+
+Threshold voltage group cell usage:
+>> saed32cell_svt 100.00%
+
+
+  Beginning Leakage Power Optimization  (max_leakage_power 0)
+  ------------------------------------
+
+                                  TOTAL                                                
+   ELAPSED            WORST NEG   SETUP    DESIGN                              LEAKAGE 
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT            POWER  
+  --------- --------- --------- --------- --------- ------------------------- ---------
+    0:00:07    4261.0      0.00       0.0      90.6                           205924.0312
+    0:00:07    4261.0      0.00       0.0      90.6                           205924.0312
+    0:00:07    4261.0      0.00       0.0      90.6                           205924.0312
+    0:00:07    4261.0      0.00       0.0      90.6                           205924.0312
+    0:00:07    4255.9      0.00       0.0      90.6                           205179.5781
+    0:00:07    4255.9      0.00       0.0      90.6                           205179.5781
+    0:00:07    4255.9      0.00       0.0      90.6                           205179.5781
+    0:00:07    4255.9      0.00       0.0      90.6                           205179.5781
+    0:00:07    4255.9      0.00       0.0      90.6                           205179.5781
+    0:00:07    4255.9      0.00       0.0      90.6                           205179.5781
+    0:00:07    4255.9      0.00       0.0      90.6                           205179.5781
+    0:00:07    4255.9      0.00       0.0      90.6                           205179.5781
+    0:00:07    4255.9      0.00       0.0      90.6                           205179.5781
+    0:00:07    4255.9      0.00       0.0      90.6                           205179.5781
+    0:00:07    4255.9      0.00       0.0      90.6                           205179.5781
+    0:00:07    4255.9      0.00       0.0      90.6                           205179.5781
+    0:00:07    4255.9      0.00       0.0      90.6                           205179.5781
+    0:00:07    4255.9      0.00       0.0      90.6                           205179.5781
+    0:00:07    4255.9      0.00       0.0      90.6                           205179.5781
+    0:00:07    4255.9      0.00       0.0      90.6                           205179.5781
+    0:00:07    4255.9      0.00       0.0      90.6                           205179.5781
+    0:00:07    4255.9      0.00       0.0      90.6                           205179.5781
+    0:00:07    4255.9      0.00       0.0      90.6                           205179.5781
+
+                                  TOTAL                                                
+   ELAPSED            WORST NEG   SETUP    DESIGN                              LEAKAGE 
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT            POWER  
+  --------- --------- --------- --------- --------- ------------------------- ---------
+    0:00:07    4255.9      0.00       0.0      90.6                           205179.5781
+    0:00:07    4098.6      0.00       0.0      90.0                           200082.8438
+    0:00:07    4098.6      0.00       0.0      90.0                           200082.8438
+    0:00:07    4098.6      0.00       0.0      90.0                           200082.8438
+    0:00:07    4098.6      0.00       0.0      90.0                           200082.8438
+    0:00:09    7227.9      0.83       8.3      46.3                           326053.4375
+    0:00:09    7086.0      0.00       0.0      84.6                           314565.8438
+    0:00:09    7086.0      0.00       0.0      84.6                           314565.8438
+    0:00:09    7086.0      0.00       0.0      84.6                           314565.8438
+    0:00:09    7086.0      0.00       0.0      84.6                           314565.8438
+    0:00:09    7086.0      0.00       0.0      84.6                           314565.8438
+    0:00:09    7046.7      0.00       0.0      79.5                           308661.3750
+CPU Load: 0%, Ram Free: 3 GB, Swap Free: 5 GB, Work Disk Free: 219 GB, Tmp Disk Free: 219 GB
+Loading db file '/study/Testcase_C-DAC_july24/Testcase_C-DAC_july24/C-DAC_july24/ref/lib/stdcell_rvt/saed32rvt_ss0p7vn40c.db'
+Loading db file '/study/Testcase_C-DAC_july24/Testcase_C-DAC_july24/C-DAC_july24/ref/lib/stdcell_rvt/saed32rvt_tt0p78vn40c.db'
+Loading db file '/study/Testcase_C-DAC_july24/Testcase_C-DAC_july24/C-DAC_july24/ref/lib/stdcell_rvt/saed32rvt_ff1p16v125c.db'
+
+
+Note: Symbol # after min delay cost means estimated hold TNS across all active scenarios 
+
+
+  Optimization Complete
+  ---------------------
+Information: State dependent leakage is now switched from off to on.
+Information: Propagating switching activity (low effort zero delay simulation). (PWR-6)
+CPU Load: 0%, Ram Free: 3 GB, Swap Free: 5 GB, Work Disk Free: 219 GB, Tmp Disk Free: 219 GB
+Information: Total number of MV cells in the design.
+----------------------------------------------------------------------------------------------------
+ MV Cells                                           Total Number                                   
+----------------------------------------------------------------------------------------------------
+ Level Shifter:                                     0                                             
+ Enable Level Shifter:                              0                                             
+ Isolation Cell:                                    0                                             
+ Retention Cell:                                    0                                             
+ Retention Clamp Cell:                              0                                             
+ Switch Cell:                                       0                                             
+ Always-On Cell:                                    0                                             
+ Repeater Cell:                                     0                                             
+
+----------------------------------------------------------------------------------------------------
+Unmapped MV Cells 
+----------------------------------------------------------------------------------------------------
+0 Isolation Cells are unmapped 
+0 Retention Clamp Cells are unmapped 
+----------------------------------------------------------------------------------------------------
+1
+# ---------- Write netlist ----------
+set NET_DIR "/home/DVLSI10/pd_group7/netlist"
+/home/DVLSI10/pd_group7/netlist
+write_file -format verilog -hierarchy -output $NET_DIR/systolic_netlist.v
+Writing verilog file '/home/DVLSI10/pd_group7/netlist/systolic_netlist.v'.
+1
+write_sdc  $NET_DIR/post_systolic_synth.sdc
+1
+# ---------- Reports ----------
+report_timing -path full -delay max -max_paths 1 > $NET_DIR/systolic_timing.rpt
+report_area   > $NET_DIR/systolic_area.rpt
+report_power  > $NET_DIR/systolic_power.rpt
+report_qor    > $NET_DIR/systolic_qor.rpt
+quit
+
+Memory usage for this session 286 Mbytes.
+Memory usage for this session including child processes 286 Mbytes.
+CPU usage for this session 17 seconds ( 0.00 hours ).
+Elapsed time for this session 20 seconds ( 0.01 hours ).
+
+Thank you...

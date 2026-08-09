@@ -1,0 +1,1495 @@
+
+                           Design Compiler Graphical 
+                                 DC Ultra (TM)
+                                  DFTMAX (TM)
+                              Power Compiler (TM)
+                                 DesignWare (R)
+                                 DC Expert (TM)
+                               Design Vision (TM)
+                               HDL Compiler (TM)
+                               VHDL Compiler (TM)
+                                  DFT Compiler
+                               Design Compiler(R)
+
+                 Version V-2023.12 for linux64 - Nov 27, 2023 
+
+                    Copyright (c) 1988 - 2023 Synopsys, Inc.
+   This software and the associated documentation are proprietary to Synopsys,
+ Inc. This software may only be used in accordance with the terms and conditions
+ of a written license agreement with Synopsys, Inc. All other use, reproduction,
+   or distribution of this software is strictly prohibited.  Licensed Products
+     communicate with Synopsys servers for the purpose of providing software
+    updates, detecting software piracy and verifying that customers are using
+    Licensed Products in conformity with the applicable License Key for such
+  Licensed Products. Synopsys will use information gathered in connection with
+    this process to deliver software updates and pursue software pirates and
+                                   infringers.
+
+ Inclusivity & Diversity - Visit SolvNetPlus to read the "Synopsys Statement on
+            Inclusivity and Diversity" (Refer to article 000036315 at
+                        https://solvnetplus.synopsys.com)
+Initializing...
+Current time:       Sat Aug  8 23:58:24 2026
+Hostname:           acts-eda.pune.cdac.in
+CPU Model:          Intel(R) Xeon(R) CPU E5-2680 v3 @ 2.50GHz
+CPU Details:        Cores = 48 : Sockets = 2 : Cache Size = 30720 KB : Freq = 3.30 GHz
+OS:                 Linux 4.18.0-553.51.1.el8_10.x86_64
+RAM:                 62 GB (Free   2 GB)
+Swap:                 7 GB (Free   5 GB)
+Work Filesystem:    / mounted to /dev/mapper/almalinux-root
+Tmp Filesystem:     / mounted to /dev/mapper/almalinux-root
+Work Disk:          1370 GB (Free 218 GB)
+Tmp Disk:           1370 GB (Free 218 GB)
+
+CPU Load: 3%, Ram Free: 2 GB, Swap Free: 5 GB, Work Disk Free: 218 GB, Tmp Disk Free: 218 GB
+###############################################################################
+# Synthesis script (dc_shell) for system_top
+#
+# Usage: dc_shell -f synth_system_top.tcl | tee synth_system_top.log
+###############################################################################
+# ==============================================================================
+# 1. Setup
+# ==============================================================================
+remove_design -all
+1
+set DESIGN_NAME  system_top
+system_top
+set PD_ROOT      /home/DVLSI10/pd_group7
+/home/DVLSI10/pd_group7
+set RTL_DIR      $PD_ROOT/rtl
+/home/DVLSI10/pd_group7/rtl
+set SDC_DIR      $PD_ROOT/sdc
+/home/DVLSI10/pd_group7/sdc
+set NETLIST_DIR  $PD_ROOT/netlist
+/home/DVLSI10/pd_group7/netlist
+set RESULTS_DIR  $PD_ROOT/results
+/home/DVLSI10/pd_group7/results
+set REPORTS_DIR  $PD_ROOT/reports
+/home/DVLSI10/pd_group7/reports
+set OUTPUTS_DIR  $PD_ROOT/outputs
+/home/DVLSI10/pd_group7/outputs
+# Create output directories up front -- write_* and redirect below assume
+# these exist; DC does not create them for you.
+file mkdir $NETLIST_DIR
+file mkdir $RESULTS_DIR
+file mkdir $REPORTS_DIR
+file mkdir $OUTPUTS_DIR
+set search_path [list . $RTL_DIR $search_path]
+. /home/DVLSI10/pd_group7/rtl {. /home/acts/synopsys_tools/dc/syn/V-2023.12/libraries/syn /home/acts/synopsys_tools/dc/syn/V-2023.12/dw/syn_ver /home/acts/synopsys_tools/dc/syn/V-2023.12/dw/sim_ver}
+set target_library "/home/acts/Documents/References/ref/lib/stdcell_rvt/saed32rvt_tt0p78vn40c.db"
+/home/acts/Documents/References/ref/lib/stdcell_rvt/saed32rvt_tt0p78vn40c.db
+set link_library   "* $target_library"
+* /home/acts/Documents/References/ref/lib/stdcell_rvt/saed32rvt_tt0p78vn40c.db
+define_design_lib WORK -path ./WORK
+1
+# ==============================================================================
+# 2. Analyze
+# ==============================================================================
+# Full file list, in dependency order (leaf modules first). The previous
+# version of this list was missing input_fifo.sv and output_fifo.sv --
+# accel_fifo.sv instantiates both directly (u_input_fifo / u_output_fifo),
+# so without them `elaborate system_top` would fail to resolve those
+# module references.
+analyze -format sverilog -library WORK [list \
+    $RTL_DIR/dff.sv \
+    $RTL_DIR/d_ff_chain.sv \
+    $RTL_DIR/processing_element.sv \
+    $RTL_DIR/pe_array.sv \
+    $RTL_DIR/systolic.sv \
+    $RTL_DIR/async_fifo.sv \
+    $RTL_DIR/input_fifo.sv \
+    $RTL_DIR/output_fifo.sv \
+    $RTL_DIR/accel_fifo.sv \
+    $RTL_DIR/dma_bram.sv \
+    $RTL_DIR/system_top.sv \
+]
+Running PRESTO HDLC
+Compiling source file /home/DVLSI10/pd_group7/rtl/dff.sv
+Compiling source file /home/DVLSI10/pd_group7/rtl/d_ff_chain.sv
+Compiling source file /home/DVLSI10/pd_group7/rtl/processing_element.sv
+Compiling source file /home/DVLSI10/pd_group7/rtl/pe_array.sv
+Compiling source file /home/DVLSI10/pd_group7/rtl/systolic.sv
+Compiling source file /home/DVLSI10/pd_group7/rtl/async_fifo.sv
+Compiling source file /home/DVLSI10/pd_group7/rtl/input_fifo.sv
+Compiling source file /home/DVLSI10/pd_group7/rtl/output_fifo.sv
+Compiling source file /home/DVLSI10/pd_group7/rtl/accel_fifo.sv
+Compiling source file /home/DVLSI10/pd_group7/rtl/dma_bram.sv
+Compiling source file /home/DVLSI10/pd_group7/rtl/system_top.sv
+Presto compilation completed successfully.
+Loading db file '/home/acts/Documents/References/ref/lib/stdcell_rvt/saed32rvt_tt0p78vn40c.db'
+1
+# ==============================================================================
+# 3. Elaborate & Link
+# ==============================================================================
+elaborate $DESIGN_NAME -library WORK
+Loading db file '/home/acts/synopsys_tools/dc/syn/V-2023.12/libraries/syn/gtech.db'
+Loading db file '/home/acts/synopsys_tools/dc/syn/V-2023.12/libraries/syn/standard.sldb'
+  Loading link library 'saed32rvt_tt0p78vn40c'
+  Loading link library 'gtech'
+Running PRESTO HDLC
+Presto compilation completed successfully. (system_top)
+Elaborated 1 design.
+Current design is now 'system_top'.
+Information: Building the design 'dma_bram' instantiated from design 'system_top' with
+	the parameters "AXI_ADDR_WIDTH=32,AXI_DATA_WIDTH=32,STREAM_WIDTH=4,BRAM_DEPTH=48". (HDL-193)
+Presto compilation completed successfully. (dma_bram_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_STREAM_WIDTH4_BRAM_DEPTH48)
+Information: Building the design 'accel_fifo' instantiated from design 'system_top' with
+	the parameters "MATRIX_SIZE=4,IN_DATA_WIDTH=4,IN_DATA_WIDTH_M=4,IN_DEPTH=32,OUT_DATA_WIDTH=4,OUT_DATA_WIDTH_M=4,OUT_DEPTH=16". (HDL-193)
+Presto compilation completed successfully. (accel_fifo_MATRIX_SIZE4_IN_DATA_WIDTH4_IN_DATA_WIDTH_M4_IN_DEPTH32_OUT_DATA_WIDTH4_OUT_DATA_WIDTH_M4_OUT_DEPTH16)
+Information: Building the design 'dma' instantiated from design 'dma_bram_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_STREAM_WIDTH4_BRAM_DEPTH48' with
+	the parameters "ADDR_WIDTH=32,DATA_WIDTH=32,STREAM_WIDTH=4". (HDL-193)
+
+Statistics for case statements in always block at line 145 in file
+	'/home/DVLSI10/pd_group7/rtl/dma_bram.sv'
+===============================================
+|           Line           |  full/ parallel  |
+===============================================
+|           162            |     no/auto      |
+===============================================
+
+Statistics for case statements in always block at line 186 in file
+	'/home/DVLSI10/pd_group7/rtl/dma_bram.sv'
+===============================================
+|           Line           |  full/ parallel  |
+===============================================
+|           197            |    auto/auto     |
+===============================================
+
+Statistics for case statements in always block at line 236 in file
+	'/home/DVLSI10/pd_group7/rtl/dma_bram.sv'
+===============================================
+|           Line           |  full/ parallel  |
+===============================================
+|           250            |     no/auto      |
+===============================================
+
+Statistics for case statements in always block at line 359 in file
+	'/home/DVLSI10/pd_group7/rtl/dma_bram.sv'
+===============================================
+|           Line           |  full/ parallel  |
+===============================================
+|           376            |     no/auto      |
+===============================================
+
+Inferred memory devices in process
+	in routine dma_ADDR_WIDTH32_DATA_WIDTH32_STREAM_WIDTH4 line 128 in file
+		'/home/DVLSI10/pd_group7/rtl/dma_bram.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|   reg_status_reg    | Flip-flop |  32   |  Y  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+
+Inferred memory devices in process
+	in routine dma_ADDR_WIDTH32_DATA_WIDTH32_STREAM_WIDTH4 line 145 in file
+		'/home/DVLSI10/pd_group7/rtl/dma_bram.sv'.
+==================================================================================
+|     Register Name      |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+==================================================================================
+|  s_axi_lite_bresp_reg  |   Latch   |   2   |  Y  | N  | Y  | N  | -  | -  | -  |
+|      reg_ctrl_reg      | Flip-flop |  32   |  Y  | N  | Y  | N  | N  | N  | N  |
+|    reg_src_addr_reg    | Flip-flop |  32   |  Y  | N  | Y  | N  | N  | N  | N  |
+|   reg_dest_addr_reg    | Flip-flop |  32   |  Y  | N  | Y  | N  | N  | N  | N  |
+|    reg_xfer_len_reg    | Flip-flop |  32   |  Y  | N  | Y  | N  | N  | N  | N  |
+|    start_pulse_reg     | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+| s_axi_lite_awready_reg | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+| s_axi_lite_wready_reg  | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+| s_axi_lite_bvalid_reg  | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+==================================================================================
+
+Inferred memory devices in process
+	in routine dma_ADDR_WIDTH32_DATA_WIDTH32_STREAM_WIDTH4 line 186 in file
+		'/home/DVLSI10/pd_group7/rtl/dma_bram.sv'.
+==================================================================================
+|     Register Name      |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+==================================================================================
+|  s_axi_lite_rresp_reg  |   Latch   |   2   |  Y  | N  | Y  | N  | -  | -  | -  |
+| s_axi_lite_arready_reg | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+| s_axi_lite_rvalid_reg  | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|  s_axi_lite_rdata_reg  | Flip-flop |  32   |  Y  | N  | Y  | N  | N  | N  | N  |
+==================================================================================
+
+Inferred memory devices in process
+	in routine dma_ADDR_WIDTH32_DATA_WIDTH32_STREAM_WIDTH4 line 236 in file
+		'/home/DVLSI10/pd_group7/rtl/dma_bram.sv'.
+==================================================================================
+|     Register Name      |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+==================================================================================
+|       rd_buf_reg       | Flip-flop |  32   |  Y  | N  | N  | N  | N  | N  | N  |
+|      r_state_reg       | Flip-flop |   3   |  Y  | N  | Y  | N  | N  | N  | N  |
+|    m_axi_araddr_reg    | Flip-flop |  32   |  Y  | N  | Y  | N  | N  | N  | N  |
+|    m_axi_arlen_reg     | Flip-flop |   8   |  Y  | N  | Y  | N  | N  | N  | N  |
+|   m_axi_arvalid_reg    | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|    m_axi_rready_reg    | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+| m_axis_mm2s_tvalid_reg | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|      rd_done_reg       | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|      rd_error_reg      | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|     unpack_idx_reg     | Flip-flop |   3   |  Y  | N  | Y  | N  | N  | N  | N  |
+|   rd_bytes_left_reg    | Flip-flop |  32   |  Y  | N  | Y  | N  | N  | N  | N  |
+|    rd_last_beat_reg    | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+==================================================================================
+
+Inferred memory devices in process
+	in routine dma_ADDR_WIDTH32_DATA_WIDTH32_STREAM_WIDTH4 line 359 in file
+		'/home/DVLSI10/pd_group7/rtl/dma_bram.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|     w_state_reg     | Flip-flop |   3   |  Y  | N  | Y  | N  | N  | N  | N  |
+|     wr_done_reg     | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|    wr_error_reg     | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|  m_axi_awaddr_reg   | Flip-flop |  32   |  Y  | N  | Y  | N  | N  | N  | N  |
+|   m_axi_awlen_reg   | Flip-flop |   8   |  Y  | N  | Y  | N  | N  | N  | N  |
+|  m_axi_awvalid_reg  | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|   m_axi_wdata_reg   | Flip-flop |  32   |  Y  | N  | Y  | N  | N  | N  | N  |
+|   m_axi_wstrb_reg   | Flip-flop |   4   |  Y  | N  | Y  | N  | N  | N  | N  |
+|  m_axi_wvalid_reg   | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|   m_axi_wlast_reg   | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|  m_axi_bready_reg   | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|  pack_elm_cnt_reg   | Flip-flop |   4   |  Y  | N  | Y  | N  | N  | N  | N  |
+|    pack_buf_reg     | Flip-flop |  64   |  Y  | N  | Y  | N  | N  | N  | N  |
+|  wr_bytes_left_reg  | Flip-flop |  32   |  Y  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+Warning:  /home/DVLSI10/pd_group7/rtl/dma_bram.sv:145: Netlist for always_ff block contains a latch. (ELAB-978)
+Warning:  /home/DVLSI10/pd_group7/rtl/dma_bram.sv:186: Netlist for always_ff block contains a latch. (ELAB-978)
+Presto compilation completed successfully. (dma_ADDR_WIDTH32_DATA_WIDTH32_STREAM_WIDTH4)
+Information: Building the design 'bram_axi_top' instantiated from design 'dma_bram_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_STREAM_WIDTH4_BRAM_DEPTH48' with
+	the parameters "AXI_ADDR_WIDTH=32,AXI_DATA_WIDTH=32,BRAM_DEPTH=48". (HDL-193)
+Presto compilation completed successfully. (bram_axi_top_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_BRAM_DEPTH48)
+Information: Building the design 'input_fifo' instantiated from design 'accel_fifo_MATRIX_SIZE4_IN_DATA_WIDTH4_IN_DATA_WIDTH_M4_IN_DEPTH32_OUT_DATA_WIDTH4_OUT_DATA_WIDTH_M4_OUT_DEPTH16' with
+	the parameters "DATA_WIDTH=4,DATA_WIDTH_M=4,MATRIX_SIZE=4,DEPTH=32". (HDL-193)
+Warning:  /home/DVLSI10/pd_group7/rtl/input_fifo.sv:94: signed to unsigned conversion occurs. (VER-318)
+Warning:  /home/DVLSI10/pd_group7/rtl/input_fifo.sv:121: signed to unsigned conversion occurs. (VER-318)
+Warning:  /home/DVLSI10/pd_group7/rtl/input_fifo.sv:123: signed to unsigned conversion occurs. (VER-318)
+Warning:  /home/DVLSI10/pd_group7/rtl/input_fifo.sv:100: DEFAULT branch of CASE statement cannot be reached. (ELAB-311)
+
+Statistics for case statements in always block at line 84 in file
+	'/home/DVLSI10/pd_group7/rtl/input_fifo.sv'
+===============================================
+|           Line           |  full/ parallel  |
+===============================================
+|            85            |    auto/auto     |
+===============================================
+
+Statistics for case statements in always block at line 105 in file
+	'/home/DVLSI10/pd_group7/rtl/input_fifo.sv'
+===============================================
+|           Line           |  full/ parallel  |
+===============================================
+|           114            |    auto/auto     |
+===============================================
+
+Inferred memory devices in process
+	in routine input_fifo_DATA_WIDTH4_DATA_WIDTH_M4_MATRIX_SIZE4_DEPTH32 line 76 in file
+		'/home/DVLSI10/pd_group7/rtl/input_fifo.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|  current_state_reg  | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+
+Inferred memory devices in process
+	in routine input_fifo_DATA_WIDTH4_DATA_WIDTH_M4_MATRIX_SIZE4_DEPTH32 line 105 in file
+		'/home/DVLSI10/pd_group7/rtl/input_fifo.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|     counter_reg     | Flip-flop |   5   |  Y  | N  | Y  | N  | N  | N  | N  |
+|   array_data_reg    | Flip-flop |  128  |  Y  | N  | Y  | N  | N  | N  | N  |
+|   array_start_reg   | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+Presto compilation completed successfully. (input_fifo_DATA_WIDTH4_DATA_WIDTH_M4_MATRIX_SIZE4_DEPTH32)
+Information: Building the design 'systolic' instantiated from design 'accel_fifo_MATRIX_SIZE4_IN_DATA_WIDTH4_IN_DATA_WIDTH_M4_IN_DEPTH32_OUT_DATA_WIDTH4_OUT_DATA_WIDTH_M4_OUT_DEPTH16' with
+	the parameters "MATRIX_SIZE=4,DATA_WIDTH=4,PSUM_WIDTH=4". (HDL-193)
+
+Inferred memory devices in process
+	in routine systolic_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4 line 24 in file
+		'/home/DVLSI10/pd_group7/rtl/systolic.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+| input_data_reg_reg  | Flip-flop |  128  |  Y  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+
+Inferred memory devices in process
+	in routine systolic_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4 line 59 in file
+		'/home/DVLSI10/pd_group7/rtl/systolic.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|      busy_reg       | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+Presto compilation completed successfully. (systolic_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4)
+Information: Building the design 'output_fifo' instantiated from design 'accel_fifo_MATRIX_SIZE4_IN_DATA_WIDTH4_IN_DATA_WIDTH_M4_IN_DEPTH32_OUT_DATA_WIDTH4_OUT_DATA_WIDTH_M4_OUT_DEPTH16' with
+	the parameters "DATA_WIDTH=4,DATA_WIDTH_M=4,MATRIX_SIZE=4,DEPTH=16". (HDL-193)
+Warning:  /home/DVLSI10/pd_group7/rtl/output_fifo.sv:47: signed to unsigned conversion occurs. (VER-318)
+Warning:  /home/DVLSI10/pd_group7/rtl/output_fifo.sv:86: signed to unsigned conversion occurs. (VER-318)
+Warning:  /home/DVLSI10/pd_group7/rtl/output_fifo.sv:112: signed to unsigned conversion occurs. (VER-318)
+Warning:  /home/DVLSI10/pd_group7/rtl/output_fifo.sv:138: signed to unsigned conversion occurs. (VER-318)
+Warning:  /home/DVLSI10/pd_group7/rtl/output_fifo.sv:145: signed to unsigned conversion occurs. (VER-318)
+Warning:  /home/DVLSI10/pd_group7/rtl/output_fifo.sv:92: DEFAULT branch of CASE statement cannot be reached. (ELAB-311)
+Warning:  /home/DVLSI10/pd_group7/rtl/output_fifo.sv:120: DEFAULT branch of CASE statement cannot be reached. (ELAB-311)
+
+Statistics for case statements in always block at line 76 in file
+	'/home/DVLSI10/pd_group7/rtl/output_fifo.sv'
+===============================================
+|           Line           |  full/ parallel  |
+===============================================
+|            77            |    auto/auto     |
+===============================================
+
+Statistics for case statements in always block at line 97 in file
+	'/home/DVLSI10/pd_group7/rtl/output_fifo.sv'
+===============================================
+|           Line           |  full/ parallel  |
+===============================================
+|           102            |    auto/auto     |
+===============================================
+
+Inferred memory devices in process
+	in routine output_fifo_DATA_WIDTH4_DATA_WIDTH_M4_MATRIX_SIZE4_DEPTH16 line 69 in file
+		'/home/DVLSI10/pd_group7/rtl/output_fifo.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|  current_state_reg  | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+
+Inferred memory devices in process
+	in routine output_fifo_DATA_WIDTH4_DATA_WIDTH_M4_MATRIX_SIZE4_DEPTH16 line 97 in file
+		'/home/DVLSI10/pd_group7/rtl/output_fifo.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|   result_reg_reg    | Flip-flop |  64   |  Y  | N  | Y  | N  | N  | N  | N  |
+|     counter_reg     | Flip-flop |   4   |  Y  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+
+Inferred memory devices in process
+	in routine output_fifo_DATA_WIDTH4_DATA_WIDTH_M4_MATRIX_SIZE4_DEPTH16 line 133 in file
+		'/home/DVLSI10/pd_group7/rtl/output_fifo.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|   rd_elem_cnt_reg   | Flip-flop |   4   |  Y  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+Presto compilation completed successfully. (output_fifo_DATA_WIDTH4_DATA_WIDTH_M4_MATRIX_SIZE4_DEPTH16)
+Information: Building the design 'axi4_slave_if' instantiated from design 'bram_axi_top_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_BRAM_DEPTH48' with
+	the parameters "AXI_ADDR_WIDTH=32,AXI_DATA_WIDTH=32,MEM_ADDR_WIDTH=6". (HDL-193)
+Warning:  /home/DVLSI10/pd_group7/rtl/dma_bram.sv:685: DEFAULT branch of CASE statement cannot be reached. (ELAB-311)
+
+Statistics for case statements in always block at line 593 in file
+	'/home/DVLSI10/pd_group7/rtl/dma_bram.sv'
+===============================================
+|           Line           |  full/ parallel  |
+===============================================
+|           611            |    auto/auto     |
+===============================================
+
+Inferred memory devices in process
+	in routine axi4_slave_if_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_MEM_ADDR_WIDTH6 line 593 in file
+		'/home/DVLSI10/pd_group7/rtl/dma_bram.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|      rdata_reg      | Flip-flop |  32   |  Y  | N  | N  | N  | N  | N  | N  |
+|      state_reg      | Flip-flop |   2   |  Y  | N  | Y  | N  | N  | N  | N  |
+|     bvalid_reg      | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|      bresp_reg      | Flip-flop |   2   |  Y  | N  | Y  | N  | N  | N  | N  |
+|     rvalid_reg      | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|      rlast_reg      | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|      rresp_reg      | Flip-flop |   2   |  Y  | N  | Y  | N  | N  | N  | N  |
+|  mem_req_valid_reg  | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|   mem_req_we_reg    | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|  mem_req_wstrb_reg  | Flip-flop |   4   |  Y  | N  | Y  | N  | N  | N  | N  |
+|     wready_reg      | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+| rd_req_pending_reg  | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|  rd_last_pend_reg   | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|   rbeats_left_reg   | Flip-flop |   8   |  Y  | N  | N  | N  | N  | N  | N  |
+|    waddr_cnt_reg    | Flip-flop |   6   |  Y  | N  | N  | N  | N  | N  | N  |
+|   wbeats_left_reg   | Flip-flop |   8   |  Y  | N  | N  | N  | N  | N  | N  |
+|    raddr_cnt_reg    | Flip-flop |   6   |  Y  | N  | N  | N  | N  | N  | N  |
+|  mem_req_addr_reg   | Flip-flop |   6   |  Y  | N  | N  | N  | N  | N  | N  |
+|  mem_req_wdata_reg  | Flip-flop |  32   |  Y  | N  | N  | N  | N  | N  | N  |
+===============================================================================
+Presto compilation completed successfully. (axi4_slave_if_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_MEM_ADDR_WIDTH6)
+Information: Building the design 'axi4_lite_slave_if' instantiated from design 'bram_axi_top_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_BRAM_DEPTH48' with
+	the parameters "AXI_ADDR_WIDTH=32,AXI_DATA_WIDTH=32,MEM_ADDR_WIDTH=6". (HDL-193)
+Warning:  /home/DVLSI10/pd_group7/rtl/dma_bram.sv:809: DEFAULT branch of CASE statement cannot be reached. (ELAB-311)
+
+Statistics for case statements in always block at line 746 in file
+	'/home/DVLSI10/pd_group7/rtl/dma_bram.sv'
+===============================================
+|           Line           |  full/ parallel  |
+===============================================
+|           759            |    auto/auto     |
+===============================================
+
+Inferred memory devices in process
+	in routine axi4_lite_slave_if_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_MEM_ADDR_WIDTH6 line 746 in file
+		'/home/DVLSI10/pd_group7/rtl/dma_bram.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|  mem_req_wdata_reg  | Flip-flop |  32   |  Y  | N  | N  | N  | N  | N  | N  |
+|      state_reg      | Flip-flop |   2   |  Y  | N  | Y  | N  | N  | N  | N  |
+|     bvalid_reg      | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|      bresp_reg      | Flip-flop |   2   |  Y  | N  | Y  | N  | N  | N  | N  |
+|     rvalid_reg      | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|      rresp_reg      | Flip-flop |   2   |  Y  | N  | Y  | N  | N  | N  | N  |
+|  mem_req_valid_reg  | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|   mem_req_we_reg    | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|  mem_req_wstrb_reg  | Flip-flop |   4   |  Y  | N  | Y  | N  | N  | N  | N  |
+|      rdata_reg      | Flip-flop |  32   |  Y  | N  | N  | N  | N  | N  | N  |
+|   awaddr_lat_reg    | Flip-flop |   6   |  Y  | N  | N  | N  | N  | N  | N  |
+|   araddr_lat_reg    | Flip-flop |   6   |  Y  | N  | N  | N  | N  | N  | N  |
+|  mem_req_addr_reg   | Flip-flop |   6   |  Y  | N  | N  | N  | N  | N  | N  |
+===============================================================================
+Presto compilation completed successfully. (axi4_lite_slave_if_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_MEM_ADDR_WIDTH6)
+Information: Building the design 'bram_arbiter' instantiated from design 'bram_axi_top_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_BRAM_DEPTH48' with
+	the parameters "DATA_WIDTH=32,ADDR_WIDTH=6". (HDL-193)
+
+Inferred memory devices in process
+	in routine bram_arbiter_DATA_WIDTH32_ADDR_WIDTH6 line 873 in file
+		'/home/DVLSI10/pd_group7/rtl/dma_bram.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|    grant_a_d_reg    | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+Presto compilation completed successfully. (bram_arbiter_DATA_WIDTH32_ADDR_WIDTH6)
+Information: Building the design 'bram_core' instantiated from design 'bram_axi_top_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_BRAM_DEPTH48' with
+	the parameters "DATA_WIDTH=32,DEPTH=48,ADDR_WIDTH=6". (HDL-193)
+
+Inferred memory devices in process
+	in routine bram_core_DATA_WIDTH32_DEPTH48_ADDR_WIDTH6 line 493 in file
+		'/home/DVLSI10/pd_group7/rtl/dma_bram.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|   resp_valid_reg    | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|   resp_rdata_reg    | Flip-flop |  32   |  Y  | N  | Y  | N  | N  | N  | N  |
+|       mem_reg       | Flip-flop | 1536  |  Y  | N  | N  | N  | N  | N  | N  |
+===============================================================================
+Presto compilation completed successfully. (bram_core_DATA_WIDTH32_DEPTH48_ADDR_WIDTH6)
+Information: Building the design 'async_fifo' instantiated from design 'input_fifo_DATA_WIDTH4_DATA_WIDTH_M4_MATRIX_SIZE4_DEPTH32' with
+	the parameters "DATA_WIDTH=4,DEPTH=32". (HDL-193)
+
+Inferred memory devices in process
+	in routine async_fifo_DATA_WIDTH4_DEPTH32 line 62 in file
+		'/home/DVLSI10/pd_group7/rtl/async_fifo.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|     wr_gray_reg     | Flip-flop |   6   |  Y  | N  | Y  | N  | N  | N  | N  |
+|     wr_bin_reg      | Flip-flop |   6   |  Y  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+
+Inferred memory devices in process
+	in routine async_fifo_DATA_WIDTH4_DEPTH32 line 73 in file
+		'/home/DVLSI10/pd_group7/rtl/async_fifo.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|       mem_reg       | Flip-flop |  128  |  Y  | N  | N  | N  | N  | N  | N  |
+===============================================================================
+
+Inferred memory devices in process
+	in routine async_fifo_DATA_WIDTH4_DEPTH32 line 79 in file
+		'/home/DVLSI10/pd_group7/rtl/async_fifo.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|  rd_gray_sync2_reg  | Flip-flop |   6   |  Y  | N  | Y  | N  | N  | N  | N  |
+|  rd_gray_sync1_reg  | Flip-flop |   6   |  Y  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+
+Inferred memory devices in process
+	in routine async_fifo_DATA_WIDTH4_DEPTH32 line 94 in file
+		'/home/DVLSI10/pd_group7/rtl/async_fifo.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|      full_reg       | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+
+Inferred memory devices in process
+	in routine async_fifo_DATA_WIDTH4_DEPTH32 line 103 in file
+		'/home/DVLSI10/pd_group7/rtl/async_fifo.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|     rd_gray_reg     | Flip-flop |   6   |  Y  | N  | Y  | N  | N  | N  | N  |
+|     rd_bin_reg      | Flip-flop |   6   |  Y  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+
+Inferred memory devices in process
+	in routine async_fifo_DATA_WIDTH4_DEPTH32 line 117 in file
+		'/home/DVLSI10/pd_group7/rtl/async_fifo.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|  wr_gray_sync2_reg  | Flip-flop |   6   |  Y  | N  | Y  | N  | N  | N  | N  |
+|  wr_gray_sync1_reg  | Flip-flop |   6   |  Y  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+
+Inferred memory devices in process
+	in routine async_fifo_DATA_WIDTH4_DEPTH32 line 130 in file
+		'/home/DVLSI10/pd_group7/rtl/async_fifo.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|      empty_reg      | Flip-flop |   1   |  N  | N  | N  | Y  | N  | N  | N  |
+===============================================================================
+Statistics for MUX_OPs
+========================================================================
+|          block name/line           | Inputs | Outputs | # sel inputs |
+========================================================================
+| async_fifo_DATA_WIDTH4_DEPTH32/114 |   32   |    4    |      5       |
+========================================================================
+Presto compilation completed successfully. (async_fifo_DATA_WIDTH4_DEPTH32)
+Information: Building the design 'pe_array' instantiated from design 'systolic_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4' with
+	the parameters "DATA_WIDTH=4,MATRIX_SIZE=4,PSUM_WIDTH=4". (HDL-193)
+Warning:  /home/DVLSI10/pd_group7/rtl/pe_array.sv:35: signed to unsigned conversion occurs. (VER-318)
+Warning:  /home/DVLSI10/pd_group7/rtl/pe_array.sv:45: signed to unsigned conversion occurs. (VER-318)
+Warning:  /home/DVLSI10/pd_group7/rtl/pe_array.sv:214: signed to unsigned conversion occurs. (VER-318)
+
+Inferred memory devices in process
+	in routine pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4 line 30 in file
+		'/home/DVLSI10/pd_group7/rtl/pe_array.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|      pe_en_reg      | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+
+Inferred memory devices in process
+	in routine pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4 line 40 in file
+		'/home/DVLSI10/pd_group7/rtl/pe_array.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|     counter_reg     | Flip-flop |   4   |  Y  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+
+Inferred memory devices in process
+	in routine pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4 line 201 in file
+		'/home/DVLSI10/pd_group7/rtl/pe_array.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|       OUT_reg       | Flip-flop |  64   |  Y  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+Statistics for MUX_OPs
+======================================================================================
+|                 block name/line                  | Inputs | Outputs | # sel inputs |
+======================================================================================
+| pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4/78 |   4    |   16    |      2       |
+======================================================================================
+Presto compilation completed successfully. (pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4)
+Information: Building the design 'async_fifo' instantiated from design 'output_fifo_DATA_WIDTH4_DATA_WIDTH_M4_MATRIX_SIZE4_DEPTH16' with
+	the parameters "DATA_WIDTH=4,DEPTH=16". (HDL-193)
+
+Inferred memory devices in process
+	in routine async_fifo_DATA_WIDTH4_DEPTH16 line 62 in file
+		'/home/DVLSI10/pd_group7/rtl/async_fifo.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|     wr_gray_reg     | Flip-flop |   5   |  Y  | N  | Y  | N  | N  | N  | N  |
+|     wr_bin_reg      | Flip-flop |   5   |  Y  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+
+Inferred memory devices in process
+	in routine async_fifo_DATA_WIDTH4_DEPTH16 line 73 in file
+		'/home/DVLSI10/pd_group7/rtl/async_fifo.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|       mem_reg       | Flip-flop |  64   |  Y  | N  | N  | N  | N  | N  | N  |
+===============================================================================
+
+Inferred memory devices in process
+	in routine async_fifo_DATA_WIDTH4_DEPTH16 line 79 in file
+		'/home/DVLSI10/pd_group7/rtl/async_fifo.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|  rd_gray_sync2_reg  | Flip-flop |   5   |  Y  | N  | Y  | N  | N  | N  | N  |
+|  rd_gray_sync1_reg  | Flip-flop |   5   |  Y  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+
+Inferred memory devices in process
+	in routine async_fifo_DATA_WIDTH4_DEPTH16 line 94 in file
+		'/home/DVLSI10/pd_group7/rtl/async_fifo.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|      full_reg       | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+
+Inferred memory devices in process
+	in routine async_fifo_DATA_WIDTH4_DEPTH16 line 103 in file
+		'/home/DVLSI10/pd_group7/rtl/async_fifo.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|     rd_gray_reg     | Flip-flop |   5   |  Y  | N  | Y  | N  | N  | N  | N  |
+|     rd_bin_reg      | Flip-flop |   5   |  Y  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+
+Inferred memory devices in process
+	in routine async_fifo_DATA_WIDTH4_DEPTH16 line 117 in file
+		'/home/DVLSI10/pd_group7/rtl/async_fifo.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|  wr_gray_sync2_reg  | Flip-flop |   5   |  Y  | N  | Y  | N  | N  | N  | N  |
+|  wr_gray_sync1_reg  | Flip-flop |   5   |  Y  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+
+Inferred memory devices in process
+	in routine async_fifo_DATA_WIDTH4_DEPTH16 line 130 in file
+		'/home/DVLSI10/pd_group7/rtl/async_fifo.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|      empty_reg      | Flip-flop |   1   |  N  | N  | N  | Y  | N  | N  | N  |
+===============================================================================
+Statistics for MUX_OPs
+========================================================================
+|          block name/line           | Inputs | Outputs | # sel inputs |
+========================================================================
+| async_fifo_DATA_WIDTH4_DEPTH16/114 |   16   |    4    |      4       |
+========================================================================
+Presto compilation completed successfully. (async_fifo_DATA_WIDTH4_DEPTH16)
+Information: Building the design 'd_ff_chain' instantiated from design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4' with
+	the parameters "DATA_WIDTH=4,DEPTH=1". (HDL-193)
+Presto compilation completed successfully. (d_ff_chain_DATA_WIDTH4_DEPTH1)
+Information: Building the design 'd_ff_chain' instantiated from design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4' with
+	the parameters "DATA_WIDTH=4,DEPTH=2". (HDL-193)
+Presto compilation completed successfully. (d_ff_chain_DATA_WIDTH4_DEPTH2)
+Information: Building the design 'd_ff_chain' instantiated from design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4' with
+	the parameters "DATA_WIDTH=4,DEPTH=3". (HDL-193)
+Presto compilation completed successfully. (d_ff_chain_DATA_WIDTH4_DEPTH3)
+Information: Building the design 'processing_element' instantiated from design 'pe_array_MATRIX_SIZE4_DATA_WIDTH4_PSUM_WIDTH4' with
+	the parameters "DATA_WIDTH=4,PSUM_WIDTH=4". (HDL-193)
+
+Inferred memory devices in process
+	in routine processing_element_DATA_WIDTH4_PSUM_WIDTH4 line 47 in file
+		'/home/DVLSI10/pd_group7/rtl/processing_element.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|    psum_out_reg     | Flip-flop |   4   |  Y  | N  | Y  | N  | N  | N  | N  |
+|      a_out_reg      | Flip-flop |   4   |  Y  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+Presto compilation completed successfully. (processing_element_DATA_WIDTH4_PSUM_WIDTH4)
+Information: Building the design 'dff' instantiated from design 'd_ff_chain_DATA_WIDTH4_DEPTH1' with
+	the parameters "DATA_WIDTH=4". (HDL-193)
+
+Inferred memory devices in process
+	in routine dff_DATA_WIDTH4 line 14 in file
+		'/home/DVLSI10/pd_group7/rtl/dff.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|      dout_reg       | Flip-flop |   4   |  Y  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+Presto compilation completed successfully. (dff_DATA_WIDTH4)
+1
+current_design $DESIGN_NAME
+Current design is 'system_top'.
+{system_top}
+link
+
+  Linking design 'system_top'
+  Using the following designs and libraries:
+  --------------------------------------------------------------------------
+  * (20 designs)              /home/DVLSI10/pd_group7/scripts/system_top.db, etc
+  saed32rvt_tt0p78vn40c (library) /home/acts/Documents/References/ref/lib/stdcell_rvt/saed32rvt_tt0p78vn40c.db
+
+1
+# Catch unresolved references / multiply-driven nets / other structural
+# problems before spending time applying constraints or compiling.
+check_design > $REPORTS_DIR/check_design.rpt
+# ==============================================================================
+# 4. Apply Constraints
+# ==============================================================================
+# Constraints MUST be sourced before any timing analysis (check_timing,
+# report_timing) or compile -- an earlier version of this script ran
+# check_timing and several report_timing calls BEFORE sourcing the SDC,
+# meaning they executed against a design with no clocks/exceptions applied
+# at all (meaningless/empty results). Fixed ordering below.
+source $SDC_DIR/$DESIGN_NAME.sdc
+Warning: ignore net clk_sys because -no_propagate is not specified. (UID-1330)
+Warning: ignore net clk_accel because -no_propagate is not specified. (UID-1330)
+Current design is 'system_top'.
+Current design is 'system_top'.
+Current design is 'system_top'.
+Warning: Design rule attributes from the driving cell will be set on the port 'rst_sys_n'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'rst_accel_n'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[31]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[30]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[29]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[28]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[27]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[26]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[25]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[24]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[23]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[22]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[21]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[20]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[19]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[18]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[17]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[16]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[15]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[14]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[13]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[12]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[11]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[10]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[9]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[8]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[7]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[6]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[5]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[4]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[3]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[2]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[1]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awaddr[0]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_awvalid'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[31]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[30]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[29]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[28]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[27]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[26]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[25]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[24]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[23]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[22]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[21]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[20]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[19]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[18]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[17]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[16]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[15]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[14]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[13]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[12]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[11]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[10]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[9]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[8]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[7]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[6]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[5]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[4]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[3]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[2]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[1]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wdata[0]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_wvalid'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_bready'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[31]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[30]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[29]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[28]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[27]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[26]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[25]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[24]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[23]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[22]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[21]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[20]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[19]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[18]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[17]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[16]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[15]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[14]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[13]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[12]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[11]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[10]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[9]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[8]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[7]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[6]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[5]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[4]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[3]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[2]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[1]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_araddr[0]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_arvalid'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_dma_axi_lite_rready'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[31]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[30]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[29]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[28]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[27]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[26]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[25]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[24]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[23]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[22]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[21]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[20]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[19]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[18]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[17]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[16]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[15]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[14]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[13]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[12]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[11]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[10]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[9]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[8]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[7]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[6]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[5]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[4]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[3]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[2]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[1]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awaddr[0]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_awvalid'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[31]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[30]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[29]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[28]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[27]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[26]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[25]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[24]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[23]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[22]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[21]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[20]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[19]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[18]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[17]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[16]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[15]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[14]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[13]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[12]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[11]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[10]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[9]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[8]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[7]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[6]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[5]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[4]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[3]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[2]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[1]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wdata[0]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wstrb[3]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wstrb[2]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wstrb[1]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wstrb[0]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_wvalid'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_bready'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[31]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[30]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[29]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[28]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[27]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[26]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[25]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[24]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[23]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[22]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[21]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[20]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[19]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[18]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[17]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[16]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[15]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[14]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[13]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[12]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[11]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[10]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[9]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[8]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[7]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[6]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[5]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[4]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[3]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[2]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[1]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_araddr[0]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_arvalid'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 's_bram_axi_lite_rready'. (UID-401)
+Current design is 'system_top'.
+Information: Command 'set_max_leakage_power' is obsolete and is being ignored. (INFO-102)
+Warning: Can't find object '*/psum_out_reg[3]/D' in design 'system_top'. (UID-95)
+Error: Value for list '-to' must have 1 elements. (CMD-036)
+Warning: Can't find objects matching '*/u_async_fifo/mem_reg[*][*]/D' in design 'system_top'. (UID-95)
+Error: Value for list '-to' must have 1 elements. (CMD-036)
+1
+# Sanity-check that the constraints are well-formed now that they're
+# applied (catches missing clocks, unconstrained paths, etc.) before
+# burning compile time on an incompletely-constrained design.
+check_timing > $REPORTS_DIR/check_timing.rpt
+# ==============================================================================
+# 5. Compile
+# ==============================================================================
+compile_ultra
+Loading db file '/home/acts/synopsys_tools/dc/syn/V-2023.12/libraries/syn/dw_foundation.sldb'
+Warning: DesignWare synthetic library dw_foundation.sldb is added to the synthetic_library in the current command. (UISN-40)
+Information: Performing leakage power optimization. (PWR-850)
+CPU Load: 3%, Ram Free: 2 GB, Swap Free: 5 GB, Work Disk Free: 218 GB, Tmp Disk Free: 218 GB
+Alib files are up-to-date.
+Warning: DesignWare synthetic library dw_foundation.sldb is added to the synthetic_library in the current command. (UISN-40)
+Information: Evaluating DesignWare library utilization. (UISN-27)
+
+============================================================================
+| DesignWare Building Block Library  |         Version         | Available |
+============================================================================
+| Basic DW Building Blocks           | V-2023.12-DWBB_202312.0 |     *     |
+| Licensed DW Building Blocks        | V-2023.12-DWBB_202312.0 |     *     |
+============================================================================
+
+====================================================================================================
+| Flow Information                                                                                 |
+----------------------------------------------------------------------------------------------------
+| Flow         | Design Compiler WLM                                                               |
+| Command Line | compile_ultra                                                                     |
+====================================================================================================
+| Design Information                                      | Value                                  |
+====================================================================================================
+| Number of Scenarios                                     | 0                                      |
+| Leaf Cell Count                                         | 4892                                   |
+| Number of User Hierarchies                              | 48                                     |
+| Sequential Cell Count                                   | 3151                                   |
+| Macro Count                                             | 0                                      |
+| Number of Power Domains                                 | 0                                      |
+| Number of Path Groups                                   | 3                                      |
+| Number of VT Class                                      | 1                                      |
+| Number of Clocks                                        | 2                                      |
+| Number of Dont Touch Cells                              | 576                                    |
+| Number of Dont Touch Nets                               | 55                                     |
+| Number of Size Only Cells                               | 0                                      |
+| Design with UPF Data                                    | false                                  |
+====================================================================================================
+Information: Sequential output inversion is enabled.  SVF file must be used for formal verification. (OPT-1208)
+
+Information: There are 344 potential problems in your design. Please run 'check_design' for more information. (LINT-99)
+
+Information: Uniquified 2 instances of design 'd_ff_chain_DATA_WIDTH4_DEPTH1'. (OPT-1056)
+Information: Uniquified 2 instances of design 'd_ff_chain_DATA_WIDTH4_DEPTH2'. (OPT-1056)
+Information: Uniquified 2 instances of design 'd_ff_chain_DATA_WIDTH4_DEPTH3'. (OPT-1056)
+Information: Uniquified 16 instances of design 'processing_element_DATA_WIDTH4_PSUM_WIDTH4'. (OPT-1056)
+Information: Uniquified 12 instances of design 'dff_DATA_WIDTH4'. (OPT-1056)
+  Simplifying Design 'system_top'
+Information: The register 'u_accel_top/u_systolic/dut/g_pe_row[0].g_pe_col[3].u_pe/a_out_reg[0]' will be removed. (OPT-1207)
+Information: The register 'u_accel_top/u_systolic/dut/g_pe_row[0].g_pe_col[3].u_pe/a_out_reg[1]' will be removed. (OPT-1207)
+Information: The register 'u_accel_top/u_systolic/dut/g_pe_row[0].g_pe_col[3].u_pe/a_out_reg[2]' will be removed. (OPT-1207)
+Information: The register 'u_accel_top/u_systolic/dut/g_pe_row[0].g_pe_col[3].u_pe/a_out_reg[3]' will be removed. (OPT-1207)
+Information: The register 'u_accel_top/u_systolic/dut/g_pe_row[1].g_pe_col[3].u_pe/a_out_reg[0]' will be removed. (OPT-1207)
+Information: The register 'u_accel_top/u_systolic/dut/g_pe_row[1].g_pe_col[3].u_pe/a_out_reg[1]' will be removed. (OPT-1207)
+Information: The register 'u_accel_top/u_systolic/dut/g_pe_row[1].g_pe_col[3].u_pe/a_out_reg[2]' will be removed. (OPT-1207)
+Information: The register 'u_accel_top/u_systolic/dut/g_pe_row[1].g_pe_col[3].u_pe/a_out_reg[3]' will be removed. (OPT-1207)
+Information: The register 'u_accel_top/u_systolic/dut/g_pe_row[2].g_pe_col[3].u_pe/a_out_reg[0]' will be removed. (OPT-1207)
+Information: The register 'u_accel_top/u_systolic/dut/g_pe_row[2].g_pe_col[3].u_pe/a_out_reg[1]' will be removed. (OPT-1207)
+Information: The register 'u_accel_top/u_systolic/dut/g_pe_row[2].g_pe_col[3].u_pe/a_out_reg[2]' will be removed. (OPT-1207)
+Information: The register 'u_accel_top/u_systolic/dut/g_pe_row[2].g_pe_col[3].u_pe/a_out_reg[3]' will be removed. (OPT-1207)
+Information: The register 'u_accel_top/u_systolic/dut/g_pe_row[3].g_pe_col[3].u_pe/a_out_reg[0]' will be removed. (OPT-1207)
+Information: The register 'u_accel_top/u_systolic/dut/g_pe_row[3].g_pe_col[3].u_pe/a_out_reg[1]' will be removed. (OPT-1207)
+Information: The register 'u_accel_top/u_systolic/dut/g_pe_row[3].g_pe_col[3].u_pe/a_out_reg[2]' will be removed. (OPT-1207)
+Information: The register 'u_accel_top/u_systolic/dut/g_pe_row[3].g_pe_col[3].u_pe/a_out_reg[3]' will be removed. (OPT-1207)
+
+Loaded alib file './alib-52/saed32rvt_tt0p78vn40c.db.alib'
+  Building model 'DW01_NAND2'
+Information: Ungrouping hierarchy u_accel_top before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_dma_bram/u_dma before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_input_fifo before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_output_fifo before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_dma_bram/u_bram_axi/u_axi4 before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_dma_bram/u_bram_axi/u_axi4_lite before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_dma_bram/u_bram_axi/u_arb before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_input_fifo/u_async_fifo before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_output_fifo/u_async_fifo before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/input_skew[1].d_ff_skew_in before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/input_skew[2].d_ff_skew_in before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/input_skew[3].d_ff_skew_in before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/g_pe_row[0].g_pe_col[0].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/output_unskew[2].d_ff_unskew_out before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/output_unskew[1].d_ff_unskew_out before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/output_unskew[0].d_ff_unskew_out before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/g_pe_row[3].g_pe_col[3].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/g_pe_row[3].g_pe_col[2].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/g_pe_row[3].g_pe_col[1].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/g_pe_row[3].g_pe_col[0].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/g_pe_row[2].g_pe_col[3].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/g_pe_row[2].g_pe_col[2].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/g_pe_row[2].g_pe_col[1].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/g_pe_row[2].g_pe_col[0].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/g_pe_row[1].g_pe_col[3].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/g_pe_row[1].g_pe_col[2].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/g_pe_row[1].g_pe_col[1].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/g_pe_row[1].g_pe_col[0].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/g_pe_row[0].g_pe_col[3].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/g_pe_row[0].g_pe_col[2].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/g_pe_row[0].g_pe_col[1].u_pe before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/input_skew[1].d_ff_skew_in/g_dff_chain[0].dff_inst before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/output_unskew[2].d_ff_unskew_out/g_dff_chain[0].dff_inst before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/output_unskew[1].d_ff_unskew_out/g_dff_chain[1].dff_inst before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/output_unskew[1].d_ff_unskew_out/g_dff_chain[0].dff_inst before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/output_unskew[0].d_ff_unskew_out/g_dff_chain[2].dff_inst before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/output_unskew[0].d_ff_unskew_out/g_dff_chain[1].dff_inst before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/output_unskew[0].d_ff_unskew_out/g_dff_chain[0].dff_inst before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/input_skew[3].d_ff_skew_in/g_dff_chain[2].dff_inst before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/input_skew[3].d_ff_skew_in/g_dff_chain[1].dff_inst before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/input_skew[3].d_ff_skew_in/g_dff_chain[0].dff_inst before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/input_skew[2].d_ff_skew_in/g_dff_chain[1].dff_inst before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_accel_top/u_systolic/dut/input_skew[2].d_ff_skew_in/g_dff_chain[0].dff_inst before Pass 1 (OPT-776)
+Information: Ungrouping 45 of 49 hierarchies before Pass 1 (OPT-775)
+CPU Load: 3%, Ram Free: 2 GB, Swap Free: 5 GB, Work Disk Free: 218 GB, Tmp Disk Free: 218 GB
+Information: State dependent leakage is now switched from on to off.
+
+  Beginning Pass 1 Mapping
+  ------------------------
+  Processing 'bram_core_DATA_WIDTH32_DEPTH48_ADDR_WIDTH6'
+  Processing 'system_top'
+Information: Added key list 'DesignWare' to design 'system_top'. (DDB-72)
+Information: The register 'u_accel_top/u_output_fifo/rd_elem_cnt_reg[3]' will be removed. (OPT-1207)
+Information: The register 'u_accel_top/u_output_fifo/rd_elem_cnt_reg[2]' will be removed. (OPT-1207)
+Information: The register 'u_accel_top/u_output_fifo/rd_elem_cnt_reg[1]' will be removed. (OPT-1207)
+Information: The register 'u_accel_top/u_output_fifo/rd_elem_cnt_reg[0]' will be removed. (OPT-1207)
+Information: In design 'system_top', the register 'u_accel_top/u_input_fifo/u_async_fifo/wr_gray_reg[5]' is removed because it is merged to 'u_accel_top/u_input_fifo/u_async_fifo/wr_bin_reg[5]'. (OPT-1215)
+Information: In design 'system_top', the register 'u_accel_top/u_input_fifo/u_async_fifo/rd_gray_reg[5]' is removed because it is merged to 'u_accel_top/u_input_fifo/u_async_fifo/rd_bin_reg[5]'. (OPT-1215)
+Information: In design 'system_top', the register 'u_accel_top/u_output_fifo/u_async_fifo/rd_gray_reg[4]' is removed because it is merged to 'u_accel_top/u_output_fifo/u_async_fifo/rd_bin_reg[4]'. (OPT-1215)
+Information: In design 'system_top', the register 'u_accel_top/u_output_fifo/u_async_fifo/wr_gray_reg[4]' is removed because it is merged to 'u_accel_top/u_output_fifo/u_async_fifo/wr_bin_reg[4]'. (OPT-1215)
+ Implement Synthetic for 'system_top'.
+  Processing 'dma_bram_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_STREAM_WIDTH4_BRAM_DEPTH48'
+Information: Added key list 'DesignWare' to design 'dma_bram_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_STREAM_WIDTH4_BRAM_DEPTH48'. (DDB-72)
+Information: The register 'u_dma/m_axi_awlen_reg[1]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/m_axi_awlen_reg[2]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/m_axi_awlen_reg[3]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/m_axi_awlen_reg[4]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/m_axi_awlen_reg[5]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/m_axi_awlen_reg[6]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/m_axi_awlen_reg[7]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[3]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[4]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[5]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[6]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[7]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[8]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[9]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[10]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[11]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[12]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[13]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[14]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[15]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[16]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[17]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[18]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[19]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[20]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[21]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[22]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[23]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[24]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[25]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[26]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[27]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[28]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[29]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[30]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/reg_status_reg[31]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/m_axi_arlen_reg[2]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/m_axi_arlen_reg[3]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/m_axi_arlen_reg[4]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/m_axi_arlen_reg[5]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/m_axi_arlen_reg[6]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma/m_axi_arlen_reg[7]' is a constant and will be removed. (OPT-1206)
+Information: In design 'dma_bram_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_STREAM_WIDTH4_BRAM_DEPTH48', the register 'u_dma/s_axi_lite_bresp_reg[1]' is removed because it is merged to 'u_dma/s_axi_lite_bresp_reg[0]'. (OPT-1215)
+Information: In design 'dma_bram_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_STREAM_WIDTH4_BRAM_DEPTH48', the register 'u_dma/s_axi_lite_rresp_reg[1]' is removed because it is merged to 'u_dma/s_axi_lite_bresp_reg[0]'. (OPT-1215)
+Information: In design 'dma_bram_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_STREAM_WIDTH4_BRAM_DEPTH48', the register 'u_dma/s_axi_lite_rresp_reg[0]' is removed because it is merged to 'u_dma/s_axi_lite_bresp_reg[0]'. (OPT-1215)
+Information: In design 'dma_bram_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_STREAM_WIDTH4_BRAM_DEPTH48', the register 'u_dma/s_axi_lite_wready_reg' is removed because it is merged to 'u_dma/s_axi_lite_awready_reg'. (OPT-1215)
+Information: In design 'dma_bram_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_STREAM_WIDTH4_BRAM_DEPTH48', the register 'u_dma/m_axi_arlen_reg[1]' is removed because it is merged to 'u_dma/m_axi_arlen_reg[0]'. (OPT-1215)
+Information: In design 'dma_bram_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_STREAM_WIDTH4_BRAM_DEPTH48', the register 'u_dma/m_axi_wstrb_reg[3]' is removed because it is merged to 'u_dma/m_axi_wstrb_reg[0]'. (OPT-1215)
+Information: In design 'dma_bram_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_STREAM_WIDTH4_BRAM_DEPTH48', the register 'u_dma/m_axi_wstrb_reg[2]' is removed because it is merged to 'u_dma/m_axi_wstrb_reg[0]'. (OPT-1215)
+Information: In design 'dma_bram_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_STREAM_WIDTH4_BRAM_DEPTH48', the register 'u_dma/m_axi_wstrb_reg[1]' is removed because it is merged to 'u_dma/m_axi_wstrb_reg[0]'. (OPT-1215)
+ Implement Synthetic for 'dma_bram_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_STREAM_WIDTH4_BRAM_DEPTH48'.
+Information: The register 'u_dma/s_axi_lite_bresp_reg[0]' is a constant and will be removed. (OPT-1206)
+  Processing 'bram_axi_top_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_BRAM_DEPTH48'
+Information: The register 'u_axi4/rresp_reg[1]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_axi4/rresp_reg[0]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_axi4/bresp_reg[1]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_axi4/bresp_reg[0]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_axi4_lite/rresp_reg[1]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_axi4_lite/rresp_reg[0]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_axi4_lite/bresp_reg[1]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_axi4_lite/bresp_reg[0]' is a constant and will be removed. (OPT-1206)
+ Implement Synthetic for 'bram_axi_top_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_BRAM_DEPTH48'.
+CPU Load: 3%, Ram Free: 2 GB, Swap Free: 5 GB, Work Disk Free: 218 GB, Tmp Disk Free: 218 GB
+
+  Updating timing information
+Information: Updating design information... (UID-85)
+Information: The library cell 'PMT3_RVT' in the library 'saed32rvt_tt0p78vn40c' is not characterized for internal power. (PWR-536)
+Information: The library cell 'PMT2_RVT' in the library 'saed32rvt_tt0p78vn40c' is not characterized for internal power. (PWR-536)
+Information: The library cell 'PMT1_RVT' in the library 'saed32rvt_tt0p78vn40c' is not characterized for internal power. (PWR-536)
+Information: The library cell 'NMT3_RVT' in the library 'saed32rvt_tt0p78vn40c' is not characterized for internal power. (PWR-536)
+Information: The library cell 'NMT2_RVT' in the library 'saed32rvt_tt0p78vn40c' is not characterized for internal power. (PWR-536)
+Information: The library cell 'NMT1_RVT' in the library 'saed32rvt_tt0p78vn40c' is not characterized for internal power. (PWR-536)
+Information: The target library(s) contains cell(s), other than black boxes, that are not characterized for internal power. (PWR-24)
+Information: The register 'u_dma_bram/u_dma/rd_error_reg' is a constant and will be removed. (OPT-1206)
+
+Threshold voltage group cell usage:
+>> saed32cell_svt 100.00%
+
+  Beginning Mapping Optimizations  (Ultra High effort)
+  -------------------------------
+Information: Added key list 'DesignWare' to design 'bram_axi_top_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_BRAM_DEPTH48'. (DDB-72)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[1]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[0]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[31]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[30]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[29]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[8]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[10]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[9]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[12]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[11]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[14]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[13]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[16]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[15]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[18]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[17]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[20]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[19]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[22]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[21]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[24]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[23]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[26]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[25]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[28]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_araddr_reg[27]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[0]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[1]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[9]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[8]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[11]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[10]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[13]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[12]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[15]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[14]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[17]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[16]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[19]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[18]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[21]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[20]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[23]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[22]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[25]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[24]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[27]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[26]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[29]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[28]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[30]' will be removed. (OPT-1207)
+Information: The register 'u_dma_bram/u_dma/m_axi_awaddr_reg[31]' will be removed. (OPT-1207)
+Information: The wire load model of the parent cell system_top is different from that of the child cell u_dma_bram in the design dma_bram_AXI_ADDR_WIDTH32_AXI_DATA_WIDTH32_STREAM_WIDTH4_BRAM_DEPTH48. The child cell will not be ungrouped. (OPT-779)
+Information: The register 'u_dma_bram/u_dma/wr_error_reg' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_dma_bram/u_dma/wr_bytes_left_reg[31]' is a constant and will be removed. (OPT-1206)
+  Mapping Optimization (Phase 1)
+Information: The register 'u_dma_bram/u_dma/reg_status_reg[2]' is a constant and will be removed. (OPT-1206)
+
+                                  TOTAL                                                
+   ELAPSED            WORST NEG   SETUP    DESIGN                              LEAKAGE 
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT            POWER  
+  --------- --------- --------- --------- --------- ------------------------- ---------
+    0:00:29   43105.4      0.78     101.5    1086.6                           147951312.0000
+    0:00:29   43091.6      0.83     101.5    1099.9                           147932800.0000
+
+Threshold voltage group cell usage:
+>> saed32cell_svt 100.00%
+
+  Beginning Constant Register Removal
+  -----------------------------------
+    0:00:29   43091.6      0.83     101.5    1099.9                           147932800.0000
+    0:00:30   43090.1      0.83     101.5    1099.9                           147931728.0000
+
+Threshold voltage group cell usage:
+>> saed32cell_svt 100.00%
+
+  Beginning Global Optimizations
+  ------------------------------
+  Numerical Synthesis (Phase 1)
+  Numerical Synthesis (Phase 2)
+  Global Optimization (Phase 1)
+  Global Optimization (Phase 2)
+  Global Optimization (Phase 3)
+  Global Optimization (Phase 4)
+  Global Optimization (Phase 5)
+  Global Optimization (Phase 6)
+  Global Optimization (Phase 7)
+  Global Optimization (Phase 8)
+  Global Optimization (Phase 9)
+  Global Optimization (Phase 10)
+  Global Optimization (Phase 11)
+  Global Optimization (Phase 12)
+  Global Optimization (Phase 13)
+  Global Optimization (Phase 14)
+  Global Optimization (Phase 15)
+  Global Optimization (Phase 16)
+  Global Optimization (Phase 17)
+  Global Optimization (Phase 18)
+  Global Optimization (Phase 19)
+  Global Optimization (Phase 20)
+  Global Optimization (Phase 21)
+  Global Optimization (Phase 22)
+  Global Optimization (Phase 23)
+  Global Optimization (Phase 24)
+  Global Optimization (Phase 25)
+  Global Optimization (Phase 26)
+  Global Optimization (Phase 27)
+  Global Optimization (Phase 28)
+  Global Optimization (Phase 29)
+  Global Optimization (Phase 30)
+  Global Optimization (Phase 31)
+
+Threshold voltage group cell usage:
+>> saed32cell_svt 100.00%
+
+  Beginning Isolate Ports
+  -----------------------
+
+Threshold voltage group cell usage:
+>> saed32cell_svt 100.00%
+
+  Beginning Delay Optimization
+  ----------------------------
+    0:00:34   37566.0      2.22     271.7    1701.7                           92136952.0000
+    0:00:36   37671.0      0.21      40.3    1639.7                           92621592.0000
+    0:00:36   37671.0      0.21      40.3    1639.7                           92621592.0000
+    0:00:37   37653.2      0.21      33.1    1669.7                           92606296.0000
+
+Threshold voltage group cell usage:
+>> saed32cell_svt 100.00%
+    0:00:38   37644.1      0.21      33.0    1669.7                           92584832.0000
+    0:00:38   37644.1      0.21      33.0    1669.7                           92584832.0000
+
+  Beginning WLM Backend Optimization
+  --------------------------------------
+    0:00:42   37261.6      0.19      23.7    1344.8                           89238440.0000
+    0:00:42   37261.1      0.13       8.6    1316.7                           89206368.0000
+    0:00:42   37261.1      0.13       8.6    1316.7                           89206368.0000
+    0:00:42   37261.1      0.13       8.6    1316.7                           89206368.0000
+    0:00:42   37261.1      0.13       8.6    1316.7                           89206368.0000
+    0:00:43   37218.6      0.13       7.5    1294.7                           88843336.0000
+    0:00:43   37218.6      0.13       7.5    1294.7                           88843336.0000
+    0:00:43   37230.3      0.12       4.2    1294.8                           88861656.0000
+    0:00:43   37230.3      0.12       4.2    1294.8                           88861656.0000
+    0:00:43   37230.3      0.12       4.2    1294.8                           88861656.0000
+    0:00:43   37230.3      0.12       4.2    1294.8                           88861656.0000
+    0:00:43   37230.3      0.12       4.2    1294.8                           88861656.0000
+    0:00:43   37230.3      0.12       4.2    1294.8                           88861656.0000
+    0:00:44   37247.6      0.04       0.6    1306.1                           88943944.0000
+    0:00:44   37247.6      0.04       0.6    1306.1                           88943944.0000
+    0:00:44   37244.5      0.01       0.1    1306.1                           88936080.0000
+    0:00:44   37244.5      0.01       0.1    1306.1                           88936080.0000
+    0:00:44   37297.9      0.00       0.0    1306.5                           89096856.0000
+    0:00:44   37297.9      0.00       0.0    1306.5                           89096856.0000
+    0:00:44   37297.9      0.00       0.0    1306.5                           89096856.0000
+    0:00:44   37297.9      0.00       0.0    1306.5                           89096856.0000
+    0:00:44   37297.9      0.00       0.0    1306.5                           89096856.0000
+    0:00:44   37297.9      0.00       0.0    1306.5                           89096856.0000
+    0:00:44   37297.9      0.00       0.0    1306.5                           89096856.0000
+
+
+  Beginning Design Rule Fixing  (max_transition)  (max_capacitance)
+  ----------------------------
+
+                                  TOTAL                                                
+   ELAPSED            WORST NEG   SETUP    DESIGN                              LEAKAGE 
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT            POWER  
+  --------- --------- --------- --------- --------- ------------------------- ---------
+    0:00:44   37297.9      0.00       0.0    1306.5                           89096856.0000
+  Global Optimization (Phase 32)
+  Global Optimization (Phase 33)
+  Global Optimization (Phase 34)
+    0:00:48   37901.0      0.00       0.0     158.5 u_dma_bram/u_bram_axi/u_mem/net24900 90647880.0000
+    0:00:49   37957.4      0.00       0.0      84.4 u_dma_bram/u_bram_axi/u_mem/net24533 90536208.0000
+    0:00:49   37979.8      0.00       0.0      68.3                           90549072.0000
+    0:00:49   37979.8      0.00       0.0      68.3                           90549072.0000
+
+Threshold voltage group cell usage:
+>> saed32cell_svt 100.00%
+
+
+  Beginning Leakage Power Optimization  (max_leakage_power 0)
+  ------------------------------------
+
+                                  TOTAL                                                
+   ELAPSED            WORST NEG   SETUP    DESIGN                              LEAKAGE 
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT            POWER  
+  --------- --------- --------- --------- --------- ------------------------- ---------
+    0:00:49   37979.8      0.00       0.0      68.3                           90549072.0000
+    0:00:49   37979.8      0.00       0.0      68.3                           90549072.0000
+    0:00:49   37979.8      0.00       0.0      68.3                           90549072.0000
+    0:00:49   37979.8      0.00       0.0      68.3                           90549072.0000
+    0:00:50   37902.5      0.00       0.0      25.7                           89648584.0000
+    0:00:50   37902.5      0.00       0.0      25.7                           89648584.0000
+    0:00:50   37902.5      0.00       0.0      25.7                           89648584.0000
+    0:00:50   37902.5      0.00       0.0      25.7                           89648584.0000
+    0:00:50   37902.5      0.00       0.0      25.7                           89648584.0000
+    0:00:50   37902.5      0.00       0.0      25.7                           89648584.0000
+    0:00:50   37902.5      0.00       0.0      25.7                           89648584.0000
+    0:00:50   37902.5      0.00       0.0      25.7                           89648584.0000
+    0:00:50   37902.5      0.00       0.0      25.7                           89648584.0000
+    0:00:50   37902.5      0.00       0.0      25.7                           89648584.0000
+    0:00:50   37902.5      0.00       0.0      25.7                           89648584.0000
+    0:00:50   37902.5      0.00       0.0      25.7                           89648584.0000
+    0:00:50   37902.5      0.00       0.0      25.7                           89648584.0000
+    0:00:50   37902.5      0.00       0.0      25.7                           89648584.0000
+    0:00:50   37902.5      0.00       0.0      25.7                           89648584.0000
+    0:00:50   37902.5      0.00       0.0      25.7                           89648584.0000
+    0:00:50   37902.5      0.00       0.0      25.7                           89648584.0000
+    0:00:50   37902.5      0.00       0.0      25.7                           89648584.0000
+    0:00:50   37902.5      0.00       0.0      25.7                           89648584.0000
+
+                                  TOTAL                                                
+   ELAPSED            WORST NEG   SETUP    DESIGN                              LEAKAGE 
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT            POWER  
+  --------- --------- --------- --------- --------- ------------------------- ---------
+    0:00:51   37902.5      0.00       0.0      25.7                           89648584.0000
+    0:00:52   37650.9      0.23       2.1      24.2                           88644432.0000
+    0:00:52   37669.2      0.13       0.7      24.2                           88755400.0000
+    0:00:52   37669.2      0.13       0.7      24.2                           88755400.0000
+    0:00:52   37662.9      0.13       0.7      24.2                           88707592.0000
+    0:00:55   37732.0      0.13       4.1       3.1 u_dma_bram/u_bram_axi/u_mem/net24628 88494440.0000
+    0:00:56   37766.8      0.10       4.0       0.0                           88422240.0000
+    0:00:56   37828.6      0.00       0.0       8.7                           88606184.0000
+    0:00:56   37828.6      0.00       0.0       8.7                           88606184.0000
+    0:00:56   37828.6      0.00       0.0       8.7                           88606184.0000
+    0:00:56   37828.6      0.00       0.0       8.7                           88606184.0000
+    0:00:56   37828.6      0.00       0.0       8.7                           88606184.0000
+    0:00:57   37726.4      0.00       0.0       9.1                           87591664.0000
+CPU Load: 4%, Ram Free: 2 GB, Swap Free: 5 GB, Work Disk Free: 218 GB, Tmp Disk Free: 218 GB
+Loading db file '/home/acts/Documents/References/ref/lib/stdcell_rvt/saed32rvt_tt0p78vn40c.db'
+
+
+Note: Symbol # after min delay cost means estimated hold TNS across all active scenarios 
+
+
+  Optimization Complete
+  ---------------------
+Warning: Design 'system_top' contains 1 high-fanout nets. A fanout number of 1000 will be used for delay calculations involving these nets. (TIM-134)
+     Net 'u_dma_bram/u_bram_axi/u_mem/clk': 2342 load(s), 1 driver(s)
+Information: State dependent leakage is now switched from off to on.
+Information: Propagating switching activity (low effort zero delay simulation). (PWR-6)
+CPU Load: 4%, Ram Free: 2 GB, Swap Free: 5 GB, Work Disk Free: 218 GB, Tmp Disk Free: 218 GB
+Information: Total number of MV cells in the design.
+----------------------------------------------------------------------------------------------------
+ MV Cells                                           Total Number                                   
+----------------------------------------------------------------------------------------------------
+ Level Shifter:                                     0                                             
+ Enable Level Shifter:                              0                                             
+ Isolation Cell:                                    0                                             
+ Retention Cell:                                    0                                             
+ Retention Clamp Cell:                              0                                             
+ Switch Cell:                                       0                                             
+ Always-On Cell:                                    0                                             
+ Repeater Cell:                                     0                                             
+
+----------------------------------------------------------------------------------------------------
+Unmapped MV Cells 
+----------------------------------------------------------------------------------------------------
+0 Isolation Cells are unmapped 
+0 Retention Clamp Cells are unmapped 
+----------------------------------------------------------------------------------------------------
+1
+# ==============================================================================
+# 6. Post-Synthesis Reports
+# ==============================================================================
+# QoR snapshot (WNS/TNS/violating path count) first, then constraint
+# violations, then detailed timing (worst path, then per-domain and
+# per-path-group breakdowns), then min-delay (hold) checks, then area
+# and power. Every report is redirected to its own file under
+# $REPORTS_DIR so results survive independent of the session log.
+redirect $REPORTS_DIR/qor.rpt { report_qor }
+redirect $REPORTS_DIR/constraint_violators.rpt { report_constraint -all_violators }
+# Worst setup path, full detail
+redirect $REPORTS_DIR/timing_worst_setup.rpt {
+    report_timing -delay_type max -max_paths 1 -path_type full_clock
+}
+# Worst N setup paths within each clock's own domain, so you can see
+# margin across many endpoints, not just the single worst
+redirect $REPORTS_DIR/timing_setup_clk_sys.rpt {
+    report_timing -delay_type max -max_paths 10 -from [get_clocks clk_sys]   -to [get_clocks clk_sys]   -sort_by slack
+}
+redirect $REPORTS_DIR/timing_setup_clk_accel.rpt {
+    report_timing -delay_type max -max_paths 10 -from [get_clocks clk_accel] -to [get_clocks clk_accel] -sort_by slack
+}
+# Worst hold paths, same breakdown
+redirect $REPORTS_DIR/timing_hold_clk_sys.rpt {
+    report_timing -delay_type min -max_paths 10 -from [get_clocks clk_sys]   -to [get_clocks clk_sys]   -sort_by slack
+}
+redirect $REPORTS_DIR/timing_hold_clk_accel.rpt {
+    report_timing -delay_type min -max_paths 10 -from [get_clocks clk_accel] -to [get_clocks clk_accel] -sort_by slack
+}
+redirect $REPORTS_DIR/area.rpt { report_area }
+# Pre-layout power estimate only (ideal clock network, no real switching
+# activity applied) -- NOT signoff. Real leakage/dynamic power signoff
+# needs PrimePower/PT-PX post-route with extracted parasitics and real
+# activity vectors, at the library's worst-case leakage corner.
+redirect $REPORTS_DIR/power.rpt { report_power -analysis_effort high }
+# ==============================================================================
+# 7. Write Outputs for Handoff to Physical Design
+# ==============================================================================
+# Gate-level netlist -- the primary P&R input -- goes in netlist/.
+write -format verilog -hierarchy -output $NETLIST_DIR/${DESIGN_NAME}_syn.v
+Writing verilog file '/home/DVLSI10/pd_group7/netlist/system_top_syn.v'.
+Warning: Verilog 'assign' or 'tran' statements are written out. (VO-4)
+1
+# DC-specific synthesis artifacts go in results/:
+#  - mapped SDC: constraints as actually applied by DC (including anything
+#    DC auto-derived), not just what was typed in the source SDC. This,
+#    not the original SDC, is what P&R should consume alongside the
+#    netlist above.
+#  - DDC: DC's own binary design database, lets this exact compiled state
+#    be reopened in DC later without re-running synthesis. Not portable
+#    to other tools.
+write_sdc $RESULTS_DIR/${DESIGN_NAME}.mapped.sdc
+1
+write -format ddc -hierarchy -output $RESULTS_DIR/${DESIGN_NAME}.ddc
+Writing ddc file '/home/DVLSI10/pd_group7/results/system_top.ddc'.
+1
+# Misc handoff deliverables (SDF for gate-level sim / STA cross-check,
+# Verilog gate netlist without hierarchy flattening, etc.) go in outputs/.
+# Uncomment as needed:
+# write_sdf $OUTPUTS_DIR/${DESIGN_NAME}.sdf
+dc_shell> exit
+
+Memory usage for this session 227 Mbytes.
+Memory usage for this session including child processes 247 Mbytes.
+CPU usage for this session 69 seconds ( 0.02 hours ).
+Elapsed time for this session 779 seconds ( 0.22 hours ).
+
+Thank you...

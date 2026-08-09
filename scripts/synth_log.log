@@ -1,0 +1,674 @@
+
+                           Design Compiler Graphical 
+                                 DC Ultra (TM)
+                                  DFTMAX (TM)
+                              Power Compiler (TM)
+                                 DesignWare (R)
+                                 DC Expert (TM)
+                               Design Vision (TM)
+                               HDL Compiler (TM)
+                               VHDL Compiler (TM)
+                                  DFT Compiler
+                               Design Compiler(R)
+
+                 Version V-2023.12 for linux64 - Nov 27, 2023 
+
+                    Copyright (c) 1988 - 2023 Synopsys, Inc.
+   This software and the associated documentation are proprietary to Synopsys,
+ Inc. This software may only be used in accordance with the terms and conditions
+ of a written license agreement with Synopsys, Inc. All other use, reproduction,
+   or distribution of this software is strictly prohibited.  Licensed Products
+     communicate with Synopsys servers for the purpose of providing software
+    updates, detecting software piracy and verifying that customers are using
+    Licensed Products in conformity with the applicable License Key for such
+  Licensed Products. Synopsys will use information gathered in connection with
+    this process to deliver software updates and pursue software pirates and
+                                   infringers.
+
+ Inclusivity & Diversity - Visit SolvNetPlus to read the "Synopsys Statement on
+            Inclusivity and Diversity" (Refer to article 000036315 at
+                        https://solvnetplus.synopsys.com)
+Initializing...
+Current time:       Sat Aug  1 11:44:32 2026
+Hostname:           acts-eda.pune.cdac.in
+CPU Model:          Intel(R) Xeon(R) CPU E5-2680 v3 @ 2.50GHz
+CPU Details:        Cores = 48 : Sockets = 2 : Cache Size = 30720 KB : Freq = 3.30 GHz
+OS:                 Linux 4.18.0-553.51.1.el8_10.x86_64
+RAM:                 62 GB (Free   4 GB)
+Swap:                 7 GB (Free   5 GB)
+Work Filesystem:    / mounted to /dev/mapper/almalinux-root
+Tmp Filesystem:     / mounted to /dev/mapper/almalinux-root
+Work Disk:          1370 GB (Free 219 GB)
+Tmp Disk:           1370 GB (Free 219 GB)
+
+CPU Load: 0%, Ram Free: 4 GB, Swap Free: 5 GB, Work Disk Free: 219 GB, Tmp Disk Free: 219 GB
+# ---------- Library setup ----------
+set LIB_DIR "/study/Testcase_C-DAC_july24/Testcase_C-DAC_july24/C-DAC_july24/ref/lib/stdcell_rvt"
+/study/Testcase_C-DAC_july24/Testcase_C-DAC_july24/C-DAC_july24/ref/lib/stdcell_rvt
+set search_path ". $LIB_DIR"
+. /study/Testcase_C-DAC_july24/Testcase_C-DAC_july24/C-DAC_july24/ref/lib/stdcell_rvt
+set target_library "saed32rvt_ss0p7vn40c.db"
+saed32rvt_ss0p7vn40c.db
+set link_library "* saed32rvt_ss0p7vn40c.db saed32rvt_tt0p78vn40c.db saed32rvt_ff1p16v125c.db"
+* saed32rvt_ss0p7vn40c.db saed32rvt_tt0p78vn40c.db saed32rvt_ff1p16v125c.db
+# ---------- Design library ----------
+define_design_lib WORK -path ./WORK
+1
+# ---------- Read RTL ----------
+set RTL_DIR "/home/DVLSI10/pd_group7/rtl"
+/home/DVLSI10/pd_group7/rtl
+analyze -format sverilog [glob $RTL_DIR/*.sv]
+Running PRESTO HDLC
+Compiling source file /home/DVLSI10/pd_group7/rtl/dma.sv
+Compiling source file /home/DVLSI10/pd_group7/rtl/systolic_array.sv
+Presto compilation completed successfully.
+Loading db file '/study/Testcase_C-DAC_july24/Testcase_C-DAC_july24/C-DAC_july24/ref/lib/stdcell_rvt/saed32rvt_ss0p7vn40c.db'
+Loading db file '/study/Testcase_C-DAC_july24/Testcase_C-DAC_july24/C-DAC_july24/ref/lib/stdcell_rvt/saed32rvt_tt0p78vn40c.db'
+Loading db file '/study/Testcase_C-DAC_july24/Testcase_C-DAC_july24/C-DAC_july24/ref/lib/stdcell_rvt/saed32rvt_ff1p16v125c.db'
+1
+elaborate dma
+Loading db file '/home/acts/synopsys_tools/dc/syn/V-2023.12/libraries/syn/gtech.db'
+Loading db file '/home/acts/synopsys_tools/dc/syn/V-2023.12/libraries/syn/standard.sldb'
+  Loading link library 'saed32rvt_ss0p7vn40c'
+  Loading link library 'saed32rvt_tt0p78vn40c'
+  Loading link library 'saed32rvt_ff1p16v125c'
+  Loading link library 'gtech'
+Running PRESTO HDLC
+
+Statistics for case statements in always block at line 95 in file
+	'/home/DVLSI10/pd_group7/rtl/dma.sv'
+===============================================
+|           Line           |  full/ parallel  |
+===============================================
+|           113            |     no/auto      |
+===============================================
+
+Statistics for case statements in always block at line 137 in file
+	'/home/DVLSI10/pd_group7/rtl/dma.sv'
+===============================================
+|           Line           |  full/ parallel  |
+===============================================
+|           147            |    auto/auto     |
+===============================================
+
+Statistics for case statements in always block at line 178 in file
+	'/home/DVLSI10/pd_group7/rtl/dma.sv'
+===============================================
+|           Line           |  full/ parallel  |
+===============================================
+|           189            |     no/auto      |
+===============================================
+
+Statistics for case statements in always block at line 258 in file
+	'/home/DVLSI10/pd_group7/rtl/dma.sv'
+===============================================
+|           Line           |  full/ parallel  |
+===============================================
+|           273            |     no/auto      |
+===============================================
+
+Inferred memory devices in process
+	in routine dma line 80 in file
+		'/home/DVLSI10/pd_group7/rtl/dma.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|   reg_status_reg    | Flip-flop |  32   |  Y  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+
+Inferred memory devices in process
+	in routine dma line 95 in file
+		'/home/DVLSI10/pd_group7/rtl/dma.sv'.
+==================================================================================
+|     Register Name      |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+==================================================================================
+|  s_axi_lite_bresp_reg  |   Latch   |   2   |  Y  | N  | Y  | N  | -  | -  | -  |
+|      reg_ctrl_reg      | Flip-flop |  32   |  Y  | N  | Y  | N  | N  | N  | N  |
+|    reg_src_addr_reg    | Flip-flop |  32   |  Y  | N  | Y  | N  | N  | N  | N  |
+|   reg_dest_addr_reg    | Flip-flop |  32   |  Y  | N  | Y  | N  | N  | N  | N  |
+|    reg_xfer_len_reg    | Flip-flop |  32   |  Y  | N  | Y  | N  | N  | N  | N  |
+|    start_pulse_reg     | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+| s_axi_lite_awready_reg | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+| s_axi_lite_wready_reg  | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+| s_axi_lite_bvalid_reg  | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+==================================================================================
+
+Inferred memory devices in process
+	in routine dma line 137 in file
+		'/home/DVLSI10/pd_group7/rtl/dma.sv'.
+==================================================================================
+|     Register Name      |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+==================================================================================
+|  s_axi_lite_rresp_reg  |   Latch   |   2   |  Y  | N  | Y  | N  | -  | -  | -  |
+| s_axi_lite_arready_reg | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+| s_axi_lite_rvalid_reg  | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|  s_axi_lite_rdata_reg  | Flip-flop |  32   |  Y  | N  | Y  | N  | N  | N  | N  |
+==================================================================================
+
+Inferred memory devices in process
+	in routine dma line 178 in file
+		'/home/DVLSI10/pd_group7/rtl/dma.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|     rd_buf_reg      | Flip-flop |  32   |  Y  | N  | N  | N  | N  | N  | N  |
+|     r_state_reg     | Flip-flop |   3   |  Y  | N  | Y  | N  | N  | N  | N  |
+|  m_axi_araddr_reg   | Flip-flop |  32   |  Y  | N  | Y  | N  | N  | N  | N  |
+|   m_axi_arlen_reg   | Flip-flop |   8   |  Y  | N  | Y  | N  | N  | N  | N  |
+|  m_axi_arvalid_reg  | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|  m_axi_rready_reg   | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|     rd_done_reg     | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|   unpack_idx_reg    | Flip-flop |   3   |  Y  | N  | Y  | N  | N  | N  | N  |
+|  rd_bytes_left_reg  | Flip-flop |  32   |  Y  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+
+Inferred memory devices in process
+	in routine dma line 258 in file
+		'/home/DVLSI10/pd_group7/rtl/dma.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|     w_state_reg     | Flip-flop |   3   |  Y  | N  | Y  | N  | N  | N  | N  |
+|     wr_done_reg     | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|  m_axi_awaddr_reg   | Flip-flop |  32   |  Y  | N  | Y  | N  | N  | N  | N  |
+|   m_axi_awlen_reg   | Flip-flop |   8   |  Y  | N  | Y  | N  | N  | N  | N  |
+|  m_axi_awvalid_reg  | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|   m_axi_wdata_reg   | Flip-flop |  32   |  Y  | N  | Y  | N  | N  | N  | N  |
+|  m_axi_wvalid_reg   | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|   m_axi_wlast_reg   | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|  m_axi_bready_reg   | Flip-flop |   1   |  N  | N  | Y  | N  | N  | N  | N  |
+|  pack_elm_cnt_reg   | Flip-flop |   4   |  Y  | N  | Y  | N  | N  | N  | N  |
+|    pack_buf_reg     | Flip-flop |  64   |  Y  | N  | Y  | N  | N  | N  | N  |
+|  wr_bytes_left_reg  | Flip-flop |  32   |  Y  | N  | Y  | N  | N  | N  | N  |
+===============================================================================
+Warning:  /home/DVLSI10/pd_group7/rtl/dma.sv:95: Netlist for always_ff block contains a latch. (ELAB-978)
+Warning:  /home/DVLSI10/pd_group7/rtl/dma.sv:137: Netlist for always_ff block contains a latch. (ELAB-978)
+Presto compilation completed successfully. (dma)
+Elaborated 1 design.
+Current design is now 'dma'.
+1
+current_design dma
+Current design is 'dma'.
+{dma}
+link
+
+  Linking design 'dma'
+  Using the following designs and libraries:
+  --------------------------------------------------------------------------
+  dma                         /home/DVLSI10/pd_group7/scripts/dma.db
+  saed32rvt_ss0p7vn40c (library) /study/Testcase_C-DAC_july24/Testcase_C-DAC_july24/C-DAC_july24/ref/lib/stdcell_rvt/saed32rvt_ss0p7vn40c.db
+  saed32rvt_tt0p78vn40c (library) /study/Testcase_C-DAC_july24/Testcase_C-DAC_july24/C-DAC_july24/ref/lib/stdcell_rvt/saed32rvt_tt0p78vn40c.db
+  saed32rvt_ff1p16v125c (library) /study/Testcase_C-DAC_july24/Testcase_C-DAC_july24/C-DAC_july24/ref/lib/stdcell_rvt/saed32rvt_ff1p16v125c.db
+
+1
+# ---------- Read constraints ----------
+read_sdc /home/DVLSI10/pd_group7/sdc/dma.sdc
+
+Reading SDC version 2.1...
+Error: Cannot find the specified driving cell in memory.   (UID-993)
+Current design is 'dma'.
+Current design is 'dma'.
+1
+# ---------- Datapath optimization hint (NEW) ----------
+set_dp_smartgen_options -optimize_type1_datapath true
+Error: unknown option '-optimize_type1_datapath' (CMD-010)
+# ---------- Checks ----------
+check_design
+ 
+****************************************
+check_design summary:
+Version:     V-2023.12
+Date:        Sat Aug  1 11:44:35 2026
+****************************************
+
+                   Name                                            Total
+--------------------------------------------------------------------------------
+Inputs/Outputs                                                     48
+    Unconnected ports (LINT-28)                                    48
+
+Cells                                                               4
+    Cells do not drive (LINT-1)                                     4
+--------------------------------------------------------------------------------
+
+Warning: In design 'dma', cell 'C4555' does not drive any nets. (LINT-1)
+Warning: In design 'dma', cell 'C4556' does not drive any nets. (LINT-1)
+Warning: In design 'dma', cell 'C4595' does not drive any nets. (LINT-1)
+Warning: In design 'dma', cell 'C4612' does not drive any nets. (LINT-1)
+Warning: In design 'dma', port 's_axi_lite_awaddr[31]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_awaddr[30]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_awaddr[29]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_awaddr[28]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_awaddr[27]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_awaddr[26]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_awaddr[25]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_awaddr[24]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_awaddr[23]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_awaddr[22]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_awaddr[21]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_awaddr[20]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_awaddr[19]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_awaddr[18]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_awaddr[17]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_awaddr[16]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_awaddr[15]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_awaddr[14]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_awaddr[13]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_awaddr[12]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_awaddr[11]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_awaddr[10]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_awaddr[9]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_awaddr[8]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_araddr[31]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_araddr[30]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_araddr[29]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_araddr[28]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_araddr[27]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_araddr[26]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_araddr[25]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_araddr[24]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_araddr[23]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_araddr[22]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_araddr[21]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_araddr[20]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_araddr[19]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_araddr[18]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_araddr[17]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_araddr[16]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_araddr[15]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_araddr[14]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_araddr[13]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_araddr[12]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_araddr[11]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_araddr[10]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_araddr[9]' is not connected to any nets. (LINT-28)
+Warning: In design 'dma', port 's_axi_lite_araddr[8]' is not connected to any nets. (LINT-28)
+1
+check_timing
+Information: Changed wire load model for 'DW01_sub_width32' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*SUB_UNS_OP_32_3_32' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_sub_width32' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*SUB_UNS_OP_32_4_32' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_inc_width3' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*ADD_UNS_OP_3_1_3' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_add_width32' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*ADD_UNS_OP_32_3_32' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_inc_width4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*ADD_UNS_OP_4_1_4' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_add_width32' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*ADD_UNS_OP_32_4_32' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_cmp2_width32' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*LEQ_UNS_OP_32_4_1' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for 'DW01_cmp2_width32' from '(none)' to 'ForQA'. (OPT-170)
+Information: Changed wire load model for '*LEQ_UNS_OP_32_3_1' from '(none)' to 'ForQA'. (OPT-170)
+Information: Updating design information... (UID-85)
+Warning: Design 'dma' contains 1 high-fanout nets. A fanout number of 1000 will be used for delay calculations involving these nets. (TIM-134)
+
+Information: Checking generated_clocks...
+
+Information: Checking loops...
+
+Information: Checking no_input_delay...
+Warning: The following input ports have no clock_relative delay specified, the command set_input_delay without -clock option will be ignored. (TIM-216)
+--------------------
+rst_n
+
+Information: Checking unconstrained_endpoints...
+
+Information: Checking pulse_clock_cell_type...
+
+Information: Checking no_driving_cell...
+
+Information: Checking partial_input_delay...
+1
+# ---------- Compile ----------
+compile_ultra -timing_high_effort
+Loading db file '/home/acts/synopsys_tools/dc/syn/V-2023.12/libraries/syn/dw_foundation.sldb'
+Information: Failed to find dw_foundation.sldb in the user defined search_path, load it from 'Synopsys Root'. (UISN-70)
+Warning: DesignWare synthetic library dw_foundation.sldb is added to the synthetic_library in the current command. (UISN-40)
+Warning: The -timing_high_effort_script option is ignored.  (OPT-1342)
+Information: Performing leakage power optimization. (PWR-850)
+CPU Load: 0%, Ram Free: 3 GB, Swap Free: 5 GB, Work Disk Free: 219 GB, Tmp Disk Free: 219 GB
+Alib files are up-to-date.
+Information: Failed to find dw_foundation.sldb in the user defined search_path, load it from 'Synopsys Root'. (UISN-70)
+Warning: DesignWare synthetic library dw_foundation.sldb is added to the synthetic_library in the current command. (UISN-40)
+Information: Evaluating DesignWare library utilization. (UISN-27)
+
+============================================================================
+| DesignWare Building Block Library  |         Version         | Available |
+============================================================================
+| Basic DW Building Blocks           | V-2023.12-DWBB_202312.0 |     *     |
+| Licensed DW Building Blocks        | V-2023.12-DWBB_202312.0 |     *     |
+============================================================================
+
+====================================================================================================
+| Flow Information                                                                                 |
+----------------------------------------------------------------------------------------------------
+| Flow         | Design Compiler WLM                                                               |
+| Command Line | compile_ultra -timing_high_effort_script                                          |
+====================================================================================================
+| Design Information                                      | Value                                  |
+====================================================================================================
+| Number of Scenarios                                     | 0                                      |
+| Leaf Cell Count                                         | 804                                    |
+| Number of User Hierarchies                              | 0                                      |
+| Sequential Cell Count                                   | 495                                    |
+| Macro Count                                             | 0                                      |
+| Number of Power Domains                                 | 0                                      |
+| Number of Path Groups                                   | 2                                      |
+| Number of VT Class                                      | 1                                      |
+| Number of Clocks                                        | 1                                      |
+| Number of Dont Touch Cells                              | 112                                    |
+| Number of Dont Touch Nets                               | 0                                      |
+| Number of Size Only Cells                               | 0                                      |
+| Design with UPF Data                                    | false                                  |
+====================================================================================================
+Information: Sequential output inversion is enabled.  SVF file must be used for formal verification. (OPT-1208)
+
+Information: There are 52 potential problems in your design. Please run 'check_design' for more information. (LINT-99)
+
+  Simplifying Design 'dma'
+
+Loaded alib file './alib-52/saed32rvt_ss0p7vn40c.db.alib'
+  Building model 'DW01_NAND2'
+Information: Ungrouping 0 of 1 hierarchies before Pass 1 (OPT-775)
+CPU Load: 0%, Ram Free: 3 GB, Swap Free: 5 GB, Work Disk Free: 219 GB, Tmp Disk Free: 219 GB
+Information: State dependent leakage is now switched from on to off.
+
+  Beginning Pass 1 Mapping
+  ------------------------
+  Processing 'dma'
+Information: Added key list 'DesignWare' to design 'dma'. (DDB-72)
+Information: The register 'm_axi_arlen_reg[0]' is a constant and will be removed. (OPT-1206)
+Information: The register 'm_axi_arlen_reg[1]' is a constant and will be removed. (OPT-1206)
+Information: The register 'm_axi_arlen_reg[2]' is a constant and will be removed. (OPT-1206)
+Information: The register 'm_axi_arlen_reg[3]' is a constant and will be removed. (OPT-1206)
+Information: The register 'm_axi_arlen_reg[4]' is a constant and will be removed. (OPT-1206)
+Information: The register 'm_axi_arlen_reg[5]' is a constant and will be removed. (OPT-1206)
+Information: The register 'm_axi_arlen_reg[6]' is a constant and will be removed. (OPT-1206)
+Information: The register 'm_axi_arlen_reg[7]' is a constant and will be removed. (OPT-1206)
+Information: The register 'm_axi_awlen_reg[1]' is a constant and will be removed. (OPT-1206)
+Information: The register 'm_axi_awlen_reg[2]' is a constant and will be removed. (OPT-1206)
+Information: The register 'm_axi_awlen_reg[3]' is a constant and will be removed. (OPT-1206)
+Information: The register 'm_axi_awlen_reg[4]' is a constant and will be removed. (OPT-1206)
+Information: The register 'm_axi_awlen_reg[5]' is a constant and will be removed. (OPT-1206)
+Information: The register 'm_axi_awlen_reg[6]' is a constant and will be removed. (OPT-1206)
+Information: The register 'm_axi_awlen_reg[7]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[2]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[3]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[4]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[5]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[6]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[7]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[8]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[9]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[10]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[11]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[12]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[13]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[14]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[15]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[16]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[17]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[18]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[19]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[20]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[21]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[22]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[23]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[24]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[25]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[26]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[27]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[28]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[29]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[30]' is a constant and will be removed. (OPT-1206)
+Information: The register 'reg_status_reg[31]' is a constant and will be removed. (OPT-1206)
+Information: In design 'dma', the register 's_axi_lite_rresp_reg[0]' is removed because it is merged to 's_axi_lite_bresp_reg[0]'. (OPT-1215)
+Information: In design 'dma', the register 's_axi_lite_rresp_reg[1]' is removed because it is merged to 's_axi_lite_bresp_reg[0]'. (OPT-1215)
+Information: In design 'dma', the register 's_axi_lite_bresp_reg[1]' is removed because it is merged to 's_axi_lite_bresp_reg[0]'. (OPT-1215)
+Information: In design 'dma', the register 's_axi_lite_wready_reg' is removed because it is merged to 's_axi_lite_awready_reg'. (OPT-1215)
+ Implement Synthetic for 'dma'.
+Information: The register 's_axi_lite_bresp_reg[0]' is a constant and will be removed. (OPT-1206)
+CPU Load: 0%, Ram Free: 3 GB, Swap Free: 5 GB, Work Disk Free: 219 GB, Tmp Disk Free: 219 GB
+
+  Updating timing information
+Information: Updating design information... (UID-85)
+Information: The library cell 'PMT3_RVT' in the library 'saed32rvt_ss0p7vn40c' is not characterized for internal power. (PWR-536)
+Information: The library cell 'PMT2_RVT' in the library 'saed32rvt_ss0p7vn40c' is not characterized for internal power. (PWR-536)
+Information: The library cell 'PMT1_RVT' in the library 'saed32rvt_ss0p7vn40c' is not characterized for internal power. (PWR-536)
+Information: The library cell 'NMT3_RVT' in the library 'saed32rvt_ss0p7vn40c' is not characterized for internal power. (PWR-536)
+Information: The library cell 'NMT2_RVT' in the library 'saed32rvt_ss0p7vn40c' is not characterized for internal power. (PWR-536)
+Information: The library cell 'NMT1_RVT' in the library 'saed32rvt_ss0p7vn40c' is not characterized for internal power. (PWR-536)
+Information: The target library(s) contains cell(s), other than black boxes, that are not characterized for internal power. (PWR-24)
+
+Threshold voltage group cell usage:
+>> saed32cell_svt 100.00%
+
+  Beginning Mapping Optimizations  (Ultra High effort)
+  -------------------------------
+  Mapping Optimization (Phase 1)
+
+                                  TOTAL                                                
+   ELAPSED            WORST NEG   SETUP    DESIGN                              LEAKAGE 
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT            POWER  
+  --------- --------- --------- --------- --------- ------------------------- ---------
+    0:00:05    7548.3      0.00       0.0     393.2                           3081734.0000
+    0:00:05    7536.4      0.00       0.0     427.2                           3081249.5000
+
+Threshold voltage group cell usage:
+>> saed32cell_svt 100.00%
+
+  Beginning Constant Register Removal
+  -----------------------------------
+    0:00:05    7536.4      0.00       0.0     427.2                           3081249.5000
+    0:00:05    7536.4      0.00       0.0     427.2                           3081249.5000
+
+Threshold voltage group cell usage:
+>> saed32cell_svt 100.00%
+
+  Beginning Global Optimizations
+  ------------------------------
+  Numerical Synthesis (Phase 1)
+  Numerical Synthesis (Phase 2)
+  Global Optimization (Phase 1)
+  Global Optimization (Phase 2)
+  Global Optimization (Phase 3)
+  Global Optimization (Phase 4)
+  Global Optimization (Phase 5)
+  Global Optimization (Phase 6)
+  Global Optimization (Phase 7)
+  Global Optimization (Phase 8)
+  Global Optimization (Phase 9)
+  Global Optimization (Phase 10)
+  Global Optimization (Phase 11)
+  Global Optimization (Phase 12)
+  Global Optimization (Phase 13)
+  Global Optimization (Phase 14)
+  Global Optimization (Phase 15)
+  Global Optimization (Phase 16)
+  Global Optimization (Phase 17)
+  Global Optimization (Phase 18)
+  Global Optimization (Phase 19)
+  Global Optimization (Phase 20)
+  Global Optimization (Phase 21)
+  Global Optimization (Phase 22)
+  Global Optimization (Phase 23)
+  Global Optimization (Phase 24)
+  Global Optimization (Phase 25)
+  Global Optimization (Phase 26)
+  Global Optimization (Phase 27)
+  Global Optimization (Phase 28)
+  Global Optimization (Phase 29)
+  Global Optimization (Phase 30)
+  Global Optimization (Phase 31)
+
+Threshold voltage group cell usage:
+>> saed32cell_svt 100.00%
+
+  Beginning Isolate Ports
+  -----------------------
+
+Threshold voltage group cell usage:
+>> saed32cell_svt 100.00%
+
+  Beginning Delay Optimization
+  ----------------------------
+    0:00:06    6535.1      0.00       0.0     438.9                           2941577.5000
+    0:00:06    6535.1      0.00       0.0     438.9                           2941577.5000
+    0:00:06    6535.1      0.00       0.0     438.9                           2941577.5000
+    0:00:06    6474.3      0.00       0.0     446.6                           2940299.5000
+
+Threshold voltage group cell usage:
+>> saed32cell_svt 100.00%
+    0:00:06    6474.3      0.00       0.0     446.6                           2940299.5000
+    0:00:06    6474.3      0.00       0.0     446.6                           2940299.5000
+
+  Beginning WLM Backend Optimization
+  --------------------------------------
+    0:00:07    6430.1      0.00       0.0     438.0                           2934116.7500
+    0:00:07    6430.1      0.00       0.0     438.0                           2934116.7500
+    0:00:07    6430.1      0.00       0.0     438.0                           2934116.7500
+    0:00:07    6430.1      0.00       0.0     438.0                           2934116.7500
+    0:00:07    6430.1      0.00       0.0     438.0                           2934116.7500
+    0:00:07    6393.8      0.00       0.0     436.8                           2926459.7500
+    0:00:07    6393.8      0.00       0.0     436.8                           2926459.7500
+    0:00:07    6393.8      0.00       0.0     436.8                           2926459.7500
+    0:00:07    6393.8      0.00       0.0     436.8                           2926459.7500
+    0:00:07    6393.8      0.00       0.0     436.8                           2926459.7500
+    0:00:07    6393.8      0.00       0.0     436.8                           2926459.7500
+    0:00:07    6393.8      0.00       0.0     436.8                           2926459.7500
+    0:00:07    6393.8      0.00       0.0     436.8                           2926459.7500
+    0:00:07    6393.8      0.00       0.0     436.8                           2926459.7500
+    0:00:07    6393.8      0.00       0.0     436.8                           2926459.7500
+    0:00:07    6393.8      0.00       0.0     436.8                           2926459.7500
+    0:00:07    6393.8      0.00       0.0     436.8                           2926459.7500
+    0:00:07    6393.8      0.00       0.0     436.8                           2926459.7500
+    0:00:07    6393.8      0.00       0.0     436.8                           2926459.7500
+    0:00:07    6393.8      0.00       0.0     436.8                           2926459.7500
+    0:00:07    6393.8      0.00       0.0     436.8                           2926459.7500
+    0:00:07    6393.8      0.00       0.0     436.8                           2926459.7500
+    0:00:07    6393.8      0.00       0.0     436.8                           2926459.7500
+    0:00:07    6393.8      0.00       0.0     436.8                           2926459.7500
+
+
+  Beginning Design Rule Fixing  (max_transition)  (max_capacitance)
+  ----------------------------
+
+                                  TOTAL                                                
+   ELAPSED            WORST NEG   SETUP    DESIGN                              LEAKAGE 
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT            POWER  
+  --------- --------- --------- --------- --------- ------------------------- ---------
+    0:00:07    6393.8      0.00       0.0     436.8                           2926459.7500
+  Global Optimization (Phase 32)
+  Global Optimization (Phase 33)
+  Global Optimization (Phase 34)
+    0:00:08    7152.1      0.00       0.0     139.9                           2988307.5000
+    0:00:08    7152.1      0.00       0.0     139.9                           2988307.5000
+
+Threshold voltage group cell usage:
+>> saed32cell_svt 100.00%
+
+
+  Beginning Leakage Power Optimization  (max_leakage_power 0)
+  ------------------------------------
+
+                                  TOTAL                                                
+   ELAPSED            WORST NEG   SETUP    DESIGN                              LEAKAGE 
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT            POWER  
+  --------- --------- --------- --------- --------- ------------------------- ---------
+    0:00:08    7152.1      0.00       0.0     139.9                           2988307.5000
+    0:00:08    7152.1      0.00       0.0     139.9                           2988307.5000
+    0:00:08    7152.1      0.00       0.0     139.9                           2988307.5000
+    0:00:08    7152.1      0.00       0.0     139.9                           2988307.5000
+    0:00:08    7151.6      0.00       0.0     139.2                           2988010.0000
+    0:00:08    7151.6      0.00       0.0     139.2                           2988010.0000
+    0:00:08    7151.6      0.00       0.0     139.2                           2988010.0000
+    0:00:08    7151.6      0.00       0.0     139.2                           2988010.0000
+    0:00:08    7151.6      0.00       0.0     139.2                           2988010.0000
+    0:00:08    7151.6      0.00       0.0     139.2                           2988010.0000
+    0:00:08    7151.6      0.00       0.0     139.2                           2988010.0000
+    0:00:08    7151.6      0.00       0.0     139.2                           2988010.0000
+    0:00:08    7151.6      0.00       0.0     139.2                           2988010.0000
+    0:00:08    7151.6      0.00       0.0     139.2                           2988010.0000
+    0:00:08    7151.6      0.00       0.0     139.2                           2988010.0000
+    0:00:08    7151.6      0.00       0.0     139.2                           2988010.0000
+    0:00:08    7151.6      0.00       0.0     139.2                           2988010.0000
+    0:00:08    7151.6      0.00       0.0     139.2                           2988010.0000
+    0:00:08    7151.6      0.00       0.0     139.2                           2988010.0000
+    0:00:08    7151.6      0.00       0.0     139.2                           2988010.0000
+    0:00:08    7151.6      0.00       0.0     139.2                           2988010.0000
+    0:00:08    7151.6      0.00       0.0     139.2                           2988010.0000
+    0:00:08    7151.6      0.00       0.0     139.2                           2988010.0000
+
+                                  TOTAL                                                
+   ELAPSED            WORST NEG   SETUP    DESIGN                              LEAKAGE 
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT            POWER  
+  --------- --------- --------- --------- --------- ------------------------- ---------
+    0:00:08    7151.6      0.00       0.0     139.2                           2988010.0000
+    0:00:08    6897.0      0.00       0.0     135.7                           2983431.2500
+    0:00:08    6897.0      0.00       0.0     135.7                           2983431.2500
+    0:00:08    6897.0      0.00       0.0     135.7                           2983431.2500
+    0:00:08    6897.0      0.00       0.0     135.7                           2983431.2500
+    0:00:09    7282.0      0.00       0.0      84.6                           3013652.7500
+    0:00:09    7282.0      0.00       0.0      84.6                           3013652.7500
+    0:00:09    7282.0      0.00       0.0      84.6                           3013652.7500
+    0:00:09    7282.0      0.00       0.0      84.6                           3013652.7500
+    0:00:09    7282.0      0.00       0.0      84.6                           3013652.7500
+    0:00:09    7282.0      0.00       0.0      84.6                           3013652.7500
+    0:00:10    7196.6      0.00       0.0      92.0                           2995486.2500
+CPU Load: 0%, Ram Free: 3 GB, Swap Free: 5 GB, Work Disk Free: 219 GB, Tmp Disk Free: 219 GB
+Loading db file '/study/Testcase_C-DAC_july24/Testcase_C-DAC_july24/C-DAC_july24/ref/lib/stdcell_rvt/saed32rvt_ss0p7vn40c.db'
+Loading db file '/study/Testcase_C-DAC_july24/Testcase_C-DAC_july24/C-DAC_july24/ref/lib/stdcell_rvt/saed32rvt_tt0p78vn40c.db'
+Loading db file '/study/Testcase_C-DAC_july24/Testcase_C-DAC_july24/C-DAC_july24/ref/lib/stdcell_rvt/saed32rvt_ff1p16v125c.db'
+
+
+Note: Symbol # after min delay cost means estimated hold TNS across all active scenarios 
+
+
+  Optimization Complete
+  ---------------------
+Information: State dependent leakage is now switched from off to on.
+Information: Propagating switching activity (low effort zero delay simulation). (PWR-6)
+CPU Load: 0%, Ram Free: 3 GB, Swap Free: 5 GB, Work Disk Free: 219 GB, Tmp Disk Free: 219 GB
+Information: Total number of MV cells in the design.
+----------------------------------------------------------------------------------------------------
+ MV Cells                                           Total Number                                   
+----------------------------------------------------------------------------------------------------
+ Level Shifter:                                     0                                             
+ Enable Level Shifter:                              0                                             
+ Isolation Cell:                                    0                                             
+ Retention Cell:                                    0                                             
+ Retention Clamp Cell:                              0                                             
+ Switch Cell:                                       0                                             
+ Always-On Cell:                                    0                                             
+ Repeater Cell:                                     0                                             
+
+----------------------------------------------------------------------------------------------------
+Unmapped MV Cells 
+----------------------------------------------------------------------------------------------------
+0 Isolation Cells are unmapped 
+0 Retention Clamp Cells are unmapped 
+----------------------------------------------------------------------------------------------------
+1
+# ---------- Write netlist ----------
+set NET_DIR "/home/DVLSI10/pd_group7/netlist"
+/home/DVLSI10/pd_group7/netlist
+write_file -format verilog -hierarchy -output $NET_DIR/dma_netlist.v
+Writing verilog file '/home/DVLSI10/pd_group7/netlist/dma_netlist.v'.
+Warning: Verilog 'assign' or 'tran' statements are written out. (VO-4)
+1
+write_sdc  $NET_DIR/post_dma_synth.sdc
+1
+# ---------- Reports ----------
+report_timing > $NET_DIR/timing.rpt
+report_area   > $NET_DIR/area.rpt
+report_power  > $NET_DIR/power.rpt
+report_qor    > $NET_DIR/qor.rpt
+quit
+
+Memory usage for this session 287 Mbytes.
+Memory usage for this session including child processes 287 Mbytes.
+CPU usage for this session 18 seconds ( 0.01 hours ).
+Elapsed time for this session 21 seconds ( 0.01 hours ).
+
+Thank you...
