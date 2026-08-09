@@ -378,6 +378,8 @@ module riscv_core #(
         .m_axi_lite_awprot  (m_axi_lite_awprot),
         .m_axi_lite_awvalid (m_axi_lite_awvalid),
         .m_axi_lite_awready (m_axi_lite_awready),
+        .m_axi_lite_wvalid  (m_axi_lite_wvalid),
+        .m_axi_lite_wready  (m_axi_lite_wready),
         .m_axi_lite_wdata   (m_axi_lite_wdata),
         .m_axi_lite_wstrb   (m_axi_lite_wstrb),
         .m_axi_lite_bresp   (m_axi_lite_bresp),
