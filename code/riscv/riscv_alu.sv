@@ -10,8 +10,10 @@ module riscv_alu #(
 );
 
     localparam SHIFT_W = $clog2(DATA_WIDTH);   ///shift amount held in the lower 5 bits of operand_b_i.
+    logic signed [(2*DATA_WIDTH)-1:0] signed_a_ext;
 
     always_comb begin
+        signed_a_ext = {{DATA_WIDTH{operand_a_i[DATA_WIDTH-1]}}, operand_a_i};
 
         unique case (alu_op_i)
             `ALU_ADD    : result_o = operand_a_i + operand_b_i;                                                               ///ADDITION
@@ -23,10 +25,9 @@ module riscv_alu #(
             `ALU_SLTU   : result_o = operand_a_i < operand_b_i ? {{(DATA_WIDTH-1){1'b0}}, 1'b1} : '0;                         ///Unsigned Comparision
             `ALU_SLL    : result_o = operand_a_i << operand_b_i[SHIFT_W - 1:0];                                               ///Logical Left Shift
             `ALU_SRL    : result_o = operand_a_i >> operand_b_i[SHIFT_W - 1:0];                                               ///Logical Right Shift
-            `ALU_SRA    : result_o = $signed(operand_a_i) >>> operand_b_i[SHIFT_W - 1:0];                                     ///Arithmetic Right Shift
+            `ALU_SRA    : result_o = signed_a_ext >>> operand_b_i[SHIFT_W - 1:0];                                     ///Arithmetic Right Shift
             `ALU_PASS_B : result_o = operand_b_i;
             default     : result_o = 'b0;
-
         endcase
     end
 
