@@ -13,7 +13,7 @@ module pe_array #(
     input  logic [DATA_WIDTH - 1 : 0] B [0 : MATRIX_SIZE - 1][0 : MATRIX_SIZE - 1],
 
     // Parallel Output Matrix
-    output logic [DATA_WIDTH - 1 : 0] OUT [0 : MATRIX_SIZE - 1][0 : MATRIX_SIZE - 1],
+    output logic [PSUM_WIDTH - 1 : 0] OUT [0 : MATRIX_SIZE - 1][0 : MATRIX_SIZE - 1],
 
     output logic done
 );
