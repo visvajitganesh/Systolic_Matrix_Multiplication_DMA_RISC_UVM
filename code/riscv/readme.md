@@ -142,6 +142,3 @@ Provides crucial RISC-V RV32I opcodes, instruction slices, and control bit vecto
 - **`tb_riscv_dmem.sv`**: Tests 1-cycle read/write memory timing, byte-strobe lane combinations, read-during-write pass-through, and address boundary exception flags.
 
 ---
-# Compile and simulate Data Memory
-iverilog -g2012 -o dmem_sim riscv_dmem.sv tb_riscv_dmem.sv
-vvp dmem_sim
