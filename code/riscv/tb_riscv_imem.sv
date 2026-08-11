@@ -1,99 +1,188 @@
-`timescale 1ns/1ps
+`timescale 1ns / 1ps
 
 module tb_riscv_imem;
 
-    // Parameters
-    localparam DEPTH      = 256;
-    localparam CLK_PERIOD = 10; // 100 MHz clock
+    localparam DEPTH      = 1024;
+    localparam CLK_PERIOD = 10;
 
     // DUT Signals
     logic        clk_i;
+    logic        rst_i;                 // Active-High Reset
     logic [31:0] addr_i;
     logic [31:0] rdata_o;
+    logic        error_unaligned_o;
+    logic        error_out_of_bounds_o;
 
-    // Test Tracking
     int pass_count = 0;
     int fail_count = 0;
 
-    // Instantiate Instruction Memory DUT
+    // Instantiate DUT
     riscv_imem #(
         .DEPTH(DEPTH),
-        .INIT_FILE("") // Empty = populated directly by testbench
+        .INIT_FILE("")
     ) dut (
-        .clk_i   (clk_i),
-        .addr_i  (addr_i),
-        .rdata_o (rdata_o)
+        .clk_i                (clk_i),
+        .rst_i                (rst_i),
+        .addr_i               (addr_i),
+        .rdata_o              (rdata_o),
+        .error_unaligned_o    (error_unaligned_o),
+        .error_out_of_bounds_o(error_out_of_bounds_o)
     );
 
-    // Clock Generation (10ns period)
-    always #(CLK_PERIOD/2) clk_i = ~clk_i;
+    // Clock Generation
+    always #(CLK_PERIOD / 2) clk_i = ~clk_i;
 
-    // Task: Check Instruction Fetch
-    task automatic check_fetch(input [31:0] fetch_addr, input [31:0] expected_instr, input string test_name);
-        @(negedge clk_i);
-        addr_i = fetch_addr;
-        @(posedge clk_i); // Synchronous read latches instruction into rdata_o
+    // Helper Task for Response Checking
+    task automatic check_response(
+        input string       test_name,
+        input logic [31:0] exp_rdata,
+        input logic        exp_unaligned,
+        input logic        exp_oob
+    );
+        // Sample 1 cycle after clock edge to match 1-cycle read latency
+        @(posedge clk_i);
         #1;
-        if (rdata_o === expected_instr) begin
-            $display("[PASS] %-35s | PC: 0x%08h | Instr: 0x%08h", 
-                     test_name, fetch_addr, rdata_o);
+
+        if (rdata_o === exp_rdata && 
+            error_unaligned_o === exp_unaligned && 
+            error_out_of_bounds_o === exp_oob) begin
+            $display("[PASS] %-36s | rdata: 0x%08h | err_unaligned: %0b | err_oob: %0b",
+                     test_name, rdata_o, error_unaligned_o, error_out_of_bounds_o);
             pass_count++;
         end else begin
-            $display("** Error: [FAIL] %-28s | PC: 0x%08h | Expected: 0x%08h | Got: 0x%08h", 
-                     test_name, fetch_addr, expected_instr, rdata_o);
+            $error("[FAIL] %-36s\n  Expected -> rdata: 0x%08h, err_unaligned: %0b, err_oob: %0b\n  Actual   -> rdata: 0x%08h, err_unaligned: %0b, err_oob: %0b",
+                   test_name, exp_rdata, exp_unaligned, exp_oob, rdata_o, error_unaligned_o, error_out_of_bounds_o);
             fail_count++;
         end
     endtask
 
-    // Stimulus Process
+    // Main Test Sequence
     initial begin
-        // Initialize Signals
-        clk_i  = 0;
-        addr_i = 0;
+        clk_i  = 1'b0;
+        rst_i  = 1'b0;
+        addr_i = '0;
 
-        // Pre-load memory array with test instructions
-        dut.mem[0] = 32'h00500593; // addi x11, x0, 5    (PC = 0x00)
-        dut.mem[1] = 32'h00a00613; // addi x12, x0, 10   (PC = 0x04)
-        dut.mem[2] = 32'h00c586b3; // add  x13, x11, x12 (PC = 0x08)
-        dut.mem[3] = 32'h00d60733; // add  x14, x12, x13 (PC = 0x0C)
-        dut.mem[8] = 32'h0000006f; // jal  x0, 0         (PC = 0x20)
+        // Pre-populate memory array directly
+        dut.mem[0]           = 32'h00500513; // addi x10, x0, 5
+        dut.mem[1]           = 32'h00a00593; // addi x11, x0, 10
+        dut.mem[DEPTH / 2]   = 32'h12345678; // Test pattern at midpoint
+        dut.mem[DEPTH - 1]   = 32'hDEADBEEF; // Test pattern at max legal index
 
         $display("==========================================================");
-        $display("          STARTING RISC-V IMEM TESTBENCH                  ");
+        $display("         STARTING RISC-V IMEM ROBUST VERIFICATION         ");
         $display("==========================================================");
 
-        // --------------------------------------------------------
-        // Test 1: Sequential Fetch (Simulating Instruction Pipeline)
-        // --------------------------------------------------------
-        check_fetch(32'h0000_0000, 32'h00500593, "Fetch Addr 0x00 (addi x11)");
-        check_fetch(32'h0000_0004, 32'h00a00613, "Fetch Addr 0x04 (addi x12)");
-        check_fetch(32'h0000_0008, 32'h00c586b3, "Fetch Addr 0x08 (add x13)");
-        check_fetch(32'h0000_000C, 32'h00d60733, "Fetch Addr 0x0C (add x14)");
+        // -----------------------------------------------------------------
+        // [TEST 1] Active-High Reset Asserted State
+        // -----------------------------------------------------------------
+        rst_i = 1'b1;
+        #(CLK_PERIOD);
+        
+        if (rdata_o === 32'h0000_0013 && 
+            error_unaligned_o === 1'b0 && 
+            error_out_of_bounds_o === 1'b0) begin
+            $display("[PASS] Reset State Check                  | Reset values correct (NOP state & flags clear).");
+            pass_count++;
+        end else begin
+            $error("[FAIL] Reset State Check                  | rdata: 0x%08h (exp 0x00000013), err_unaligned: %0b (exp 0), err_oob: %0b (exp 0)",
+                   rdata_o, error_unaligned_o, error_out_of_bounds_o);
+            fail_count++;
+        end
 
-        // --------------------------------------------------------
-        // Test 2: Word-Alignment Slicing (addr_i[31:2])
-        // Addresses 0x04, 0x05, 0x06, 0x07 must all return word index 1
-        // --------------------------------------------------------
-        check_fetch(32'h0000_0005, 32'h00a00613, "Unaligned Fetch Addr 0x05");
-        check_fetch(32'h0000_0006, 32'h00a00613, "Unaligned Fetch Addr 0x06");
-        check_fetch(32'h0000_0007, 32'h00a00613, "Unaligned Fetch Addr 0x07");
+        // De-assert Reset
+        @(posedge clk_i);
+        rst_i = 1'b0;
 
-        // --------------------------------------------------------
-        // Test 3: Non-Sequential Jump / Branch Fetch Target
-        // --------------------------------------------------------
-        check_fetch(32'h0000_0020, 32'h0000006f, "Branch/Jump Target Addr 0x20");
+        // -----------------------------------------------------------------
+        // [TEST 2] Legal Aligned Access (Base, Mid, and Maximum Boundary)
+        // -----------------------------------------------------------------
+        addr_i = 32'h0000_0000;
+        check_response("Legal Read: Index 0", 32'h00500513, 1'b0, 1'b0);
 
-        // --------------------------------------------------------
-        // Final Test Summary
-        // --------------------------------------------------------
+        addr_i = 32'h0000_0004;
+        check_response("Legal Read: Index 1", 32'h00a00593, 1'b0, 1'b0);
+
+        addr_i = (DEPTH / 2) * 4;
+        check_response("Legal Read: Midpoint Index", 32'h12345678, 1'b0, 1'b0);
+
+        addr_i = (DEPTH - 1) * 4;
+        check_response("Legal Read: Max Index (DEPTH-1)", 32'hDEADBEEF, 1'b0, 1'b0);
+
+        // -----------------------------------------------------------------
+        // [TEST 3] Misaligned Fetch Exceptions (Offsets 1, 2, 3)
+        // -----------------------------------------------------------------
+        addr_i = 32'h0000_0001;
+        check_response("Unaligned Fetch: Byte Offset 1", 32'h0000_0013, 1'b1, 1'b0);
+
+        addr_i = 32'h0000_0002;
+        check_response("Unaligned Fetch: Byte Offset 2", 32'h0000_0013, 1'b1, 1'b0);
+
+        addr_i = 32'h0000_0003;
+        check_response("Unaligned Fetch: Byte Offset 3", 32'h0000_0013, 1'b1, 1'b0);
+
+        // -----------------------------------------------------------------
+        // [TEST 4] Out-of-Bounds Exceptions
+        // -----------------------------------------------------------------
+        addr_i = DEPTH * 4; // Boundary word index 1024
+        check_response("OOB Fetch: Exact Boundary (DEPTH)", 32'h0000_0013, 1'b0, 1'b1);
+
+        addr_i = 32'h0001_0000;
+        check_response("OOB Fetch: High Memory Address", 32'h0000_0013, 1'b0, 1'b1);
+
+        // -----------------------------------------------------------------
+        // [TEST 5] Dual Fault (Out-of-Bounds + Unaligned)
+        // -----------------------------------------------------------------
+        addr_i = (DEPTH * 4) + 2;
+        check_response("Dual Fault: OOB + Unaligned", 32'h0000_0013, 1'b1, 1'b1);
+
+        // -----------------------------------------------------------------
+        // [TEST 6] Recovery from Faults
+        // -----------------------------------------------------------------
+        addr_i = 32'h0000_0000;
+        check_response("Recovery: Legal Fetch After Faults", 32'h00500513, 1'b0, 1'b0);
+
+        // -----------------------------------------------------------------
+        // [TEST 7] Randomized Stress Read Sequence (100 Vectors)
+        // -----------------------------------------------------------------
+        $display("----------------------------------------------------------");
+        $display("Starting Randomized Access Stress Phase (100 Cycles)...");
+        
+        for (int i = 0; i < 100; i++) begin
+            logic [31:0] rand_addr;
+            logic exp_u, exp_oob;
+            logic [31:0] exp_data;
+
+            rand_addr = $urandom();
+            
+            // Mask lower bits every 3rd iteration to hit legal paths periodically
+            if (i % 3 == 0) rand_addr[1:0] = 2'b00;
+
+            exp_u   = (rand_addr[1:0] != 2'b00);
+            exp_oob = (rand_addr[31:2] >= DEPTH);
+            
+            if (!exp_u && !exp_oob) begin
+                exp_data = dut.mem[rand_addr[31:2]];
+            end else begin
+                exp_data = 32'h0000_0013;
+            end
+
+            addr_i = rand_addr;
+            check_response($sformatf("Random Vector #%0d", i + 1), exp_data, exp_u, exp_oob);
+        end
+
+        // -----------------------------------------------------------------
+        // TEST SUMMARY
+        // -----------------------------------------------------------------
         $display("==========================================================");
-        $display("   TEST SUMMARY: %0d PASSED, %0d FAILED", pass_count, fail_count);
+        $display("TESTBENCH COMPLETE");
+        $display("Passed: %0d | Failed: %0d", pass_count, fail_count);
         $display("==========================================================");
 
-        if (fail_count == 0)
-            $display(" >>> ALL IMEM TESTS PASSED <<<");
-        else
-            $display(" >>> SOME IMEM TESTS FAILED - CHECK TRANSCRIPT <<<");
+        if (fail_count == 0) begin
+            $display(">> RESULT: ALL TESTS PASSED SUCCESSFULLY!");
+        end else begin
+            $error(">> RESULT: VERIFICATION FAILED WITH %0d ERRORS.", fail_count);
+        end
 
         $finish;
     end
