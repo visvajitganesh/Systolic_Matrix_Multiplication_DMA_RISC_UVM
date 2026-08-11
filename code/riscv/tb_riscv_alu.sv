@@ -1,18 +1,4 @@
-`ifndef ALU_DEFINES_SVH
-`define ALU_DEFINES_SVH
-    `define ALU_OP_W   4
-    `define ALU_ADD    4'd0
-    `define ALU_SUB    4'd1
-    `define ALU_AND    4'd2
-    `define ALU_OR     4'd3
-    `define ALU_XOR    4'd4
-    `define ALU_SLT    4'd5
-    `define ALU_SLTU   4'd6
-    `define ALU_SLL    4'd7
-    `define ALU_SRL    4'd8
-    `define ALU_SRA    4'd9
-    `define ALU_PASS_B 4'd10
-`endif
+`include "riscv_defs.sv"
 
 module tb_riscv_alu;
 
@@ -54,7 +40,7 @@ module tb_riscv_alu;
             `ALU_OR     : return a | b;
             `ALU_XOR    : return a ^ b;
             `ALU_SLT    : return ($signed(a) < $signed(b)) ? {{(DATA_WIDTH-1){1'b0}}, 1'b1} : '0;
-            `ALU_SLTU   : return (a < b)                  ? {{(DATA_WIDTH-1){1'b0}}, 1'b1} : '0;
+            `ALU_SLTU   : return (a < b) ? {{(DATA_WIDTH-1){1'b0}}, 1'b1} : '0;
             `ALU_SLL    : return a << shamt;
             `ALU_SRL    : return a >> shamt;
             `ALU_SRA    : return signed_a >>> shamt;
