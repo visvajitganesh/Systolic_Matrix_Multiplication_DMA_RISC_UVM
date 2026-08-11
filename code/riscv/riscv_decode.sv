@@ -33,7 +33,7 @@ module riscv_decode
     logic rs2_valid;
 
     always_comb begin
-
+        // Default signal assignments
         is_alu_o    = 1'b0;
         is_load_o   = 1'b0;
         is_store_o  = 1'b0;
@@ -53,6 +53,7 @@ module riscv_decode
         mem_unsigned_o =  0;
 
         case (instr_i[`OPCODE_R])
+            // R-Type
             `OPCODE_OP     : begin
                 is_alu_o    = 1'b1;
                 rd_valid_o  = 1'b1;
@@ -65,35 +66,61 @@ module riscv_decode
                             alu_op_o = `ALU_ADD;
                         else if (instr_i[`FUNCT7_R] == `FUNCT7_SUB)
                             alu_op_o = `ALU_SUB;
-                        else
+                        else begin
                             invalid_o = 1'b1;
+                            is_alu_o   = 1'b0;
+                            rd_valid_o = 1'b0;
+                            rs1_valid  = 1'b0;
+                            rs2_valid  = 1'b0;
+                        end
                     end
                     
-                    `FUNCT3_SLT     : alu_op_o = `ALU_SLT;
-
-                    `FUNCT3_SLTU    : alu_op_o = `ALU_SLTU;
-
-                    `FUNCT3_AND     : alu_op_o = `ALU_AND;
-
-                    `FUNCT3_OR      : alu_op_o = `ALU_OR;
-
-                    `FUNCT3_XOR     : alu_op_o = `ALU_XOR;
-
-                    `FUNCT3_SLL     : alu_op_o = `ALU_SLL;
+                    `FUNCT3_SLT, `FUNCT3_SLTU, `FUNCT3_AND, `FUNCT3_OR, `FUNCT3_XOR, `FUNCT3_SLL: begin
+                        if (instr_i[`FUNCT7_R] == 7'b0000000) begin
+                            case (instr_i[`FUNCT3_R])
+                                `FUNCT3_SLT  : alu_op_o  = `ALU_SLT;
+                                `FUNCT3_SLTU : alu_op_o  = `ALU_SLTU;
+                                `FUNCT3_AND  : alu_op_o  = `ALU_AND;
+                                `FUNCT3_OR   : alu_op_o  = `ALU_OR;
+                                `FUNCT3_XOR  : alu_op_o  = `ALU_XOR;
+                                `FUNCT3_SLL  : alu_op_o  = `ALU_SLL;
+                                default      : invalid_o = 1'b1;
+                            endcase
+                        end 
+                        else begin
+                            invalid_o  = 1'b1;
+                            is_alu_o   = 1'b0;
+                            rd_valid_o = 1'b0;
+                            rs1_valid  = 1'b0;
+                            rs2_valid  = 1'b0;
+                        end
+                    end
 
                     `FUNCT3_SRL_SRA : begin 
                         if (instr_i[`FUNCT7_R] == `FUNCT7_SRL)
                             alu_op_o = `ALU_SRL;
                         else if (instr_i[`FUNCT7_R] == `FUNCT7_SRA)
                             alu_op_o = `ALU_SRA;
-                        else
-                            invalid_o = 1'b1;
+                        else begin
+                            invalid_o  = 1'b1;
+                            is_alu_o   = 1'b0;
+                            rd_valid_o = 1'b0;
+                            rs1_valid  = 1'b0;
+                            rs2_valid  = 1'b0;
+                        end
                     end
 
-                    default         : invalid_o = 1'b1;
+                    default         : begin 
+                        invalid_o  = 1'b1;
+                        is_alu_o   = 1'b0;
+                        rd_valid_o = 1'b0;
+                        rs1_valid  = 1'b0;
+                        rs2_valid  = 1'b0;
+                    end
                 endcase
             end
 
+            // I-Type
             `OPCODE_OP_IMM : begin 
                 is_alu_o        = 1'b1;
                 rd_valid_o      = 1'b1;
@@ -113,21 +140,41 @@ module riscv_decode
                     
                     `FUNCT3_OR      : alu_op_o = `ALU_OR;
                     
-                    `FUNCT3_SLL     : alu_op_o = `ALU_SLL;
+                    `FUNCT3_SLL     : begin
+                        if (instr_i[31:25] == 7'b0000000) begin
+                            alu_op_o = `ALU_SLL;
+                        end 
+                        else begin
+                            invalid_o  = 1'b1;
+                            is_alu_o   = 1'b0;
+                            rd_valid_o = 1'b0;
+                            rs1_valid  = 1'b0;
+                        end
+                    end
                     
                     `FUNCT3_SRL_SRA : begin
                         if (instr_i[`FUNCT7_R] == `FUNCT7_SRL)
                             alu_op_o = `ALU_SRL;
                         else if (instr_i[`FUNCT7_R] == `FUNCT7_SRA)
                             alu_op_o = `ALU_SRA;
-                        else
-                            invalid_o = 1'b1;
+                        else begin
+                            invalid_o  = 1'b1;
+                            is_alu_o   = 1'b0;
+                            rd_valid_o = 1'b0;
+                            rs1_valid  = 1'b0;
+                        end
                     end
 
-                    default         : invalid_o = 1'b1;
+                    default         : begin 
+                        invalid_o  = 1'b1;
+                        is_alu_o   = 1'b0;
+                        rd_valid_o = 1'b0;
+                        rs1_valid  = 1'b0;
+                    end
                 endcase
             end
             
+            // Loads (I-Type)
             `OPCODE_LOAD   : begin 
                 is_load_o       = 1'b1;
                 rd_valid_o      = 1'b1;
@@ -161,10 +208,16 @@ module riscv_decode
                         mem_unsigned_o = 1'b1;
                     end 
 
-                    default        : invalid_o = 1'b1; 
+                    default        : begin 
+                        invalid_o  = 1'b1; 
+                        is_load_o  = 1'b0;
+                        rd_valid_o = 1'b0;
+                        rs1_valid  = 1'b0;
+                    end
                 endcase
             end
 
+            // Stores (S-Type)
             `OPCODE_STORE  : begin 
                 is_store_o      = 1'b1;
                 rs1_valid       = 1'b1;
@@ -188,12 +241,18 @@ module riscv_decode
                         mem_unsigned_o = 1'b0;
                     end
 
-                    default        : invalid_o = 1'b1; 
+                    default        : begin 
+                        invalid_o  = 1'b1;
+                        is_store_o = 1'b0;
+                        rs1_valid  = 1'b0;
+                        rs2_valid  = 1'b0;
+                    end 
                 endcase
             end
                 
+            // B-Type
             `OPCODE_BRANCH : begin 
-                is_branch_o = 1'b1;
+                is_branch_o     = 1'b1;
                 rs1_valid       = 1'b1;
                 rs2_valid       = 1'b1;
                 
@@ -204,10 +263,17 @@ module riscv_decode
                     `FUNCT3_BGE  : alu_op_o  = `ALU_SLT;
                     `FUNCT3_BLTU : alu_op_o  = `ALU_SLTU;
                     `FUNCT3_BGEU : alu_op_o  = `ALU_SLTU;
-                    default      : invalid_o = 1'b1;
+
+                    default      : begin 
+                        invalid_o   = 1'b1;
+                        is_branch_o = 1'b0;
+                        rs1_valid   = 1'b0;
+                        rs2_valid   = 1'b0;
+                    end
                 endcase
             end
 
+            // J-Type 
             `OPCODE_JAL    : begin 
                 is_jal_o        = 1'b1;
                 rd_valid_o      = 1'b1;
@@ -216,14 +282,24 @@ module riscv_decode
                 alu_op_o        = `ALU_ADD;
             end
 
+            // JALR(I-Type)
             `OPCODE_JALR   : begin
-                is_jalr_o       = 1'b1;
-                rd_valid_o      = 1'b1;
-                rs1_valid       = 1'b1;
-                alu_src_b_imm_o = 1'b1;
-                alu_op_o        = `ALU_ADD;
+                if (instr_i[`FUNCT3_R] == 3'b000) begin
+                    is_jalr_o       = 1'b1;
+                    rd_valid_o      = 1'b1;
+                    rs1_valid       = 1'b1;
+                    alu_src_b_imm_o = 1'b1;
+                    alu_op_o        = `ALU_ADD;
+                end 
+                else begin
+                    invalid_o  = 1'b1;
+                    is_jalr_o  = 1'b0;
+                    rd_valid_o = 1'b0;
+                    rs1_valid  = 1'b0;
+                end
             end
 
+            // U-Type
             `OPCODE_LUI    : begin
                 is_alu_o        = 1'b1;
                 rd_valid_o      = 1'b1;
@@ -231,6 +307,7 @@ module riscv_decode
                 alu_op_o        = `ALU_PASS_B;
             end
 
+            // U-Type
             `OPCODE_AUIPC  : begin
                 is_alu_o        = 1'b1;
                 rd_valid_o      = 1'b1;
