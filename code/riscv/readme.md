@@ -1,5 +1,4 @@
-# RISCV
-
+# RISC-V 
 ---
 
 ## 📑 Project Overview
@@ -13,7 +12,7 @@ This repository contains parameterizable, synthesizable SystemVerilog modules de
 
 ---
 
-## 🏛️ Directory & Architecture Overview
+## 🏛️ Module Architecture & Port Descriptions
 
 ### 1. Header & Definitions (`riscv_defs.sv`)
 Provides crucial RISC-V RV32I opcodes and bit field selectors:
@@ -35,46 +34,65 @@ Provides crucial RISC-V RV32I opcodes and bit field selectors:
 ---
 
 ### 2. Arithmetic Logic Unit (`riscv_alu.sv`)
-- **Parameter**: `DATA_WIDTH` (Default: 32)
-- **Ports**:
-  - `input logic [`ALU_OP_W - 1:0] alu_op_i`: Operation select
-  - `input logic [DATA_WIDTH - 1:0] operand_a_i`: First operand
-  - `input logic [DATA_WIDTH - 1:0] operand_b_i`: Second operand
-  - `output logic [DATA_WIDTH - 1:0] result_o`: Computed result
-- **Features**:
-  - Combinational operation via `always_comb` block with `unique case`.
-  - Shift operations indexed using low `$clog2(DATA_WIDTH)` bits (5 bits for 32-bit width).
-  - Explicit sign-extension for arithmetic right shifts (`ALU_SRA`).
+
+#### Parameters
+| Parameter | Default | Description |
+| :--- | :--- | :--- |
+| `DATA_WIDTH` | `32` | Data bus width for operands and result |
+
+#### Input & Output Ports
+| Direction | Port Name | Width / Type | Description |
+| :--- | :--- | :--- | :--- |
+| **Input** | `alu_op_i` | `[`ALU_OP_W - 1:0]` (4 bits) | Selects the ALU operation to execute |
+| **Input** | `operand_a_i` | `[DATA_WIDTH - 1:0]` (32 bits) | First operand source |
+| **Input** | `operand_b_i` | `[DATA_WIDTH - 1:0]` (32 bits) | Second operand source / shift amount |
+| **Output** | `result_o` | `[DATA_WIDTH - 1:0]` (32 bits) | Arithmetic/logical output result |
+
+#### Key Design Features
+- Combinational operation via `always_comb` block with `unique case`.
+- Shift operations indexed using low `$clog2(DATA_WIDTH)` bits (lower 5 bits of `operand_b_i` for 32-bit width).
+- Explicit sign-extension for arithmetic right shifts (`ALU_SRA`).
 
 ---
 
 ### 3. Register File (`riscv_regfile.sv`)
-- **Parameter**: `DATA_WIDTH` (Default: 32)
-- **Ports**:
-  - `clk_i`, `rst_i`: Clock and active-high asynchronous reset
-  - `rd0_i`, `rd0_value_i`, `rd0_wren_i`: Write port address, data, enable
-  - `ra0_i`, `ra0_value_o`: Read port 1 address and output data
-  - `rb0_i`, `rb0_value_o`: Read port 2 address and output data
-- **Features**:
-  - Synchronous write on `posedge clk_i` with check for `rd0_i != 5'b00000`.
-  - Asynchronous read ports for high-throughput single-cycle execution.
-  - Zero-register enforcement: Reading address `5'b00000` hardwires output to `'0`.
+
+#### Parameters
+| Parameter | Default | Description |
+| :--- | :--- | :--- |
+| `DATA_WIDTH` | `32` | Width of each register entry and data ports |
+
+#### Input & Output Ports
+| Direction | Port Name | Width / Type | Description |
+| :--- | :--- | :--- | :--- |
+| **Input** | `clk_i` | `logic` | Clock input |
+| **Input** | `rst_i` | `logic` | Active-high asynchronous reset |
+| **Input** | `rd0_i` | `[4:0]` | Write register address destination (0–31) |
+| **Input** | `rd0_value_i` | `[DATA_WIDTH - 1:0]` (32 bits) | Data to write into register `rd0_i` |
+| **Input** | `rd0_wren_i` | `logic` | Write enable signal (active high) |
+| **Input** | `ra0_i` | `[4:0]` | Read address select for Port 1 |
+| **Input** | `rb0_i` | `[4:0]` | Read address select for Port 2 |
+| **Output** | `ra0_value_o` | `[DATA_WIDTH - 1:0]` (32 bits) | Asynchronous read data output for Port 1 |
+| **Output** | `rb0_value_o` | `[DATA_WIDTH - 1:0]` (32 bits) | Asynchronous read data output for Port 2 |
+
+#### Key Design Features
+- Synchronous write on `posedge clk_i` with check for `rd0_i != 5'b00000`.
+- Asynchronous dual read ports for single-cycle execution pipelines.
+- Zero-register enforcement: Address `5'b00000` (`x0`) is hardwired to zero on read operations.
 
 ---
 
 ## 🧪 Testbenches & Verification
 
 ### ALU Testbench (`tb_riscv_alu.sv`)
-- **Directed Tests**: Tests `ADD`, `SUB`, `AND`, `OR`, `XOR`, `PASS_B`, signed/unsigned comparisons (`SLT`, `SLTU`), and shift variants (`SLL`, `SRL`, `SRA`).
-- **Randomized Testing**: Performs 500 constraint-free random test vectors using `$urandom()` and `$urandom_range()` against an automatic reference model function (`get_expected`).
+- **Directed Tests**: Verifies `ADD`, `SUB`, `AND`, `OR`, `XOR`, `PASS_B`, signed/unsigned comparisons (`SLT`, `SLTU`), and shifts (`SLL`, `SRL`, `SRA`).
+- **Randomized Testing**: Runs 500 constraint-free random test vectors using `$urandom()` and `$urandom_range()` compared against a reference function (`get_expected`).
 
 ### Register File Testbench (`tb_riscv_regfile.sv`)
-1. **Asynchronous Reset Check**: Ensures all 32 registers clear to zero on reset.
-2. **`x0` Immutability Check**: Attempts to write `0xDEADBEEF` to `x0` and verifies it stays `0`.
-3. **Read-During-Write (RAW Hazard)**: Verifies asynchronous read response timing during write cycles.
-4. **Full Sweep & Dual Read**: Writes unique values across registers `x1`–`x31` and reads concurrently via `ra0` and `rb0`.
-5. **Write Enable Protection**: Ensures register contents are unchanged when `rd0_wren_i` is disabled.
+1. **Asynchronous Reset Check**: Confirms all 32 registers reset to zero.
+2. **`x0` Immutability Check**: Asserts that writing `0xDEADBEEF` to `x0` leaves its value as `0`.
+3. **Read-During-Write (RAW Hazard)**: Evaluates asynchronous read response timing during active write cycles.
+4. **Full Sweep & Dual Read**: Writes unique pattern data to registers `x1`–`x31` and reads concurrently via `ra0` and `rb0`.
+5. **Write Enable Protection**: Verifies that register values remain unmodified when `rd0_wren_i = 0`.
 
 ---
-
-
