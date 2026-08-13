@@ -1,3 +1,8 @@
+/*
+Branch signal -> chnage direction of the pc
+Sqaush signal -> invalidate the instruction itself
+Stall signal  -> hold the pc value
+*/
 `include "riscv_defs.sv"
 
 module riscv_fetch
@@ -17,7 +22,7 @@ module riscv_fetch
     output        [31:0] imem_addr_o,
     input         [31:0] imem_rdata_i,
 
-    // To decode/issue
+    // To decode/issue --- all three will arrive at the same cycle
     output        [31:0] pc_o,    // this instruction's own PC (needed for AUIPC, JAL, branch target calc)
     output  logic [31:0] instr_o,
     output               valid_o
@@ -29,18 +34,25 @@ module riscv_fetch
 
     always_ff @(posedge clk_i or posedge rst_i) begin
         if (rst_i)
-            pc_q <= 32'h0;      //or your reset vector.
+            pc_q <= 32'h0;            
         else if (branch_taken_i)   
             pc_q <= branch_target_i;
-        else if (!stall_i)
+        // else if (!stall_i)              // (*) 
+        else if (!stall_i && !squash_i)
             pc_q <= pc_q + 32'd4;
         // else: stalled, keep re-requesting the same address -> hold pc_q unchanged
     end
 
+    /*
+    (*) When squash_i is asserted without branch_taken_i, the pipeline flushes the current instruction
+    but does not redirect to a new address. pc_q must hold its value during a squash so that it
+    re-requests the squashed/next valid PC once the flush bubble clears
+    */
+
     always_ff @(posedge clk_i or posedge rst_i) begin
         if (rst_i) 
             valid_q <= 1'b0;
-        else if (squash_i || branch_taken_i)
+        else if (squash_i || branch_taken_i)  // Instr previous to this has already been fired -- make it invalid
             valid_q <= 1'b0;
         else if (!stall_i)
             valid_q <= 1'b1;
@@ -55,18 +67,23 @@ module riscv_fetch
         // else: stalled -- hold pc_e_q as-is, so it still matches whatever imem_rdata_i is holding stable
     end
 
-    logic [31:0] instr_buff_q;  // Saved instruction captured during stall
-    logic        use_buff_q;
-
     // Skid buffer control state
+
+    logic [31:0] instr_buff_q;  // Saved instruction captured during stall
+    logic        use_buff_q;    // Want the stall_i to affect on the next immediate cycle 
+    
     always_ff @(posedge clk_i or posedge rst_i) begin
         if (rst_i)
             use_buff_q <= 1'b0;
-        else if (squash_i || branch_taken_i)
+        else if (squash_i || branch_taken_i)  // (*)    
             use_buff_q <= 1'b0;
         else
             use_buff_q <= stall_i;
     end
+
+    /*
+    (*)  If stall arrives at the same time 
+    */
 
     // Latch instruction on first cycle of a stall (no reset needed on datapath)
     always_ff @(posedge clk_i) begin
@@ -74,12 +91,9 @@ module riscv_fetch
             instr_buff_q <= imem_rdata_i;
     end
     
-    //assign instr_o = stall_i ? instr_hold_q : imem_rdata_i;
+    // assign instr_o = stall_i ? instr_hold_q : imem_rdata_i;   // It changes the instr midway whenever stall_i arrives
     assign instr_o = use_buff_q ? instr_buff_q : imem_rdata_i;
     assign pc_o    = pc_e_q;
-
-    // assign instr_o     = imem_rdata_i;
-    // assign pc_o        = pc_e_q;
 
     assign imem_addr_o = pc_q;
     assign valid_o     = valid_q;
@@ -92,6 +106,4 @@ assign instr_o     = imem_rdata_i; doesnt work when there is a stall.
 pc_o(pc_e_q) stalls but instr_o doesnt because i-memory is already processing 
 what was there in pc_q which gets reflected. Hence buffer is needed.
 
-when stall drops instr_o gets updated immediately but not pc_o.
-Thats we need to buffer the pc_e_q as well.
 */
