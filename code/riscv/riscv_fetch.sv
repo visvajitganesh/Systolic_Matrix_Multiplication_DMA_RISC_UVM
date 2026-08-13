@@ -82,12 +82,18 @@ module riscv_fetch
     end
 
     /*
-    (*)  If stall arrives at the same time 
+    (*)  If stall arrives at the same time as branch/squash -- to see its effect.
+    If you remove that line, it doesnt make the behavior wrong.
+    Explicitly invalidate skid buffer selection on flush.
+    It guarantees that as soon as the flush happens, instr_o stops outputting wrong-path buffer data 
+    and immediately reflects live memory data (imem_rdata_i) for the new target.
     */
 
     // Latch instruction on first cycle of a stall (no reset needed on datapath)
-    always_ff @(posedge clk_i) begin
-        if (stall_i && !use_buff_q)
+    always_ff @(posedge clk_i or posedge rst_i) begin
+        if (rst_i)
+            instr_buff_q <= '0;
+        else if (stall_i && !use_buff_q)
             instr_buff_q <= imem_rdata_i;
     end
     
@@ -105,5 +111,4 @@ Extra Comments:
 assign instr_o     = imem_rdata_i; doesnt work when there is a stall.
 pc_o(pc_e_q) stalls but instr_o doesnt because i-memory is already processing 
 what was there in pc_q which gets reflected. Hence buffer is needed.
-
 */
