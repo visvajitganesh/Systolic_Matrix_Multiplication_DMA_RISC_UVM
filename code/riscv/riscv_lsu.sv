@@ -27,8 +27,11 @@ module riscv_lsu
 );
     assign dmem_addr_o = addr_mem_i;
 
+    // Write to memory
+
     always_comb begin
 
+        // Handles dmem_wstrb_o signal 
         if (!valid_mem_i || !is_store_mem_i) begin
             dmem_wstrb_o = 4'b0000;
         end
@@ -47,6 +50,7 @@ module riscv_lsu
             endcase
         end
 
+        // Handles dmem_wdata_o signal
         if (!valid_mem_i || !is_store_mem_i) begin
             dmem_wdata_o = 'b0;
         end
@@ -58,9 +62,11 @@ module riscv_lsu
                 default : dmem_wdata_o = '0; 
             endcase
         end
-
     end
 
+    // Read from memory
+
+    // Data becomes available after 1 cycle -- following signals should exist after 1 cycle for read operation
     logic       valid_mem_q;
     logic       is_load_mem_q;
 
@@ -76,7 +82,7 @@ module riscv_lsu
             valid_mem_q    <= 1'b0;
             is_load_mem_q  <= 1'b0;
             mem_size_q     <= '0;
-            mem_unsigned_q <= '0;
+            mem_unsigned_q <= 1'b0;
             addr_lsb_q     <= '0;
         end
         else if (stall_i) begin
