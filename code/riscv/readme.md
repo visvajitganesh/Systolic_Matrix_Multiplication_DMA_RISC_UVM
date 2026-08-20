@@ -1,6 +1,6 @@
 # RISC-V RV32I Processor Components
 
-A SystemVerilog implementation of core RISC-V RV32I processor pipeline building blocks, including the Instruction Fetch unit with skid buffer support, Instruction Decoder, Arithmetic Logic Unit (ALU), Register File, Instruction Memory (IMEM), Data Memory (DMEM), shared macro definitions, and comprehensive self-checking testbenches.
+A SystemVerilog implementation of core RISC-V RV32I processor pipeline building blocks, including the Instruction Fetch unit with skid buffer support, Load/Store Unit (LSU), Instruction Decoder, Arithmetic Logic Unit (ALU), Register File, Instruction Memory (IMEM), Data Memory (DMEM), shared macro definitions, and comprehensive self-checking testbenches.
 
 ---
 
@@ -10,6 +10,7 @@ This repository contains parameterizable, synthesizable SystemVerilog hardware m
 
 - **RISC-V Definitions (`riscv_defs.sv`)**: Macro definitions for opcodes, instruction field slices, funct3/funct7 codes, and ALU control codes.
 - **Instruction Fetch (`riscv_fetch.sv`)**: Pipeline instruction fetch module with PC generation, branch target redirection, pipeline squash/flush handling, and an integrated skid buffer for zero-bubble stall cycles.
+- **Load/Store Unit (`riscv_lsu.sv`)**: Memory stage interface unit handling address alignment, byte/halfword lane replication, write-strobe generation, sign/zero extension for load data, and multi-cycle stall freeze logic.
 - **Instruction Decoder (`riscv_decode.sv`)**: Combinational decoder parsing RV32I opcodes, immediate generation, register addresses, and control flags.
 - **Arithmetic Logic Unit (`riscv_alu.sv`)**: Parameterizable combinational unit supporting arithmetic, logical, shift, and comparison operations.
 - **Register File (`riscv_regfile.sv`)**: Synchronous write, dual-port asynchronous read register file with hardwired `x0 = 0` behavior.
@@ -54,7 +55,35 @@ Provides crucial RISC-V RV32I opcodes, instruction slices, and control bit vecto
 
 ---
 
-### 3. Instruction Decoder (`riscv_decode.sv`)
+### 3. Load/Store Unit (`riscv_lsu.sv`)
+
+#### Architecture & Features
+- **Store Alignment & Replication**: Dynamically aligns write byte strobes (`dmem_wstrb_o`) and replicates sub-word store data (`SB`, `SH`) across appropriate 32-bit memory byte lanes based on low-order address bits (`addr_mem_i[1:0]`).
+- **Load Response Processing**: Registers transaction metadata across memory latency and performs sign extension (`LB`, `LH`) or zero extension (`LBU`, `LHU`) on incoming read data based on requested access size and signedness flags.
+- **Pipeline Stall Protection**: Retains original memory metadata registers unchanged during downstream stall conditions (`stall_i`), preventing control state drift during multi-cycle transactions or AXI bus delays.
+
+#### Input & Output Ports
+| Direction | Port Name | Width / Type | Description |
+| :--- | :--- | :--- | :--- |
+| **Input** | `clk_i` | `logic` | Clock input |
+| **Input** | `rst_i` | `logic` | Active-high reset signal |
+| **Input** | `stall_i` | `logic` | Pipeline stall signal; freezes metadata tracking registers |
+| **Input** | `valid_mem_i` | `logic` | Active memory stage transaction valid flag |
+| **Input** | `is_load_mem_i` | `logic` | Memory read command flag |
+| **Input** | `is_store_mem_i` | `logic` | Memory write command flag |
+| **Input** | `addr_mem_i` | `[31:0]` | Memory access byte address (from ALU result) |
+| **Input** | `store_data_mem_i` | `[31:0]` | Write data payload from pipeline register |
+| **Input** | `mem_size_mem_i` | `[1:0]` | Access size control (`00`=Byte, `01`=Halfword, `10`=Word) |
+| **Input** | `mem_unsigned_mem_i` | `logic` | Unsigned load control (`1`=Zero extend, `0`=Sign extend) |
+| **Output** | `dmem_addr_o` | `logic [31:0]` | Address output routed to Data Memory |
+| **Output** | `dmem_wdata_o` | `logic [31:0]` | Byte lane-aligned write data sent to Data Memory |
+| **Output** | `dmem_wstrb_o` | `logic [3:0]` | Active byte-lane enable write strobes |
+| **Input** | `dmem_rdata_i` | `[31:0]` | Raw word data read from Data Memory |
+| **Output** | `mem_rdata_o` | `logic [31:0]` | Aligned, sign/zero-extended load data returned to pipeline |
+
+---
+
+### 4. Instruction Decoder (`riscv_decode.sv`)
 
 #### Input & Output Ports
 | Direction | Port Name | Width / Type | Description |
@@ -81,7 +110,7 @@ Provides crucial RISC-V RV32I opcodes, instruction slices, and control bit vecto
 
 ---
 
-### 4. Arithmetic Logic Unit (`riscv_alu.sv`)
+### 5. Arithmetic Logic Unit (`riscv_alu.sv`)
 
 #### Parameters
 | Parameter | Default | Description |
@@ -98,7 +127,7 @@ Provides crucial RISC-V RV32I opcodes, instruction slices, and control bit vecto
 
 ---
 
-### 5. Register File (`riscv_regfile.sv`)
+### 6. Register File (`riscv_regfile.sv`)
 
 #### Parameters
 | Parameter | Default | Description |
@@ -120,7 +149,7 @@ Provides crucial RISC-V RV32I opcodes, instruction slices, and control bit vecto
 
 ---
 
-### 6. Instruction Memory (`riscv_imem.sv`)
+### 7. Instruction Memory (`riscv_imem.sv`)
 
 #### Parameters
 | Parameter | Default | Description |
@@ -140,7 +169,7 @@ Provides crucial RISC-V RV32I opcodes, instruction slices, and control bit vecto
 
 ---
 
-### 7. Data Memory (`riscv_dmem.sv`)
+### 8. Data Memory (`riscv_dmem.sv`)
 
 #### Parameters
 | Parameter | Default | Description |
@@ -165,6 +194,7 @@ Provides crucial RISC-V RV32I opcodes, instruction slices, and control bit vecto
 ## 🧪 Verification & Testbenches
 
 - **`tb_riscv_fetch.sv`**: Verifies sequential fetch operation, skid buffer retention during single and multi-cycle stalls, branch redirection, simultaneous stall/branch conditions, pipeline squashing/flushing, and includes 100 cycles of randomized stress tests.
+- **`tb_riscv_lsu.sv`**: Validates store byte-lane strobe generation, byte/halfword write data replication across byte offsets, signed vs. zero-extended load extraction (`LB`, `LBU`, `LH`, `LHU`, `LW`), multi-cycle stall hold behavior, and a 200-iteration randomized stress test against a golden reference model.
 - **`tb_riscv_decode.sv`**: Exhaustively verifies control signal leakage protection during invalid funct3/funct7 decodes, upper-bit shift checks (SLLI/SRAI), and standard opcode decoding.
 - **`tb_riscv_alu.sv`**: Validates basic execution operations, edge-case signed/unsigned comparisons, and 500 constraint-free random test patterns.
 - **`tb_riscv_regfile.sv`**: Tests asynchronous reset, `x0` register immutability, read-during-write hazard timing, full register sweeping, and write-protection logic.
@@ -172,3 +202,4 @@ Provides crucial RISC-V RV32I opcodes, instruction slices, and control bit vecto
 - **`tb_riscv_dmem.sv`**: Tests 1-cycle read/write memory timing, byte-strobe lane combinations, read-during-write pass-through, and address boundary exception flags.
 
 ---
+
