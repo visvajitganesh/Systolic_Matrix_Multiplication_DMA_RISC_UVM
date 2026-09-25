@@ -62,17 +62,19 @@ module riscv_decode
 
                 case (instr_i[`FUNCT3_R])
                     `FUNCT3_ADD_SUB : begin
-                        if (instr_i[`FUNCT7_R] == `FUNCT7_ADD)
-                            alu_op_o = `ALU_ADD;
-                        else if (instr_i[`FUNCT7_R] == `FUNCT7_SUB)
-                            alu_op_o = `ALU_SUB;
-                        else begin
-                            invalid_o = 1'b1;
-                            is_alu_o   = 1'b0;
-                            rd_valid_o = 1'b0;
-                            rs1_valid  = 1'b0;
-                            rs2_valid  = 1'b0;
-                        end
+                        case(instr_i[`FUNCT7_R])
+                            `FUNCT7_ADD : alu_op_o = `ALU_ADD;
+
+                            `FUNCT7_SUB : alu_op_o = `ALU_SUB;
+
+                            default     : begin 
+                                invalid_o  = 1'b1;
+                                is_alu_o   = 1'b0;
+                                rd_valid_o = 1'b0;
+                                rs1_valid  = 1'b0;
+                                rs2_valid  = 1'b0;
+                            end
+                        endcase
                     end
                     
                     `FUNCT3_SLT, `FUNCT3_SLTU, `FUNCT3_AND, `FUNCT3_OR, `FUNCT3_XOR, `FUNCT3_SLL: begin
@@ -96,18 +98,20 @@ module riscv_decode
                         end
                     end
 
-                    `FUNCT3_SRL_SRA : begin 
-                        if (instr_i[`FUNCT7_R] == `FUNCT7_SRL)
-                            alu_op_o = `ALU_SRL;
-                        else if (instr_i[`FUNCT7_R] == `FUNCT7_SRA)
-                            alu_op_o = `ALU_SRA;
-                        else begin
-                            invalid_o  = 1'b1;
-                            is_alu_o   = 1'b0;
-                            rd_valid_o = 1'b0;
-                            rs1_valid  = 1'b0;
-                            rs2_valid  = 1'b0;
-                        end
+                    `FUNCT3_SRL_SRA : begin
+                        case(instr_i[`FUNCT7_R])
+                            `FUNCT7_SRL : alu_op_o = `ALU_SRL;
+
+                            `FUNCT7_SRA : alu_op_o = `ALU_SRA;
+
+                            default     : begin 
+                                invalid_o  = 1'b1;
+                                is_alu_o   = 1'b0;
+                                rd_valid_o = 1'b0;
+                                rs1_valid  = 1'b0;
+                                rs2_valid  = 1'b0;
+                            end
+                        endcase
                     end
 
                     default         : begin 
@@ -145,31 +149,36 @@ module riscv_decode
                             alu_op_o = `ALU_SLL;
                         end 
                         else begin
-                            invalid_o  = 1'b1;
-                            is_alu_o   = 1'b0;
-                            rd_valid_o = 1'b0;
-                            rs1_valid  = 1'b0;
+                            invalid_o       = 1'b1;
+                            is_alu_o        = 1'b0;
+                            rd_valid_o      = 1'b0;
+                            rs1_valid       = 1'b0;
+                            alu_src_b_imm_o = 1'b0;
                         end
                     end
                     
                     `FUNCT3_SRL_SRA : begin
-                        if (instr_i[`FUNCT7_R] == `FUNCT7_SRL)
-                            alu_op_o = `ALU_SRL;
-                        else if (instr_i[`FUNCT7_R] == `FUNCT7_SRA)
-                            alu_op_o = `ALU_SRA;
-                        else begin
-                            invalid_o  = 1'b1;
-                            is_alu_o   = 1'b0;
-                            rd_valid_o = 1'b0;
-                            rs1_valid  = 1'b0;
-                        end
+                        case(instr_i[`FUNCT7_R])
+                            `FUNCT7_SRL : alu_op_o = `ALU_SRL;
+
+                            `FUNCT7_SRA : alu_op_o = `ALU_SRA;
+
+                            default     : begin 
+                                invalid_o       = 1'b1;
+                                is_alu_o        = 1'b0;
+                                rd_valid_o      = 1'b0;
+                                rs1_valid       = 1'b0;
+                                alu_src_b_imm_o = 1'b0;
+                            end
+                        endcase
                     end
 
                     default         : begin 
-                        invalid_o  = 1'b1;
-                        is_alu_o   = 1'b0;
-                        rd_valid_o = 1'b0;
-                        rs1_valid  = 1'b0;
+                        invalid_o       = 1'b1;
+                        is_alu_o        = 1'b0;
+                        rd_valid_o      = 1'b0;
+                        rs1_valid       = 1'b0;
+                        alu_src_b_imm_o = 1'b0;
                     end
                 endcase
             end
@@ -209,10 +218,11 @@ module riscv_decode
                     end 
 
                     default        : begin 
-                        invalid_o  = 1'b1; 
-                        is_load_o  = 1'b0;
-                        rd_valid_o = 1'b0;
-                        rs1_valid  = 1'b0;
+                        invalid_o       = 1'b1; 
+                        is_load_o       = 1'b0;
+                        rd_valid_o      = 1'b0;
+                        rs1_valid       = 1'b0;
+                        alu_src_b_imm_o = 1'b0;
                     end
                 endcase
             end
@@ -242,10 +252,11 @@ module riscv_decode
                     end
 
                     default        : begin 
-                        invalid_o  = 1'b1;
-                        is_store_o = 1'b0;
-                        rs1_valid  = 1'b0;
-                        rs2_valid  = 1'b0;
+                        invalid_o       = 1'b1;
+                        is_store_o      = 1'b0;
+                        rs1_valid       = 1'b0;
+                        rs2_valid       = 1'b0;
+                        alu_src_b_imm_o = 1'b0;
                     end 
                 endcase
             end
@@ -293,9 +304,6 @@ module riscv_decode
                 end 
                 else begin
                     invalid_o  = 1'b1;
-                    is_jalr_o  = 1'b0;
-                    rd_valid_o = 1'b0;
-                    rs1_valid  = 1'b0;
                 end
             end
 
@@ -338,6 +346,6 @@ module riscv_decode
         endcase
     end
 
-    assign branch_funct3_o = instr_i[`FUNCT3_R];
+    assign branch_funct3_o = (is_branch_o) ? instr_i[`FUNCT3_R] : 0;
 
 endmodule
