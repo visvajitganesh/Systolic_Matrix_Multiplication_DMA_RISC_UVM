@@ -221,6 +221,42 @@ Provides crucial RISC-V RV32I opcodes, instruction slices, and control bit vecto
 | **Output** | `error_unaligned_o` | `logic` | High if byte address is misaligned (`addr_i[1:0] != 2'b00`) |
 | **Output** | `error_out_of_bounds_o` | `logic` | High if target word index exceeds memory `DEPTH` |
 
+#### Functional Requirements & Specifications
+
+* **Module Interface:**
+  * **Parameters:**
+    * `DEPTH`: Integer specifying total 32-bit memory words (default: `1024`).
+    * `INIT_FILE`: String specifying path to hex initialization file (default: empty `""`).
+
+  * **Inputs:** `clk_i` (clock), `rst_i` (active-high reset), `addr_i` (32-bit byte address), `wdata_i` (32-bit write data), `wstrb_i` (4-bit byte write strobe).
+  * **Outputs:** `rdata_o` (32-bit read data), `error_unaligned_o` (1-bit flag), `error_out_of_bounds_o` (1-bit flag).
+
+
+* **Memory Storage & Pre-loading:**
+  * Declare an internal array of 32-bit logic vectors ranging from index `0` to `DEPTH - 1`.
+  * In an `initial` block:
+    * If `INIT_FILE` is non-empty, load memory contents using `$readmemh`.
+    * If `INIT_FILE` is empty (`""`), explicitly zero-fill all locations from `0` to `DEPTH - 1` in a loop.
+
+* **Address Checking Logic (Combinational):**
+  * **Unaligned Access Check:** Check if the lower 2 bits of `addr_i` are non-zero (`addr_i[1:0] != 2'b00`).
+  * **Out-of-Bounds Check:** Check if the word index `addr_i[31:2]` is greater than or equal to `DEPTH`.
+
+
+* **Synchronous Read/Write Operation (`always @(posedge clk_i)`):**
+  * **Reset State (`rst_i == 1`):**
+    * Clear `rdata_o` to `32'h0000_0000`.
+    * Clear `error_unaligned_o` and `error_out_of_bounds_o` to `1'b0`.
+
+  * **Normal Operation (`rst_i == 0`):**
+    * Register both unaligned and out-of-bounds error flags to their respective output pins.
+    * **Valid Access Condition:** If *neither* error condition is true:
+      * **Byte-Enable Writes:** Write byte `k` of `wdata_i` (`[8k+7 : 8k]`) into `mem[addr_i[31:2]][8k+7 : 8k]` only if `wstrb_i[k] == 1` (for `k = 0, 1, 2, 3`). Unasserted strobe bits leave the corresponding memory bytes unchanged.
+      * **Read-During-Write Forwarding:** For each byte `k` of `rdata_o`: if `wstrb_i[k] == 1`, forward the new write byte `wdata_i[8k+7 : 8k]`; otherwise, output the existing memory byte `mem[addr_i[31:2]][8k+7 : 8k]`.
+
+
+    * **Invalid Access Condition:** If *either* error condition is true, block memory writes and drive `rdata_o` to `32'h0000_0000`.
+
 ---
 
 ## 🧪 Verification & Testbenches
