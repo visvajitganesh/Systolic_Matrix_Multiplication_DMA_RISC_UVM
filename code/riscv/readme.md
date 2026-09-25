@@ -167,6 +167,39 @@ Provides crucial RISC-V RV32I opcodes, instruction slices, and control bit vecto
 | **Output** | `error_unaligned_o` | `logic` | High if `addr_i[1:0] != 2'b00` |
 | **Output** | `error_out_of_bounds_o` | `logic` | High if address index exceeds memory `DEPTH` |
 
+#### Functional Requirements & Specifications
+
+* **Module Interface:**
+* **Parameters:**
+* `DEPTH`: Integer specifying the total number of 32-bit memory words (default: `1024`).
+* `INIT_FILE`: String specifying a path to a hexadecimal initialization file (default: empty `""`).
+
+
+* **Inputs:** `clk_i` (clock), `rst_i` (active-high reset), `addr_i` (32-bit byte address).
+* **Outputs:** `rdata_o` (32-bit instruction output), `error_unaligned_o` (1-bit flag), `error_out_of_bounds_o` (1-bit flag).
+
+
+* **Memory Storage & Pre-loading:**
+* Declare an internal array of 32-bit logic vectors ranging from index `0` to `DEPTH - 1`.
+* In an `initial` block, check if `INIT_FILE` is non-empty; if so, load the memory array using `$readmemh`.
+
+
+* **Address Checking Logic (Combinational):**
+* **Unaligned Access Check:** Check if the lower 2 bits of `addr_i` are non-zero (`addr_i[1:0] != 2'b00`).
+* **Out-of-Bounds Check:** Check if the word index from `addr_i[31:2]` is greater than or equal to `DEPTH`.
+
+
+* **Synchronous Behavior (`always_ff @(posedge clk_i)`):**
+* **Reset State (`rst_i == 1`):**
+* Set `rdata_o` to the RISC-V NOP instruction binary (`32'h0000_0013`).
+* Clear `error_unaligned_o` and `error_out_of_bounds_o` to `1'b0`.
+
+
+* **Normal Operation (`rst_i == 0`):**
+* Register both unaligned and out-of-bounds error flags to their respective outputs.
+* **Valid Access:** If *neither* error condition is true, output the word from memory at index `addr_i[31:2]`.
+* **Invalid Access:** If *either* error condition is true, substitute and output `32'h0000_0013` (NOP) to prevent illegal or `X` state propagation.
+
 ---
 
 ### 8. Data Memory (`riscv_dmem.sv`)
