@@ -125,6 +125,44 @@ Provides crucial RISC-V RV32I opcodes, instruction slices, and control bit vecto
 | **Input** | `operand_b_i` | `[DATA_WIDTH - 1:0]` (32 bits) | Operand B input / shift amount |
 | **Output** | `result_o` | `[DATA_WIDTH - 1:0]` (32 bits) | Calculated result output |
 
+#### Functional Requirements & Specifications
+
+* **Header Dependency:**
+  * Include `"riscv_defs.sv"` to import global definitions, macro operations (such as `ALU_ADD`, `ALU_SUB`, etc.), and the operation selector width macro `ALU_OP_W`.
+
+
+* **Module Interface:**
+  * **Parameters:**
+    * `DATA_WIDTH`: Integer defining the bit width of input operands and output result (default: `32`).
+
+  * **Inputs:**
+    * `alu_op_i`: Operation select signal of width `\`ALU_OP_W` bits.
+    * `operand_a_i`: Primary source input vector of width `DATA_WIDTH`.
+    * `operand_b_i`: Secondary source input vector of width `DATA_WIDTH`.
+
+  * **Outputs:**
+    * `result_o`: Computed output vector of width `DATA_WIDTH`.
+
+* **Internal Signal & Parameter Calculations:**
+  * Define `SHIFT_W` as a local parameter evaluated using `$clog2(DATA_WIDTH)` to derive the exact number of lower bits required from `operand_b_i` for shift amounts (e.g., 5 bits for 32-bit data).
+  * Declare `signed_a_ext` as a signed logic signal of width `2 * DATA_WIDTH` bits used to perform arithmetic shifts safely.
+
+* **Combinational Execution Logic (`always_comb`):**
+  * **Sign-Extension Register Preparation:** Sign-extend `operand_a_i` into the upper half of `signed_a_ext` by replicating bit `[DATA_WIDTH - 1]` across `DATA_WIDTH` positions and concatenating `operand_a_i` in the lower half.
+  * **Operation Selection (`unique case`):** Evaluates `alu_op_i` combinationally to set `result_o`:
+    * **`ALU_ADD`**: Perform binary addition (`operand_a_i + operand_b_i`).
+    * **`ALU_SUB`**: Perform binary subtraction (`operand_a_i - operand_b_i`).
+    * **`ALU_AND`**: Bitwise AND operation (`operand_a_i & operand_b_i`).
+    * **`ALU_OR`**: Bitwise OR operation (`operand_a_i | operand_b_i`).
+    * **`ALU_XOR`**: Bitwise XOR operation (`operand_a_i ^ operand_b_i`).
+    * **`ALU_SLT`**: Signed less-than comparison (`$signed(operand_a_i) < $signed(operand_b_i)`). Return `1` in bit `0` (zero-padded) if true, else `'0`.
+    * **`ALU_SLTU`**: Unsigned less-than comparison (`operand_a_i < operand_b_i`). Return `1` in bit `0` (zero-padded) if true, else `'0`.
+    * **`ALU_SLL`**: Logical left-shift `operand_a_i` by the shift amount specified in the lower `SHIFT_W` bits of `operand_b_i`.
+    * **`ALU_SRL`**: Logical right-shift `operand_a_i` by the shift amount specified in the lower `SHIFT_W` bits of `operand_b_i`.
+    * **`ALU_SRA`**: Perform signed arithmetic right-shift on `signed_a_ext` using `>>>` by `operand_b_i[SHIFT_W - 1:0]` and assign to `result_o` (truncating upper bits).
+    * **`ALU_PASS_B`**: Directly pass `operand_b_i` to `result_o`.
+    * **`default`**: Drive `result_o` to all zeros (`'b0`).
+
 ---
 
 ### 6. Register File (`riscv_regfile.sv`)
