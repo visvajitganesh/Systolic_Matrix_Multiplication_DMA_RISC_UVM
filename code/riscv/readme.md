@@ -108,7 +108,59 @@ Provides crucial RISC-V RV32I opcodes, instruction slices, and control bit vecto
 | **Output** | `mem_unsigned_o` | `logic` | Sign extension control (`1`=Unsigned LBU/LHU, `0`=Signed) |
 | **Output** | `imm_o` | `[31:0]` | Sign-extended immediate value formatted by instruction type |
 
+#### Functional Requirements & Specifications
 
+* **Header Dependency:**
+  * Include `"riscv_defs.sv"` to access global instruction field macros (`OPCODE_R`, `FUNCT3_R`, `FUNCT7_R`, `RD_R`, `RS1_R`, `RS2_R`) and opcode/funct definitions.
+
+* **Module Interface:**
+  * **Inputs:** `instr_i` (32-bit raw instruction word).
+  * **Instruction Type Flags:** `is_alu_o`, `is_load_o`, `is_store_o`, `is_branch_o`, `is_jal_o`, `is_jalr_o`, `invalid_o`.
+  * **Datapath & Execution Control:**
+    * `alu_op_o` (`ALU_OP_W`-bit ALU control select signal).
+    * `alu_src_b_imm_o` (1-bit flag: `1` selects immediate, `0` selects register `rs2`).
+    * `alu_src_a_pc_o` (1-bit flag: `1` selects PC, `0` selects register `rs1`).
+
+  * **Register File Control & Index Addressing:**
+    * `rd_o`, `rs1_o`, `rs2_o` (5-bit register index addresses).
+    * `rd_valid_o` (1-bit write-enable indicator for `rd`).
+
+  * **Memory & Branch Control:**
+    * `branch_funct3_o` (3-bit branch condition sub-type).
+    * `mem_size_o` (2-bit access width: `00`=byte, `01`=halfword, `10`=word).
+    * `mem_unsigned_o` (1-bit flag: `1`=zero-extend, `0`=sign-extend).
+
+  * **Immediate Value:** `imm_o` (32-bit reconstructed sign-extended immediate).
+
+* **Instruction Decoding Logic (`always_comb`):**
+  * **Default Safe Driving:** Set all control classification flags (`is_*`), `invalid_o`, `alu_src_*`, `rd_valid_o`, and internal validity flags (`rs1_valid`, `rs2_valid`) to `1'b0`. Set default `alu_op_o = \`ALU_ADD``and memory flags to`0`.
+  * **Opcode Decoding (`case (instr_i[\`OPCODE_R"])`):**
+    * **R-Type (`OPCODE_OP`):** Assert `is_alu_o`, `rd_valid_o`, `rs1_valid`, and `rs2_valid`. Decode `FUNCT3_R` and `FUNCT7_R` to map operations (`ADD`, `SUB`, `SLT`, `SLTU`, `AND`, `OR`, `XOR`, `SLL`, `SRL`, `SRA`). Assert `invalid_o` and deassert flags on invalid `FUNCT7` values.
+    * **I-Type ALU (`OPCODE_OP_IMM`):** Assert `is_alu_o`, `rd_valid_o`, `rs1_valid`, and `alu_src_b_imm_o`. Decode `FUNCT3_R` to assign `alu_op_o`. Validate `FUNCT7` for shift instructions (`SLL`, `SRL`, `SRA`).
+    * **Load Instructions (`OPCODE_LOAD`):** Assert `is_load_o`, `rd_valid_o`, `rs1_valid`, `alu_src_b_imm_o`, and set `alu_op_o = \`ALU_ADD``. Decode `FUNCT3_R`to configure`mem_size_o`and`mem_unsigned_o` (`WORD`, `HALF`, `BYTE`, `HALF_U`, `BYTE_U`).
+    * **Store Instructions (`OPCODE_STORE`):** Assert `is_store_o`, `rs1_valid`, `rs2_valid`, `alu_src_b_imm_o`, and set `alu_op_o = \`ALU_ADD``. Decode `FUNCT3_R`to configure`mem_size_o`.
+    * **Branch Instructions (`OPCODE_BRANCH`):** Assert `is_branch_o`, `rs1_valid`, and `rs2_valid`. Map branch operations via `FUNCT3_R` to ALU ops (`SUB` for equality checks, `SLT`/`SLTU` for comparison checks).
+    * **JAL (`OPCODE_JAL`):** Assert `is_jal_o`, `rd_valid_o`, `alu_src_a_pc_o`, `alu_src_b_imm_o`, and set `alu_op_o = \`ALU_ADD``.
+    * **JALR (`OPCODE_JALR`):** Verify `FUNCT3_R == 3'b000`. Assert `is_jalr_o`, `rd_valid_o`, `rs1_valid`, `alu_src_b_imm_o`, and set `alu_op_o = \`ALU_ADD``.
+    * **LUI (`OPCODE_LUI`):** Assert `is_alu_o`, `rd_valid_o`, `alu_src_b_imm_o`, and set `alu_op_o = \`ALU_PASS_B``.
+    * **AUIPC (`OPCODE_AUIPC`):** Assert `is_alu_o`, `rd_valid_o`, `alu_src_a_pc_o`, `alu_src_b_imm_o`, and set `alu_op_o = \`ALU_ADD``.
+    * **Default / Unrecognized Opcode:** Assert `invalid_o = 1'b1`.
+
+* **Register Index Masking (`assign` statements):**
+  * Pass source/destination field bits (`instr_i[\`RD_R`]`, `instr_i[`RS1_R`]`, `instr_i[`RS2_R`]`) to `rd_o`, `rs1_o`, and `rs2_o` only when their respective validation bit (`rd_valid_o`, `rs1_valid`, `rs2_valid`) is active; otherwise, drive to `5'd0`.
+
+* **Immediate Reconstruction Logic (`always_comb`):**
+  * Decode instruction bit slices based on `instr_i[\`OPCODE_R`]` and sign-extend to 32 bits:
+    * **I-Type / Load / JALR:** Extend `instr_i[31:20]` (12 bits).
+    * **S-Type (Store):** Combine `instr_i[31:25]` and `instr_i[11:7]`.
+    * **B-Type (Branch):** Reconstruct scramble pattern `{instr_i[31], instr_i[7], instr_i[30:25], instr_i[11:8], 1'b0}` with 19-bit sign extension.
+    * **J-Type (JAL):** Reconstruct scramble pattern `{instr_i[31], instr_i[19:12], instr_i[20], instr_i[30:21], 1'b0}` with 11-bit sign extension.
+    * **U-Type (LUI / AUIPC):** Shift upper 20 bits (`instr_i[31:12]`) and zero-fill lower 12 bits (`{instr_i[31:12], 12'b0}`).
+    * **Default:** Drive `imm_o` to `'0`.
+
+* **Branch Output Formatting:**
+  * Assign `branch_funct3_o` to pass `instr_i[\`FUNCT3_R`]`when`is_branch_o`is active, otherwise drive to`0`.
+ 
 ---
 
 ### 5. Arithmetic Logic Unit (`riscv_alu.sv`)
