@@ -108,6 +108,7 @@ Provides crucial RISC-V RV32I opcodes, instruction slices, and control bit vecto
 | **Output** | `mem_unsigned_o` | `logic` | Sign extension control (`1`=Unsigned LBU/LHU, `0`=Signed) |
 | **Output** | `imm_o` | `[31:0]` | Sign-extended immediate value formatted by instruction type |
 
+
 ---
 
 ### 5. Arithmetic Logic Unit (`riscv_alu.sv`)
