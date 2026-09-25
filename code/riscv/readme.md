@@ -185,6 +185,41 @@ Provides crucial RISC-V RV32I opcodes, instruction slices, and control bit vecto
 | **Output** | `ra0_value_o` | `[DATA_WIDTH - 1:0]` (32 bits) | Asynchronous read data output for Port 1 |
 | **Output** | `rb0_value_o` | `[DATA_WIDTH - 1:0]` (32 bits) | Asynchronous read data output for Port 2 |
 
+#### Functional Requirements & Specifications
+
+* **Module Interface:**
+  * **Parameters:**
+    * `DATA_WIDTH`: Integer defining the bit width of each register (default: `32`).
+
+  * **Inputs:**
+    * `clk_i` (clock signal).
+    * `rst_i` (active-high asynchronous reset signal).
+    * `rd0_i` (5-bit write address targeting registers 0 to 31).
+    * `rd0_value_i` (`DATA_WIDTH`-bit write data).
+    * `rd0_wren_i` (1-bit write enable control signal).
+    * `ra0_i` (5-bit read address port 1).
+    * `rb0_i` (5-bit read address port 2).
+
+  * **Outputs:**
+    * `ra0_value_o` (`DATA_WIDTH`-bit asynchronous output for read address 1).
+    * `rb0_value_o` (`DATA_WIDTH`-bit asynchronous output for read address 2).
+
+* **Register Storage Array:**
+  * Declare an internal register file array `r_xx` consisting of 32 words (`[0:31]`), each having a width of `DATA_WIDTH` bits.
+
+* **Synchronous Write Operation with Asynchronous Reset (`always_ff @(posedge clk_i or posedge rst_i)`):**
+  * **Reset Condition (`rst_i == 1`):** Asynchronously clear all 32 registers in `r_xx` to all-zeros using an assignment pattern (`'{default: '0}`).
+  * **Write Operation (`rst_i == 0`):** On the rising clock edge (`posedge clk_i`), commit `rd0_value_i` to `r_xx[rd0_i]` **only if**:
+    1. Write enable is active (`rd0_wren_i == 1`).
+    2. Target destination address is not register zero (`rd0_i != 5'b00000`).
+
+  * **Zero Register (`x0`) Protection:** Register 0 must be hard-coded to ignore synchronous write operations, maintaining its value or preventing write commits.
+
+* **Asynchronous Read Operation (`assign` statements):**
+  * **Dual Asynchronous Read Ports:** Read data combinationally without waiting for a clock edge.
+  * **Read Port 1 (`ra0_value_o`):** Continuously output `'0` if `ra0_i == 5'b00000`; otherwise, output the current contents of `r_xx[ra0_i]`.
+  * **Read Port 2 (`rb0_value_o`):** Continuously output `'0` if `rb0_i == 5'b00000`; otherwise, output the current contents of `r_xx[rb0_i]`.
+
 ---
 
 ### 7. Instruction Memory (`riscv_imem.sv`)
