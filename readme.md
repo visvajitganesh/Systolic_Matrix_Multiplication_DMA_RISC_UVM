@@ -317,10 +317,4 @@ Selected sources (full bibliography in the project report):
 
 ---
 
-## License
-
-Add a license of your choice (e.g., MIT/Apache-2.0) before publishing — none is currently specified in the source report.
-
----
-
 *Developed as part of the Post Graduate Diploma in VLSI Design (PG-DVLSI), C-DAC ACTS, Pune.*
